@@ -11,6 +11,8 @@ java {
 	sourceCompatibility = '17'
 }
 
+
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
@@ -19,6 +21,10 @@ configurations {
 
 repositories {
 	mavenCentral()
+}
+
+jar{
+	enabled=false
 }
 
 dependencies {
