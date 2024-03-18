@@ -16,8 +16,6 @@ public class School {
     @Column(name = "school_id")
     private Long id;
 
-    @OneToOne(mappedBy = "school")
-    private User user;
 
 
     @NotNull

@@ -13,12 +13,11 @@ import jakarta.validation.constraints.NotNull;
 public class Region {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="region_id")
     private Long regionId;
 
-    @OneToOne(mappedBy = "region")
-    private User user;
+
 
     @NotNull
     @Column(length = 40)

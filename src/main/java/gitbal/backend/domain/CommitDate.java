@@ -14,12 +14,10 @@ import java.time.LocalDateTime;
 public class CommitDate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "commit_date_id")
     private Long id;
 
-    @OneToOne(mappedBy = "commitDate")
-    private User user;
 
 
     private LocalDateTime currentCommitDate;

@@ -13,7 +13,7 @@ public class MajorLanguage {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "major_language_id")
     private Long id;
 
