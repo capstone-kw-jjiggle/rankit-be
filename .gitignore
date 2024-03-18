@@ -1,3 +1,6 @@
+### propertiesFile ###
+application-db.yml
+
 HELP.md
 .gradle
 build/
