@@ -1,5 +1,6 @@
 ### propertiesFile ###
 application-db.yml
+application-oauth.yml
 
 HELP.md
 .gradle
