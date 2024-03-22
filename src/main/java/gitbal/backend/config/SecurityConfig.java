@@ -29,6 +29,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/swagger-ui/**", "/").permitAll();
                     auth.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll();
                     auth.requestMatchers("/api/v1/loginCheck").authenticated(); // TODO : 임의의 로직으로 loginChecking 진행중임.
+                    auth.anyRequest().permitAll();
                 }
             )
             .oauth2Login(oauth2 -> {
