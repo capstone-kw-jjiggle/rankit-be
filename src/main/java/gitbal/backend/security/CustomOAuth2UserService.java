@@ -42,10 +42,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private User createUser(String username, String avatar_url) {
+
         log.info("현재 유저를 생성하려고 합니다.");
         User user = User.of(username, avatar_url);
-        // 할 거면 여기서 저장
-        userRepository.save(user);
-        return user;
+
+
+        return userRepository.findByNickname(username).orElseGet(() ->{
+            userRepository.save(user);
+            return user;
+            }
+        );
     }
 }
