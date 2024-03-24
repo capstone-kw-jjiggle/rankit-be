@@ -5,18 +5,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Region {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="region_id")
+    @Column(name = "region_id")
     private Long regionId;
-
 
 
     @NotNull
@@ -31,6 +31,19 @@ public class Region {
 
     @NotNull
     private Long contributorScore;
+
+
+    public Region(String regionName, Long score, String topContributor, Long contributorScore) {
+        this.regionName = regionName;
+        this.score = score;
+        this.topContributor = topContributor;
+        this.contributorScore = contributorScore;
+    }
+
+    // TODO: test 용도여서 나중에 실제로 값 넣으면 변경해야함.
+    public static Region of() {
+        return new Region("부산", 0L, "khyojun", 0L);
+    }
 
 
 }

@@ -1,5 +1,6 @@
 ### propertiesFile ###
 application-db.yml
+application-oauth.yml
 application-univ.yml
 
 HELP.md
