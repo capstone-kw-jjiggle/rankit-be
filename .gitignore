@@ -1,5 +1,6 @@
 ### propertiesFile ###
 application-db.yml
+application-univ.yml
 
 HELP.md
 .gradle
