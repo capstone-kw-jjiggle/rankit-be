@@ -7,15 +7,16 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Getter
-public class UnivDto {
+public class UnivCertCodeDto {
   private String email;
-
   private String univName;
+  private Integer code;
 
   @Builder
-  UnivDto (String email, String univName) {
+  UnivCertCodeDto (String email, String univName, Integer code) {
     this.email = email;
     this.univName = univName;
+    this.code = code;
   }
 
 }
