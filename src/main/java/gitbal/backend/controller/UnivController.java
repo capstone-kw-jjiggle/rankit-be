@@ -33,7 +33,7 @@ public class UnivController {
   })
   public ResponseEntity<?> univRequestCertificate(@RequestBody UnivCertStartDto univCertStartDto)
       throws IOException {
-    return (ResponseEntity<?>) univSerivce.CertStart(univCertStartDto);
+    return ResponseEntity.ok(univSerivce.CertStart(univCertStartDto));
   }
 
 
