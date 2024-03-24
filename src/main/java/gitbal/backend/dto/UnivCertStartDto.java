@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Getter
 public class UnivCertStartDto {
+
   private String email;
   private String univName;
 

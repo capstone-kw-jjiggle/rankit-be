@@ -5,14 +5,13 @@ import gitbal.backend.dto.UnivCertCodeDto;
 import gitbal.backend.dto.UnivCertStartDto;
 import java.io.IOException;
 import java.util.Map;
-import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UnivService {
 
-  @Value("${univ-token}")
+  @Value("${API-KEY}")
   private String apikey;
 
   public Map<String, Object> CertStart(UnivCertStartDto univCertStartDto) throws IOException {
@@ -23,7 +22,7 @@ public class UnivService {
   }
 
   public Map<String, Object> CertCode(UnivCertCodeDto univCertCodeDto)
-      throws IOException, JSONException {
+      throws IOException {
     String email = univCertCodeDto.getEmail();
     String univName = univCertCodeDto.getUnivName();
     Integer code = univCertCodeDto.getCode();
