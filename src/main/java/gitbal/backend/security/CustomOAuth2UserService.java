@@ -27,7 +27,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     //oAuth2 빼와서 User로 매핑 하고 회원가입 및 로그인 진행
     private OAuth2User mappingCustomeUserDetails(OAuth2User oAuth2User) {
-
         Map<String, Object> attributes = oAuth2User.getAttributes();
         String username = attributes.get("login").toString();
         String avatarUrl = attributes.get("avatar_url").toString();
@@ -35,16 +34,22 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         User user = userRepository.findByNickname(username)
             .orElse(createUser(username, avatarUrl));
 
-        CustomUserDetails customUserDetails = CustomUserDetails.create(user);
-        customUserDetails.setAttributes(attributes);
+        CustomUserDetails customUserDetails = settingUserDetails(user,
+            attributes);
         log.info(customUserDetails.toString());
         return customUserDetails;
     }
 
-    private User createUser(String username, String avatar_url) {
+    private static CustomUserDetails settingUserDetails(User user,
+        Map<String, Object> attributes) {
+        CustomUserDetails customUserDetails = CustomUserDetails.create(user);
+        customUserDetails.setAttributes(attributes);
+        return customUserDetails;
+    }
 
+    private User createUser(String username, String avatarUrl) {
         log.info("현재 유저를 생성하려고 합니다.");
-        User user = User.of(username, avatar_url);
+        User user = User.of(username, avatarUrl);
 
         return userRepository.findByNickname(username).orElseGet(() -> {
                 userRepository.save(user);

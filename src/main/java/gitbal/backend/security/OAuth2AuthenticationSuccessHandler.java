@@ -22,6 +22,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     // TODO : 프론트 url 받아서 보내줘야함!
     private final String REDIRECT_URL = "http://localhost:8080/api/v1/logincheck";
+    private final String ACCESS_TOKEN_PREFIX = "accessToken";
     private final TokenInfoRepository tokenInfoRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -47,7 +48,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         );
 
         String uriString = UriComponentsBuilder.fromUriString(REDIRECT_URL)
-            .queryParam("accessToken", accessToken)
+            .queryParam(ACCESS_TOKEN_PREFIX, accessToken)
             .build().toUriString();
 
         response.sendRedirect(uriString);

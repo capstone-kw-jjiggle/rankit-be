@@ -9,8 +9,6 @@ import gitbal.backend.security.GithubOAuth2UserInfo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
@@ -27,48 +25,31 @@ public class JwtTokenProvider {
 
     @Value("${jwt.key}")
     private String key;
-
     private final UserRepository userRepository;
     private final TokenInfoRepository tokenInfoRepository;
-
-    private final Long ACCESS_EXPIRE_LENGTH = 1000L * 20;
-    private final Long REFRESH_EXPIRE_LENGTH = 1000L * 120;
+    //TODO: 이후에 적절한 시간 정한후에 시간 조절진행!
+    private final Long ACCESS_EXPIRE_LENGTH = 1000L * 20; // 20초
+    private final Long REFRESH_EXPIRE_LENGTH = 1000L * 120; // 2분
 
 
     public String createAccessToken(GithubOAuth2UserInfo authentication) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + ACCESS_EXPIRE_LENGTH);
-
-        return Jwts.builder()
-            .signWith(SignatureAlgorithm.HS512, key)
-            .setSubject(authentication.getNickname())
-            .setIssuer("kyhojun")
-            .setIssuedAt(now)
-            .setExpiration(validity)
-            .compact();
-
+        return JwtUtils.generateToken(authentication.getNickname(), now, validity, key);
     }
 
-    public String createRefreshToken(GithubOAuth2UserInfo authentication
-    ) {
+    public String createRefreshToken(GithubOAuth2UserInfo authentication) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + REFRESH_EXPIRE_LENGTH);
-
-        return Jwts.builder()
-            .signWith(SignatureAlgorithm.HS512, key)
-            .setSubject(authentication.getNickname())
-            .setIssuer("kyhojun")
-            .setIssuedAt(now)
-            .setExpiration(validity)
-            .compact();
+        return JwtUtils.generateToken(authentication.getNickname(), now, validity, key);
     }
 
 
     public boolean validateToken(String token) {
         try {
-            JwtParser build = Jwts.parserBuilder().setSigningKey(key).build();
+            JwtParser build = JwtUtils.generateJwtParser(key);
             build.parseClaimsJws(token);
-            log.info("안녀하십니까!");
+            log.info("현재 token을 검증하는 중입니다!");
             return true;
         } catch (ExpiredJwtException e) {
             log.info("만료된 JWT 토큰입니다. 리프레시 토큰을 확인하여 재발급하겠습니다.");
@@ -82,8 +63,8 @@ public class JwtTokenProvider {
 
 
     public Authentication getAuthentication(String accessToken) {
-        Claims claims = parseClaims(accessToken);
-        System.out.println("claims.getSubject() is = " + claims.getSubject());
+        Claims claims = JwtUtils.parseClaims(accessToken, key);
+        log.info("claims.getSubject() is = " + claims.getSubject());
         User user = userRepository.findByNickname(claims.getSubject())
             .orElseThrow(() -> new IllegalArgumentException("not found user"));
         CustomUserDetails principal = CustomUserDetails.create(user);
@@ -91,39 +72,16 @@ public class JwtTokenProvider {
     }
 
 
-    private Claims parseClaims(String accessToken) {
-        try {
-            JwtParser parser = Jwts.parserBuilder().setSigningKey(key).build();
-            return parser.parseClaimsJws(accessToken).getBody();
-        } catch (ExpiredJwtException e) {
-            return e.getClaims();
-        }
-    }
-
     public String regenerateToken(String token) {
         TokenInfo tokenInfo = tokenInfoRepository.findByAccessToken(token)
             .orElseThrow(() -> new IllegalArgumentException("어세스 토큰으로 찾을 수 없었습니다."));
-
         Date now = new Date();
         Date validity = new Date(now.getTime() + ACCESS_EXPIRE_LENGTH);
-        Claims claims = parseClaims(token);
-
-        // TODO : 아래 과정 나중에 분리하기! 현재 너무 몰려있음!
-        System.out.println("리프레쉬  토큰 상태에서 claims.getSubject() is = " + claims.getSubject());
-
-        String regenerateToken = Jwts.builder()
-            .signWith(SignatureAlgorithm.HS512, key)
-            .setSubject(claims.getSubject())
-            .setIssuer("kyhojun")
-            .setIssuedAt(now)
-            .setExpiration(validity)
-            .compact();
-
+        Claims claims = JwtUtils.parseClaims(token, key);
+        log.info("리프레쉬  토큰 상태에서 claims.getSubject() is = " + claims.getSubject());
+        String regenerateToken = JwtUtils.generateToken(claims.getSubject(), now, validity, key);
         tokenInfo.setAccessToken(regenerateToken);
         tokenInfoRepository.save(tokenInfo);
-
-        //위 코드 분리하기!
-
         return regenerateToken;
     }
 
@@ -131,7 +89,7 @@ public class JwtTokenProvider {
         try {
             TokenInfo tokenInfo = tokenInfoRepository.findByAccessToken(token)
                 .orElseThrow(() -> new IllegalArgumentException("찾으려는 리프레시토큰은 없습니다."));
-            JwtParser build = Jwts.parserBuilder().setSigningKey(key).build();
+            JwtParser build = JwtUtils.generateJwtParser(key);
             build.parseClaimsJws(tokenInfo.getRefreshToken());
             log.info("안녀하십니까!");
             return true;

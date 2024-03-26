@@ -21,63 +21,77 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
     private final JwtTokenProvider tokenProvider;
+    private final String AUTHORIZATION_HEADER = "Authorization";
+    private final String BEARER_PREFIX = "Bearer ";
+    private final String URL_PREFIX = "accessToken=";
 
-    private final String FAILURE_LOGIN_REDIRECTED = "http://localhost:8080/api/v1/loginCheck";
 
 
-
-    // TODO : accessToken으로만 인증 가능하게 함! -> refreshToken 따로 DB 설정을 하여서 발급받아서 재검증 로직 검토해야함
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
 
-        String token = extractBearerToken(request);
+        String token = extractAccessToken(request);
 
-        // accessToken 만료됨 -> refreshToken 확인 ->
-
-        // Validation Access Token
         try {
-            if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {
-                Authentication authentication = tokenProvider.getAuthentication(token);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (isValidAccessToken(token)) {
+                Authentication authentication = registerAuthenticationToContext(token);
                 log.info(authentication.getName() + "의 인증정보 저장");
-            }
-            else if(StringUtils.hasText(token) && !tokenProvider.validateToken(token) && tokenProvider.validateRefreshToken(token)){
+
+            } else if (isValidRefreshToken(token)) {
                 log.info("다시 로그인을 해야합니다! 리프레시 토큰을 확인한 후 재발급합니다.");
                 String regenerateToken = tokenProvider.regenerateToken(token);
-
-                Authentication authentication = tokenProvider.getAuthentication(
-                    regenerateToken);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                // 여기에다가 다시 재발급한 토큰을 알려줌 프론트에게
-                response.setHeader("accessToken", regenerateToken);
+                Authentication authentication = registerAuthenticationToContext(regenerateToken);
+                response.setHeader(AUTHORIZATION_HEADER, regenerateToken);
                 log.info("다시 발급받은 정보로 인증정보 {} 저장", authentication.getName());
-            }
-            else{
+            } else {
                 log.info("유효한 JWT 토큰이 없습니다.");
             }
-        }catch (RedisConnectionFailureException e){
+        } catch (RedisConnectionFailureException e) {
             log.error("redis 연결에 오류가 발생했습니다.");
         }
 
         filterChain.doFilter(request, response);
     }
 
+    private boolean isValidRefreshToken(String token) {
+        return StringUtils.hasText(token) && !tokenProvider.validateToken(token)
+            && tokenProvider.validateRefreshToken(token);
+    }
 
-    private String extractBearerToken(HttpServletRequest request){
+    private boolean isValidAccessToken(String token) {
+        return StringUtils.hasText(token) && tokenProvider.validateToken(token);
+    }
 
-        String bearerToken = request.getHeader("Authorization");
 
+    private String extractAccessToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         String urlToken = request.getQueryString();
 
-        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")){
-            System.out.println("header accessToken is =" + bearerToken.substring(7));
-            return bearerToken.substring(7);
+        return checkUrlOrBearerToken(bearerToken, urlToken);
+    }
+
+    private String checkUrlOrBearerToken(String bearerToken, String urlToken) {
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            String token = bearerToken.split(BEARER_PREFIX)[1];
+            log.info("header accessToken is =" + token);
+            return token;
         }
-        if(StringUtils.hasText(urlToken) && urlToken.startsWith("accessToken=")){
-            System.out.println("url Token is =" + urlToken.substring(12));
-            return urlToken.substring(12);
+        if (StringUtils.hasText(urlToken) && urlToken.startsWith(URL_PREFIX)) {
+            String token = urlToken.split(URL_PREFIX)[1];
+            log.info("url Token is =" + token);
+            return token;
         }
         return null;
     }
+
+
+    private Authentication registerAuthenticationToContext(String aceessToken) {
+        Authentication authentication = tokenProvider.getAuthentication(
+            aceessToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return authentication;
+    }
+
+
 }

@@ -17,15 +17,15 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 public class CustomUserDetails implements UserDetails, OAuth2User {
 
     @Getter
-    private String nickname;
+    private final String nickname;
 
     @Getter
-    private String avatarUrl;
+    private final String avatarUrl;
 
     @Getter
     @Setter
     private String accessToken;
-    private Collection<? extends GrantedAuthority> authorities;
+    private final Collection<? extends GrantedAuthority> authorities;
     @Getter
     @Setter
     private Map<String, Object> attributes;
