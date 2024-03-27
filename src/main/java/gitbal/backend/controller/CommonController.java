@@ -1,19 +1,21 @@
 package gitbal.backend.controller;
 
 
+import gitbal.backend.dto.LoginRequestDto;
 import gitbal.backend.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,20 +31,23 @@ public class CommonController {
     @PostMapping("/join")
     @Operation(summary = "회원가입", description = "회원가입을 위한 api입니다.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "회원가입에 성공했습니다."),
+        @ApiResponse(responseCode = "200", description = "회원가입에 성공했습니다."),
     })
-    public String login(Authentication authentication) {
+    public ResponseEntity<String> login(Authentication authentication,
+        @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
 
-        return "hello";
+        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+
+        response.setHeader("accessToken", principal.getAccessToken());
+        return ResponseEntity.ok("회원 가입 성공!");
     }
 
     //TODO : 이후 제거 해야하는 메서드 -> 로그인 잘 되는지 확인하기 위한 테스트 api
-    @GetMapping("/loginCheck")
-    public String joinTest(Authentication authentication, HttpServletRequest request) {
+    @GetMapping("/logincheck")
+    public String joinTest(Authentication authentication, HttpServletResponse response) {
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-        System.out.println(principal.getAttributes());
-        //System.out.println("accessToken is  " +  request.getHeader("authorization"));
-        //System.out.println("oAuth2User is = " + principal.getAttributes().toString());
+        System.out.println(principal.getNickname());
+        response.setHeader("AccessToken", principal.getAccessToken());
         return "hello";
     }
 

@@ -1,8 +1,8 @@
 package gitbal.backend.security;
 
-import gitbal.backend.repository.UserRepository;
+import gitbal.backend.domain.TokenInfo;
+import gitbal.backend.repository.TokenInfoRepository;
 import gitbal.backend.security.jwt.JwtTokenProvider;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -20,13 +20,15 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 
-    private String redirectUrl = "http://localhost:8080/api/v1/loginCheck";
-    private final UserRepository userRepository;
+    // TODO : 프론트 url 받아서 보내줘야함!
+    private final String REDIRECT_URL = "http://localhost:8080/api/v1/logincheck";
+    private final String ACCESS_TOKEN_PREFIX = "accessToken";
+    private final TokenInfoRepository tokenInfoRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-        Authentication authentication) throws IOException, ServletException {
+        Authentication authentication) throws IOException{
 
         GithubOAuth2UserInfo githubOAuth2UserInfo = changeGithubOAuth2UserInfo(
             authentication);
@@ -38,13 +40,18 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         //여기서 refresh를 redis에 저장!
         String refreshToken = jwtTokenProvider.createRefreshToken(githubOAuth2UserInfo);
 
+        tokenInfoRepository.save(TokenInfo.builder().nickname(
+                githubOAuth2UserInfo.getNickname())
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .build()
+        );
 
-        String uriString = UriComponentsBuilder.fromUriString(redirectUrl)
-            .queryParam("accessToken", accessToken)
+        String uriString = UriComponentsBuilder.fromUriString(REDIRECT_URL)
+            .queryParam(ACCESS_TOKEN_PREFIX, accessToken)
             .build().toUriString();
 
         response.sendRedirect(uriString);
-
     }
 
     private static GithubOAuth2UserInfo changeGithubOAuth2UserInfo(Authentication authentication) {

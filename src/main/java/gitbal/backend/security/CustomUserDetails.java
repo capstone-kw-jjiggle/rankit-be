@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,15 +17,22 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 public class CustomUserDetails implements UserDetails, OAuth2User {
 
     @Getter
-    private String nickname;
+    private final String nickname;
 
     @Getter
-    private String avatarUrl;
-    private Collection<? extends GrantedAuthority> authorities;
+    private final String avatarUrl;
+
+    @Getter
+    @Setter
+    private String accessToken;
+    private final Collection<? extends GrantedAuthority> authorities;
+    @Getter
+    @Setter
     private Map<String, Object> attributes;
 
-    public CustomUserDetails(String nickname, String avatarUrl, Collection<? extends GrantedAuthority> authorities
-       ) {
+    public CustomUserDetails(String nickname, String avatarUrl,
+        Collection<? extends GrantedAuthority> authorities
+    ) {
         this.nickname = nickname;
         this.avatarUrl = avatarUrl;
         this.authorities = authorities;
@@ -41,17 +49,6 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
             user.getProfile_img(),
             authorities
         );
-    }
-
-
-    public static CustomUserDetails create(User user, Map<String, Object> attributes) {
-
-        CustomUserDetails userDetails = CustomUserDetails.create(user);
-
-        userDetails.setAttributes(attributes);
-
-        log.info("hello 나는 유저 디테일 하하");
-        return userDetails;
     }
 
 
@@ -101,7 +98,4 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
     }
 
 
-    public void setAttributes(Map<String, Object> attributes) {
-        this.attributes = attributes;
-    }
 }
