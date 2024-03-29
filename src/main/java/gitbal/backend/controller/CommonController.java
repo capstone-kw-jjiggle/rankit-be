@@ -1,7 +1,7 @@
 package gitbal.backend.controller;
 
 
-import gitbal.backend.dto.LoginRequestDto;
+import gitbal.backend.dto.JoinRequestDto;
 import gitbal.backend.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,7 +34,7 @@ public class CommonController {
         @ApiResponse(responseCode = "200", description = "회원가입에 성공했습니다."),
     })
     public ResponseEntity<String> login(Authentication authentication,
-        @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+        @RequestBody JoinRequestDto joinRequestDto, HttpServletResponse response) {
 
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
 
