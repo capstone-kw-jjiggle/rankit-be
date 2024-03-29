@@ -7,7 +7,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder.Default;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,8 +25,9 @@ public class School {
     @Column(length = 40)
     private String schoolName;
 
-    @NotNull
+    @ColumnDefault(value = "0")
     private Long score;
+
 
     @NotNull
     private String topContributor;

@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,7 +23,7 @@ public class CommitDate {
 
     private LocalDateTime currentCommitDate;
 
-    @NotNull
+    @ColumnDefault(value = "0")
     private Long steadyCount;
 
 
