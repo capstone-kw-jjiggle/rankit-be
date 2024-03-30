@@ -1,4 +1,4 @@
-package gitbal.backend.domain;
+package gitbal.backend.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,7 +7,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
-import lombok.Builder.Default;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 

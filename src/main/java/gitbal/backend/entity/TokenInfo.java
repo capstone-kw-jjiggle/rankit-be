@@ -1,4 +1,4 @@
-package gitbal.backend.domain;
+package gitbal.backend.entity;
 
 import lombok.AccessLevel;
 import lombok.Builder;

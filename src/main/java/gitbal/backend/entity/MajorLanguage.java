@@ -1,4 +1,4 @@
-package gitbal.backend.domain;
+package gitbal.backend.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -24,6 +25,7 @@ public class MajorLanguage {
     private Long languageCount;
 
 
+    @Builder
     public MajorLanguage(String majorLanguage, Long languageCount) {
         this.majorLanguage = majorLanguage;
         this.languageCount = languageCount;
@@ -31,14 +33,6 @@ public class MajorLanguage {
 
     // TODO: test 용도여서 나중에 실제로 값 넣으면 변경해야함.
 
-    public static List<MajorLanguage> of() {
-        return List.of(new MajorLanguage("java", 0L),
-            new MajorLanguage("c", 1L),
-            new MajorLanguage("c++", 2L),
-            new MajorLanguage("java script", 3L),
-            new MajorLanguage("python", 4L)
-        );
-    }
 
 
 }

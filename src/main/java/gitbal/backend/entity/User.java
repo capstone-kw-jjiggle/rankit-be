@@ -1,4 +1,4 @@
-package gitbal.backend.domain;
+package gitbal.backend.entity;
 
 
 import jakarta.persistence.CascadeType;
@@ -12,7 +12,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -69,6 +68,19 @@ public class User {
     public User(School school, Region region, CommitDate commitDate,
         List<MajorLanguage> majorLanguages,
         String nickname, Long pr_count, Long commit_count, String profile_img) {
+        this.school = school;
+        this.region = region;
+        this.commitDate = commitDate;
+        this.majorLanguages = majorLanguages;
+        this.nickname = nickname;
+        this.pr_count = pr_count;
+        this.commit_count = commit_count;
+        this.profile_img = profile_img;
+    }
+
+    public void joinUpdateUser(School school, Region region, CommitDate commitDate,
+        List<MajorLanguage> majorLanguages,
+        String nickname, Long pr_count, Long commit_count, String profile_img){
         this.school = school;
         this.region = region;
         this.commitDate = commitDate;
