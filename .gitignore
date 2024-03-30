@@ -2,6 +2,7 @@
 application-db.yml
 application-oauth.yml
 application-univ.yml
+application-token.yml
 
 HELP.md
 .gradle
