@@ -1,8 +1,8 @@
 package gitbal.backend.service;
 
 import com.univcert.api.UnivCert;
-import gitbal.backend.dto.UnivCertCodeDto;
-import gitbal.backend.dto.UnivCertStartDto;
+import gitbal.backend.entity.dto.UnivCertCodeDto;
+import gitbal.backend.entity.dto.UnivCertStartDto;
 import java.io.IOException;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;

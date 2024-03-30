@@ -1,7 +1,7 @@
 package gitbal.backend.security.jwt;
 
-import gitbal.backend.domain.TokenInfo;
-import gitbal.backend.domain.User;
+import gitbal.backend.entity.TokenInfo;
+import gitbal.backend.entity.User;
 import gitbal.backend.repository.TokenInfoRepository;
 import gitbal.backend.repository.UserRepository;
 import gitbal.backend.security.CustomUserDetails;
@@ -29,7 +29,7 @@ public class JwtTokenProvider {
     private final TokenInfoRepository tokenInfoRepository;
     //TODO: 이후에 적절한 시간 정한후에 시간 조절진행!
     private final Long ACCESS_EXPIRE_LENGTH = 1000L * 20; // 20초
-    private final Long REFRESH_EXPIRE_LENGTH = 1000L * 120; // 2분
+    private final Long REFRESH_EXPIRE_LENGTH = 1000L * 600; // 10분
 
 
     public String createAccessToken(GithubOAuth2UserInfo authentication) {
