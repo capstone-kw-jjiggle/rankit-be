@@ -1,8 +1,9 @@
 package gitbal.backend.controller;
 
 
-import gitbal.backend.dto.JoinRequestDto;
+import gitbal.backend.entity.dto.JoinRequestDto;
 import gitbal.backend.security.CustomUserDetails;
+import gitbal.backend.service.LoginService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -27,6 +28,7 @@ public class CommonController {
 
 
     // TODO : 여기 정보들은 회원가입 제외 전부 로그인한 유저 기준으로 작업 진행해야함
+    private final LoginService loginService;
 
     @PostMapping("/join")
     @Operation(summary = "회원가입", description = "회원가입을 위한 api입니다.")
@@ -37,6 +39,10 @@ public class CommonController {
         @RequestBody JoinRequestDto joinRequestDto, HttpServletResponse response) {
 
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+
+
+        loginService.join(joinRequestDto, principal);
+
 
         response.setHeader("accessToken", principal.getAccessToken());
         return ResponseEntity.ok("회원 가입 성공!");
