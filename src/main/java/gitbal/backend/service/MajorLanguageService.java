@@ -24,7 +24,7 @@ public class MajorLanguageService {
 
 
     private final MajorLanguageRepository majorLanguageRepository;
-    private final GraphQlService graphQlService;
+    private final GraphQLService graphQlService;
 
     public List<MajorLanguage> getUserTopLaunguages(String username) {
         return getUserTopLanguages(username).entrySet().stream()

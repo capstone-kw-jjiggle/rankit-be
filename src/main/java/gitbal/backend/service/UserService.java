@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final GitbalScore gitbalScore;
-    private final GraphQlService graphQlService;
+    private final GraphQLService graphQlService;
 
 
     public GitbalApiDto callUsersGithubApi(String nickname) {

@@ -1,6 +1,6 @@
 package gitbal.backend.entity.dto;
 
-import gitbal.backend.entity.Contribution;
+import gitbal.backend.entity.OneDayCommit;
 import gitbal.backend.entity.MajorLanguage;
 import gitbal.backend.entity.Region;
 import gitbal.backend.entity.School;
@@ -13,28 +13,26 @@ import java.util.List;
 public record UserDto(
     School school,
     Region region,
-    Contribution contribution,
+    OneDayCommit oneDayCommit,
     List<MajorLanguage> majorLanguages,
     String nickname,
-    Long pr_count,
-    Long commit_count,
+    Long score,
     String profile_img) {
 
-    public static UserDto of(School school, Region region, Contribution contribution,
-        List<MajorLanguage> majorLanguages, String nickname, Long pr_count, Long commit_count,
+    public static UserDto of(School school, Region region, OneDayCommit oneDayCommit,
+        List<MajorLanguage> majorLanguages, String nickname, Long score,
         String profile_img) {
-        return new UserDto(school, region, contribution, majorLanguages, nickname, pr_count, commit_count, profile_img);
+        return new UserDto(school, region, oneDayCommit, majorLanguages, nickname, score, profile_img);
     }
 
     public static User toEntity(UserDto userDto) {
         return User.builder()
             .school(userDto.school())
             .region(userDto.region())
-            .commitDate(userDto.contribution())
+            .oneDayCommit(userDto.oneDayCommit())
             .majorLanguages(userDto.majorLanguages())
             .nickname(userDto.nickname())
-            .pr_count(userDto.pr_count())
-            .commit_count(userDto.commit_count())
+            .score(userDto.score())
             .profile_img(userDto.profile_img())
             .build();
     }
