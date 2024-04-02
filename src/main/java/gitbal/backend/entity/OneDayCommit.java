@@ -5,36 +5,34 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Contribution {
+public class OneDayCommit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "commit_date_id")
+    @Column(name = "one_day_commit_id")
     private Long id;
 
-
-    private LocalDateTime currentCommitDate;
 
     @ColumnDefault(value = "0")
     private Long steadyCount;
 
 
-    public Contribution(LocalDateTime currentCommitDate, Long steadyCount) {
-        this.currentCommitDate = currentCommitDate;
+    public OneDayCommit(Long steadyCount) {
         this.steadyCount = steadyCount;
     }
 
-    // TODO: test 용도여서 나중에 실제로 값 넣으면 변경해야함.
-
-    public static Contribution of() {
-        return new Contribution(LocalDateTime.now(), 0L);
+    // 초기 가입할 때 넣기위한 값
+    public static OneDayCommit of(boolean hasRecent) {
+        if (hasRecent) {
+            return new OneDayCommit(1L);
+        }
+        return new OneDayCommit(0L);
     }
 
 }
