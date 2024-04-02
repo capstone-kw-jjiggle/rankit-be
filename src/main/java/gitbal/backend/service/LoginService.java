@@ -19,7 +19,7 @@ public class LoginService {
     private final SchoolService schoolService;
     private final RegionService regionService;
     private final MajorLanguageService majorLanguageService;
-    private final ContributionService contributionService;
+    private final OneDayCommitService oneDayCommitService;
     private final UserService userService;
     private final UserRepository userRepository;
 
@@ -49,7 +49,7 @@ public class LoginService {
         String nickname, String avatarUrl) {
         return UserDto.of(schoolService.findBySchoolName(joinRequestDto.univName()),
             regionService.findByRegionName(joinRequestDto.region()),
-            contributionService.calculateRecentCommit(gitbalApiDto.recentCommit()),
+            oneDayCommitService.calculateRecentCommit(gitbalApiDto.recentCommit()),
             majorLanguageService.getUserTopLaunguages(nickname),
             nickname,
             gitbalApiDto.score(),
