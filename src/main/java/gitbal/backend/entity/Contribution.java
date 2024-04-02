@@ -12,7 +12,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CommitDate {
+public class Contribution {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,15 +26,15 @@ public class CommitDate {
     private Long steadyCount;
 
 
-    public CommitDate(LocalDateTime currentCommitDate, Long steadyCount) {
+    public Contribution(LocalDateTime currentCommitDate, Long steadyCount) {
         this.currentCommitDate = currentCommitDate;
         this.steadyCount = steadyCount;
     }
 
     // TODO: test 용도여서 나중에 실제로 값 넣으면 변경해야함.
 
-    public static CommitDate of() {
-        return new CommitDate(LocalDateTime.now(), 0L);
+    public static Contribution of() {
+        return new Contribution(LocalDateTime.now(), 0L);
     }
 
 }

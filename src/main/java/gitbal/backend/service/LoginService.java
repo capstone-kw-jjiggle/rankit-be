@@ -7,7 +7,6 @@ import gitbal.backend.exception.JoinException;
 import gitbal.backend.repository.UserRepository;
 import gitbal.backend.security.CustomUserDetails;
 import jakarta.transaction.Transactional;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,7 @@ public class LoginService {
     private final SchoolService schoolService;
     private final RegionService regionService;
     private final MajorLanguageService majorLanguageService;
-    private final CommitDateService commitDateService;
+    private final ContributionService contributionService;
     private final UserService userService;
 
     private final UserRepository userRepository;
@@ -38,7 +37,7 @@ public class LoginService {
         //loginRequestDto 학교이름, 지역이름, 프로필 이미지 이름
         UserDto userDto = UserDto.of(schoolService.findBySchoolName(joinRequestDto.univName()),
             regionService.findByRegionName(joinRequestDto.region()),
-            commitDateService.calculateRecentCommit(nickname),
+            contributionService.calculateRecentCommit(nickname),
             majorLanguageService.getUserTopLaunguages(nickname),
             nickname,
             userService.getUserInformation(nickname).prCount(),
@@ -48,7 +47,7 @@ public class LoginService {
 
         findUser.joinUpdateUser(userDto.school(),
             userDto.region(),
-            userDto.commitDate(),
+            userDto.contribution(),
             userDto.majorLanguages(),
             userDto.nickname(),
             userDto.pr_count(),

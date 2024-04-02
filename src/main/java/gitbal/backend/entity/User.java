@@ -43,7 +43,7 @@ public class User {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "commit_date_id", unique = true)
-    private CommitDate commitDate;
+    private Contribution contribution;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "major_id")
@@ -65,12 +65,12 @@ public class User {
 
 
     @Builder
-    public User(School school, Region region, CommitDate commitDate,
+    public User(School school, Region region, Contribution contribution,
         List<MajorLanguage> majorLanguages,
         String nickname, Long pr_count, Long commit_count, String profile_img) {
         this.school = school;
         this.region = region;
-        this.commitDate = commitDate;
+        this.contribution = contribution;
         this.majorLanguages = majorLanguages;
         this.nickname = nickname;
         this.pr_count = pr_count;
@@ -78,12 +78,12 @@ public class User {
         this.profile_img = profile_img;
     }
 
-    public void joinUpdateUser(School school, Region region, CommitDate commitDate,
+    public void joinUpdateUser(School school, Region region, Contribution contribution,
         List<MajorLanguage> majorLanguages,
         String nickname, Long pr_count, Long commit_count, String profile_img){
         this.school = school;
         this.region = region;
-        this.commitDate = commitDate;
+        this.contribution = contribution;
         this.majorLanguages = majorLanguages;
         this.nickname = nickname;
         this.pr_count = pr_count;
