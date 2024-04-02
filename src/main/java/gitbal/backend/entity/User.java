@@ -43,7 +43,7 @@ public class User {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "commit_date_id", unique = true)
-    private Contribution contribution;
+    private OneDayCommit oneDayCommit;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "major_id")
@@ -54,47 +54,41 @@ public class User {
     private String nickname;
 
     @ColumnDefault("0")
-    private Long pr_count;
-
-    @ColumnDefault("0")
-    private Long commit_count;
+    private Long score;
 
     @ColumnDefault(value = "'nothing'")
     private String profile_img;
 
 
-
     @Builder
-    public User(School school, Region region, Contribution contribution,
+    public User(School school, Region region, OneDayCommit oneDayCommit,
         List<MajorLanguage> majorLanguages,
-        String nickname, Long pr_count, Long commit_count, String profile_img) {
+        String nickname, Long score, String profile_img) {
         this.school = school;
         this.region = region;
-        this.contribution = contribution;
+        this.oneDayCommit = oneDayCommit;
         this.majorLanguages = majorLanguages;
         this.nickname = nickname;
-        this.pr_count = pr_count;
-        this.commit_count = commit_count;
+        this.score = score;
         this.profile_img = profile_img;
     }
 
-    public void joinUpdateUser(School school, Region region, Contribution contribution,
+    public void joinUpdateUser(School school, Region region, OneDayCommit oneDayCommit,
         List<MajorLanguage> majorLanguages,
-        String nickname, Long pr_count, Long commit_count, String profile_img){
+        String nickname, Long score, String profile_img) {
         this.school = school;
         this.region = region;
-        this.contribution = contribution;
+        this.oneDayCommit = oneDayCommit;
         this.majorLanguages = majorLanguages;
         this.nickname = nickname;
-        this.pr_count = pr_count;
-        this.commit_count = commit_count;
+        this.score = score;
         this.profile_img = profile_img;
     }
 
 
     public static User of(String nickname, String profile_imgUrl) {
         return new User(null, null, null, null, nickname, 0L,
-            0L, profile_imgUrl);
+            profile_imgUrl);
     }
 
 

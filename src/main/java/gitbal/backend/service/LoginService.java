@@ -1,5 +1,6 @@
 package gitbal.backend.service;
 
+import gitbal.backend.domain.GitbalApiDto;
 import gitbal.backend.entity.User;
 import gitbal.backend.entity.dto.JoinRequestDto;
 import gitbal.backend.entity.dto.UserDto;
@@ -20,7 +21,6 @@ public class LoginService {
     private final MajorLanguageService majorLanguageService;
     private final ContributionService contributionService;
     private final UserService userService;
-
     private final UserRepository userRepository;
 
 
@@ -34,27 +34,38 @@ public class LoginService {
         User findUser = userRepository.findByNickname(nickname)
             .orElseThrow(() -> new JoinException("유저가 존재하지 않습니다."));
 
+        // TODO: 이름 좀 더 생각해보기 -> 이거 승준씨랑 같이 회의때 고민
+        GitbalApiDto gitbalApiDto = userService.callUsersGithubApi(nickname);
+
         //loginRequestDto 학교이름, 지역이름, 프로필 이미지 이름
-        UserDto userDto = UserDto.of(schoolService.findBySchoolName(joinRequestDto.univName()),
+        UserDto userDto = initUserDto(joinRequestDto, gitbalApiDto, nickname,
+            avatarUrl);
+
+        joinUpdate(findUser, userDto);
+
+    }
+
+    private UserDto initUserDto(JoinRequestDto joinRequestDto, GitbalApiDto gitbalApiDto,
+        String nickname, String avatarUrl) {
+        return UserDto.of(schoolService.findBySchoolName(joinRequestDto.univName()),
             regionService.findByRegionName(joinRequestDto.region()),
-            contributionService.calculateRecentCommit(nickname),
+            contributionService.calculateRecentCommit(gitbalApiDto.recentCommit()),
             majorLanguageService.getUserTopLaunguages(nickname),
             nickname,
-            userService.getUserInformation(nickname).prCount(),
-            userService.getUserInformation(nickname).commitCount(),
+            gitbalApiDto.score(),
             userService.findUserImg(joinRequestDto.imgName(), avatarUrl)
         );
+    }
 
+    private static void joinUpdate(User findUser, UserDto userDto) {
         findUser.joinUpdateUser(userDto.school(),
             userDto.region(),
-            userDto.contribution(),
+            userDto.oneDayCommit(),
             userDto.majorLanguages(),
             userDto.nickname(),
-            userDto.pr_count(),
-            userDto.commit_count(),
+            userDto.score(),
             userDto.profile_img()
-            );
-
+        );
     }
 
 
