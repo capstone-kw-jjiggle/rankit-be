@@ -45,4 +45,8 @@ public class School {
     public static School of() {
         return new School("광운대학교", 0L, "khyojun", 0L);
     }
+
+    public void addScore(Long score){
+        this.score += score;
+    }
 }

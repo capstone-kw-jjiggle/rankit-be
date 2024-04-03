@@ -42,7 +42,6 @@ public class LoginService {
             avatarUrl);
 
         joinUpdate(findUser, userDto);
-
     }
 
     private UserDto initUserDto(JoinRequestDto joinRequestDto, GitbalApiDto gitbalApiDto,
@@ -57,7 +56,7 @@ public class LoginService {
         );
     }
 
-    private static void joinUpdate(User findUser, UserDto userDto) {
+    private void joinUpdate(User findUser, UserDto userDto) {
         findUser.joinUpdateUser(userDto.school(),
             userDto.region(),
             userDto.oneDayCommit(),
@@ -66,6 +65,8 @@ public class LoginService {
             userDto.score(),
             userDto.profile_img()
         );
+        schoolService.joinNewUserScore(findUser);
+        regionService.joinNewUserScore(findUser);
     }
 
 
