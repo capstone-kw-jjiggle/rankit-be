@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -33,20 +34,20 @@ public class User {
 
 
     // Todo: 공부한 이후 수정 작업 계속 진행 (JPA 공부)
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "school_id", unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "school_id")
     private School school;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "region_id", unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id")
     private Region region;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "commit_date_id", unique = true)
+    @JoinColumn(name = "commit_date_id")
     private OneDayCommit oneDayCommit;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "major_id")
+    @JoinColumn(name = "major_user_id")
     private List<MajorLanguage> majorLanguages = new ArrayList<>();
 
 
