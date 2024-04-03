@@ -31,12 +31,12 @@ public class GitbalScore {
         Long prCount = userInfoDto.prCount();
         Long repoCount = userInfoDto.repoCount();
 
-        double rankScore = COMMIT_WEIGHT * exponentialCDF(commitCount / COMMITS_MEDIAN) +
-            PR_WEIGHT * exponentialCDF(prCount / PR_MEDIAN) +
-            ISSUE_WEIGHT * exponentialCDF(issueCount / ISSUE_MEDIAN) +
-            REPO_WEIGHT * exponentialCDF(repoCount / REPO_MEDIAN) +
-            COMMIT_WEIGHT * exponentialCDF(commitCount / COMMITS_MEDIAN) +
-            FOLLOWER_WEIGHT * logNormalCDF(followerCount / FOLLOWER_MEDIAN);
+        double rankScore = COMMIT_WEIGHT * exponentialCDF((double) commitCount / COMMITS_MEDIAN) +
+            PR_WEIGHT * exponentialCDF((double) prCount / PR_MEDIAN) +
+            ISSUE_WEIGHT * exponentialCDF((double) issueCount / ISSUE_MEDIAN) +
+            REPO_WEIGHT * exponentialCDF((double) repoCount / REPO_MEDIAN) +
+            COMMIT_WEIGHT * exponentialCDF((double) commitCount / COMMITS_MEDIAN) +
+            FOLLOWER_WEIGHT * logNormalCDF((double) followerCount / FOLLOWER_MEDIAN);
 
         return (long) (int) Math.floor(rankScore * 10000);
     }
