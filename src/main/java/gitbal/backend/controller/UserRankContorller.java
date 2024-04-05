@@ -1,17 +1,17 @@
 package gitbal.backend.controller;
 
 
+import gitbal.backend.entity.dto.UserRankRaceResponseDto;
 import gitbal.backend.entity.dto.UserRankScoreResponseDto;
 import gitbal.backend.service.UserRankService;
-import gitbal.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,8 +40,8 @@ public class UserRankContorller {
         @ApiResponse(responseCode = "200", description = "유저 경주 상황 정보 요청을 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저 경주 상황 정보 요청을 실패했습니다.")
     })
-    public void raceStatus(@RequestParam String username){
-
+    public ResponseEntity<List<UserRankRaceResponseDto>> raceStatus(@RequestParam String username){
+        return ResponseEntity.ok(userRankService.makeUserRankRaceStatusByUsername(username));
     }
 
     @GetMapping("/school")
