@@ -79,13 +79,13 @@ public class MockDataGenerator implements CommandLineRunner {
     private User createUser(School school, Region region) {
         String randomNickname = "User" + random.nextInt(1000); // Example nickname
         String randomProfileImg = "https://example.com/image" + random.nextInt(100); // Example profile image URL
-        Long randomScore = (long) random.nextInt(1000,100000); // Example score
+        Long randomScore = (long) random.nextInt(1000,100000); // Example userScore
 
         return User.builder()
             .school(school)
             .region(region)
             .nickname(randomNickname)
-            .score(randomScore) // Random score
+            .score(randomScore) // Random userScore
             .profile_img(randomProfileImg)
             .build();
     }
