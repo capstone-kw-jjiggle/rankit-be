@@ -1,20 +1,28 @@
 package gitbal.backend.controller;
 
 
+import gitbal.backend.entity.dto.UserRankScoreResponseDto;
+import gitbal.backend.service.UserRankService;
+import gitbal.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/userRank")
-@Tag(name = "유저 순위 API(미구현)", description = "유저 순위 페이지 api 입니다.")
+@RequiredArgsConstructor
+@Tag(name = "유저 순위 API(미구현)", description = "유저 페이지의 rank탭 관련 api 입니다.")
 public class UserRankContorller {
 
+    private final UserRankService userRankService;
 
     @GetMapping("/userscore")
     @Operation(summary = "유저의 현재 점수", description = "유저의 현재 점수를 가져오는 api 입니다.")
@@ -22,8 +30,8 @@ public class UserRankContorller {
         @ApiResponse(responseCode = "200", description = "유저 현재 점수 요청을 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저 현재 점수 요청을 실패했습니다.")
     })
-    public void userscore(@RequestBody String username){
-
+    public ResponseEntity<UserRankScoreResponseDto> userscore(@RequestParam String username){
+        return ResponseEntity.ok(userRankService.makeUserRankResponse(username));
     }
 
     @GetMapping("/race")
@@ -32,7 +40,7 @@ public class UserRankContorller {
         @ApiResponse(responseCode = "200", description = "유저 경주 상황 정보 요청을 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저 경주 상황 정보 요청을 실패했습니다.")
     })
-    public void raceStatus(@RequestBody String username){
+    public void raceStatus(@RequestParam String username){
 
     }
 
@@ -42,7 +50,7 @@ public class UserRankContorller {
         @ApiResponse(responseCode = "200", description = "유저 학교 상황 정보 요청을 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저 학교 상황 정보 요청을 실패했습니다.")
     })
-    public void schoolTab(@RequestBody String username){
+    public void schoolTab(@RequestParam String username){
 
     }
 
@@ -52,7 +60,7 @@ public class UserRankContorller {
         @ApiResponse(responseCode = "200", description = "유저 지역 탭 정보 요청을 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저 지역 탭 정보 요청을 실패했습니다.")
     })
-    public void regionTab(@RequestBody String username){
+    public void regionTab(@RequestParam String username){
 
     }
 
@@ -62,7 +70,7 @@ public class UserRankContorller {
         @ApiResponse(responseCode = "200", description = "유저 사용 언어 탭 정보 요청을 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저 사용 언어 탭 정보 요청을 실패했습니다.")
     })
-    public void majorLanguageTab(@RequestBody String username){
+    public void majorLanguageTab(@RequestParam String username){
 
     }
 

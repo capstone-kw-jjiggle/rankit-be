@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gitbal.backend.domain.GitbalApiDto;
 import gitbal.backend.domain.GitbalScore;
+import gitbal.backend.entity.User;
 import gitbal.backend.entity.dto.UserInfoDto;
+import gitbal.backend.exception.UserRankException;
+import gitbal.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,7 @@ public class UserService {
 
     private final GitbalScore gitbalScore;
     private final GraphQLService graphQlService;
+    private final UserRepository userRepository;
 
 
     public GitbalApiDto callUsersGithubApi(String nickname) {
@@ -53,4 +57,7 @@ public class UserService {
     }
 
 
+    public User findByUserName(String username) {
+        return userRepository.findByNickname(username).orElseThrow(UserRankException::new);
+    }
 }
