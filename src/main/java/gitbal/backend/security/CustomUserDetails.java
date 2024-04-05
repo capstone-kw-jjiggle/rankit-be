@@ -1,6 +1,6 @@
 package gitbal.backend.security;
 
-import gitbal.backend.domain.User;
+import gitbal.backend.entity.User;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +26,7 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
     @Setter
     private String accessToken;
     private final Collection<? extends GrantedAuthority> authorities;
-    @Getter
+
     @Setter
     private Map<String, Object> attributes;
 

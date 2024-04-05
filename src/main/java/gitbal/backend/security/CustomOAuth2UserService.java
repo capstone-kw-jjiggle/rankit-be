@@ -1,6 +1,6 @@
 package gitbal.backend.security;
 
-import gitbal.backend.domain.User;
+import gitbal.backend.entity.User;
 import gitbal.backend.repository.UserRepository;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +50,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private User createUser(String username, String avatarUrl) {
         log.info("현재 유저를 생성하려고 합니다.");
         User user = User.of(username, avatarUrl);
+        //TODO : 점수 계산 시점을 여기로 잡아야할 지? 고민
 
         return userRepository.findByNickname(username).orElseGet(() -> {
                 userRepository.save(user);

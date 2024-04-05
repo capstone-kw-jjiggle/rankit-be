@@ -1,6 +1,6 @@
 package gitbal.backend.security;
 
-import gitbal.backend.domain.TokenInfo;
+import gitbal.backend.entity.TokenInfo;
 import gitbal.backend.repository.TokenInfoRepository;
 import gitbal.backend.security.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;

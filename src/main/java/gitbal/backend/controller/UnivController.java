@@ -1,7 +1,7 @@
 package gitbal.backend.controller;
 
-import gitbal.backend.dto.UnivCertCodeDto;
-import gitbal.backend.dto.UnivCertStartDto;
+import gitbal.backend.entity.dto.UnivCertCodeDto;
+import gitbal.backend.entity.dto.UnivCertStartDto;
 import gitbal.backend.service.UnivService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

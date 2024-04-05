@@ -1,4 +1,4 @@
-package gitbal.backend.domain;
+package gitbal.backend.entity;
 
 
 import jakarta.persistence.CascadeType;
@@ -9,10 +9,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -34,20 +34,20 @@ public class User {
 
 
     // Todo: 공부한 이후 수정 작업 계속 진행 (JPA 공부)
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "school_id", unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "school_id")
     private School school;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "region_id", unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id")
     private Region region;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "commit_date_id", unique = true)
-    private CommitDate commitDate;
+    @JoinColumn(name = "commit_date_id")
+    private OneDayCommit oneDayCommit;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "major_id")
+    @JoinColumn(name = "major_user_id")
     private List<MajorLanguage> majorLanguages = new ArrayList<>();
 
 
@@ -55,34 +55,41 @@ public class User {
     private String nickname;
 
     @ColumnDefault("0")
-    private Long pr_count;
-
-    @ColumnDefault("0")
-    private Long commit_count;
+    private Long score;
 
     @ColumnDefault(value = "'nothing'")
     private String profile_img;
 
 
-
     @Builder
-    public User(School school, Region region, CommitDate commitDate,
+    public User(School school, Region region, OneDayCommit oneDayCommit,
         List<MajorLanguage> majorLanguages,
-        String nickname, Long pr_count, Long commit_count, String profile_img) {
+        String nickname, Long score, String profile_img) {
         this.school = school;
         this.region = region;
-        this.commitDate = commitDate;
+        this.oneDayCommit = oneDayCommit;
         this.majorLanguages = majorLanguages;
         this.nickname = nickname;
-        this.pr_count = pr_count;
-        this.commit_count = commit_count;
+        this.score = score;
+        this.profile_img = profile_img;
+    }
+
+    public void joinUpdateUser(School school, Region region, OneDayCommit oneDayCommit,
+        List<MajorLanguage> majorLanguages,
+        String nickname, Long score, String profile_img) {
+        this.school = school;
+        this.region = region;
+        this.oneDayCommit = oneDayCommit;
+        this.majorLanguages = majorLanguages;
+        this.nickname = nickname;
+        this.score = score;
         this.profile_img = profile_img;
     }
 
 
     public static User of(String nickname, String profile_imgUrl) {
         return new User(null, null, null, null, nickname, 0L,
-            0L, profile_imgUrl);
+            profile_imgUrl);
     }
 
 
