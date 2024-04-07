@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/univ")
 @RequiredArgsConstructor
-@Tag(name = "대학인증 API(미구현)", description = "대학 인증 관련 api입니다.")
+@Tag(name = "대학인증 API(구현 완료)", description = "대학 인증 관련 api입니다.")
 public class UnivController {
 
 
