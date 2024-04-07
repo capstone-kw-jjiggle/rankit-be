@@ -1,6 +1,6 @@
 package gitbal.backend.domain;
 
-import gitbal.backend.entity.dto.UserInfoDto;
+import gitbal.backend.entity.dto.UserScoreInfoDto;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,13 +23,13 @@ public class GitbalScore {
     private final Long REPO_MEDIAN = 10L;
 
 
-    public Long calculate(UserInfoDto userInfoDto) {
+    public Long calculate(UserScoreInfoDto userScoreInfoDto) {
 
-        Long commitCount = userInfoDto.commitCount();
-        Long followerCount = userInfoDto.followerCount();
-        Long issueCount = userInfoDto.issues();
-        Long prCount = userInfoDto.prCount();
-        Long repoCount = userInfoDto.repoCount();
+        Long commitCount = userScoreInfoDto.commitCount();
+        Long followerCount = userScoreInfoDto.followerCount();
+        Long issueCount = userScoreInfoDto.issues();
+        Long prCount = userScoreInfoDto.prCount();
+        Long repoCount = userScoreInfoDto.repoCount();
 
         double rankScore = COMMIT_WEIGHT * exponentialCDF((double) commitCount / COMMITS_MEDIAN) +
             PR_WEIGHT * exponentialCDF((double) prCount / PR_MEDIAN) +

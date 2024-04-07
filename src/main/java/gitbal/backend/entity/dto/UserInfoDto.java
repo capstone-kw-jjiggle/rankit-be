@@ -1,8 +1,8 @@
 package gitbal.backend.entity.dto;
 
-public record UserInfoDto2(String userName, String univName, String regionName, String imgName ,String userTitle) {
+public record UserInfoDto(String userName, String univName, String regionName, String imgName , String userTitle) {
 
-  public static UserInfoDto2 of (String userName, String univName, String regionName, String imgName ,String userTitle){
-    return new UserInfoDto2(userName, univName, regionName, imgName, userTitle);
+  public static UserInfoDto of (String userName, String univName, String regionName, String imgName ,String userTitle){
+    return new UserInfoDto(userName, univName, regionName, imgName, userTitle);
   }
 }

@@ -2,9 +2,7 @@ package gitbal.backend.controller;
 
 
 import gitbal.backend.entity.dto.JoinRequestDto;
-import gitbal.backend.entity.dto.UserDto;
 import gitbal.backend.entity.dto.UserInfoDto;
-import gitbal.backend.entity.dto.UserInfoDto2;
 import gitbal.backend.security.CustomUserDetails;
 import gitbal.backend.service.LoginService;
 import gitbal.backend.service.UserInfoService;
@@ -13,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -68,7 +65,7 @@ public class CommonController {
       @ApiResponse(responseCode = "200", description = "내 정보를 가져오는데 성공했습니다."),
       @ApiResponse(responseCode = "5xx", description = "내 정보를 가져오는데 실패했습니다.")
   })
-  public UserInfoDto2 userInfo(@PathVariable String username) {
+  public UserInfoDto userInfo(@PathVariable String username) {
     System.out.println("컨트롤러 진입");
     return userInfoService.getUserInfoByUserName(username);
   }

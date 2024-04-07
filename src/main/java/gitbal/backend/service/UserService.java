@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gitbal.backend.domain.GitbalApiDto;
 import gitbal.backend.domain.GitbalScore;
 import gitbal.backend.entity.User;
-import gitbal.backend.entity.dto.UserInfoDto;
+import gitbal.backend.entity.dto.UserScoreInfoDto;
 import gitbal.backend.domain.UserRaceStatus;
 import gitbal.backend.exception.UserRankException;
 import gitbal.backend.repository.UserRepository;
@@ -43,7 +43,7 @@ public class UserService {
     }
 
     private Long delegateToGitbalScore(JsonNode dataNode) {
-        return gitbalScore.calculate(UserInfoDto.of(
+        return gitbalScore.calculate(UserScoreInfoDto.of(
             dataNode.get("pullRequests").get("totalCount").asLong(),
             dataNode.get("contributionsCollection").get("totalCommitContributions").asLong(),
             dataNode.get("issues").get("totalCount").asLong(),
