@@ -54,7 +54,7 @@ public class MockDataGenerator implements CommandLineRunner {
             Region randomRegion = regionRepository.findById((long) (random.nextInt(TOTAL_REGIONS) + 1)).orElse(null);
 
             // Create a random user
-            User newUser = createUser(randomSchool, randomRegion);
+            User newUser = createUser(randomSchool, randomRegion, i);
 
             // Create a list of MajorLanguage entities for this user
             List<MajorLanguage> majorLanguages = createRandomMajorLanguagesForUser(newUser);
@@ -76,16 +76,16 @@ public class MockDataGenerator implements CommandLineRunner {
         log.info("Mock data creation completed");
     }
 
-    private User createUser(School school, Region region) {
-        String randomNickname = "User" + random.nextInt(1000); // Example nickname
+    private User createUser(School school, Region region, int index) {
+        String randomNickname = "User" + index; // Example nickname
         String randomProfileImg = "https://example.com/image" + random.nextInt(100); // Example profile image URL
-        Long randomScore = (long) random.nextInt(1000,100000); // Example score
+        Long randomScore = (long) random.nextInt(1000,100000); // Example userScore
 
         return User.builder()
             .school(school)
             .region(region)
             .nickname(randomNickname)
-            .score(randomScore) // Random score
+            .score(randomScore) // Random userScore
             .profile_img(randomProfileImg)
             .build();
     }
