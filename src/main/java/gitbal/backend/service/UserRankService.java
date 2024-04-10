@@ -1,7 +1,10 @@
 package gitbal.backend.service;
 
-import gitbal.backend.entity.User;
+import gitbal.backend.domain.SchoolRaceStatus;
 import gitbal.backend.domain.UserRaceStatus;
+import gitbal.backend.entity.School;
+import gitbal.backend.entity.User;
+import gitbal.backend.entity.dto.SchoolRankRaceResponseDto;
 import gitbal.backend.entity.dto.UserRankRaceResponseDto;
 import gitbal.backend.entity.dto.UserRankScoreResponseDto;
 import java.util.List;
@@ -16,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserRankService {
 
     private final UserService userService;
+    private final SchoolService schoolService;
 
     @Transactional(readOnly = true)
     public UserRankScoreResponseDto makeUserRankResponse(String username) {
@@ -27,8 +31,20 @@ public class UserRankService {
     public List<UserRankRaceResponseDto> makeUserRankRaceStatusByUsername(String username) {
         User findUser = userService.findByUserName(username);
         UserRaceStatus userRaceStatus = userService.findUsersScoreRaced(findUser.getScore());
-        userRaceStatus.addUser(findUser);
-        userRaceStatus.sortAroundUsers();
-        return userRaceStatus.toUserRankRaceResponseDto(userRaceStatus.aroundUsers());
+        userRaceStatus.addEntity(findUser);
+        userRaceStatus.sortAroundEntitys();
+        return userRaceStatus.toResponseDto(userRaceStatus.aroundUsers());
+    }
+
+
+    @Transactional(readOnly = true)
+    public SchoolRankRaceResponseDto makeUserRankSchoolStatusByUsername(String username) {
+        School findSchool = userService.findSchoolByUserName(username);
+        SchoolRaceStatus schoolRaceStatus = schoolService.findSchoolScoreRaced(
+            findSchool.getScore());
+        schoolRaceStatus.addEntity(findSchool);
+        schoolRaceStatus.sortAroundEntitys();
+        return schoolRaceStatus.toResponseDto(schoolRaceStatus.aroundUsers(),
+            findSchool.getSchoolName());
     }
 }

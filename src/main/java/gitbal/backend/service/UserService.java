@@ -5,10 +5,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gitbal.backend.domain.GitbalApiDto;
 import gitbal.backend.domain.GitbalScore;
+import gitbal.backend.domain.SurroundingRankStatus;
+import gitbal.backend.domain.UserRaceStatus;
+import gitbal.backend.entity.School;
 import gitbal.backend.entity.User;
 import gitbal.backend.entity.dto.UserScoreInfoDto;
-import gitbal.backend.domain.UserRaceStatus;
 import gitbal.backend.exception.UserRankException;
+import gitbal.backend.repository.SchoolRepository;
 import gitbal.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,7 @@ public class UserService {
     private final GitbalScore gitbalScore;
     private final GraphQLService graphQlService;
     private final UserRepository userRepository;
+    private final int USER_AROUND_RANGE = 2;
 
 
     public GitbalApiDto callUsersGithubApi(String nickname) {
@@ -68,21 +72,17 @@ public class UserService {
         int forwardCount = userRepository.usersScoreRacedForward(score);
         int backwardCount = userRepository.userScoreRacedBackward(score);
         log.info("forwardCount = {} backwardCount = {}", forwardCount, backwardCount);
-        int userIndex;
-        if (forwardCount == 0) {
-            backwardCount = 4;
-        } else if (forwardCount == 1) {
-            backwardCount = 3;
-        } else if (backwardCount == 0) {
-            forwardCount = 4;
-        } else if (backwardCount == 1) {
-            forwardCount = 3;
-        } else {
-            forwardCount = 2;
-            backwardCount = 2;
-        }
-        log.info("after forwardCount = {} backwardCount = {}", forwardCount, backwardCount);
+        SurroundingRankStatus surroundingRankStatus = SurroundingRankStatus.calculateUserForwardBackward(
+            forwardCount, backwardCount, USER_AROUND_RANGE);
+        log.info("after forwardCount = {} backwardCount = {}", surroundingRankStatus.forwardCount(), surroundingRankStatus.backwardCount());
         return UserRaceStatus.of(
-            userRepository.usersScoreRaced(score, forwardCount, backwardCount));
+            userRepository.usersScoreRaced(score, surroundingRankStatus.forwardCount(),
+                surroundingRankStatus.backwardCount()));
+    }
+
+    public School findSchoolByUserName(String username) {
+        User findUser = userRepository.findByNickname(username)
+            .orElseThrow(() -> new UserRankException("학교를 찾던 도중 유저를 못 찾았습니다"));
+        return findUser.getSchool();
     }
 }
