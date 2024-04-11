@@ -26,14 +26,14 @@ public record RegionRaceStatus(List<Region> aroundUsers) implements RaceStatus<R
         aroundUsers.add(region);
     }
 
-    public RegionRankRaceResponseDto toResponseDto(List<Region> around, String myRegionName) {
+    public RegionRankRaceResponseDto toResponseDto(List<Region> around) {
         List<RegionRankDto> regionRankDtos = new ArrayList<>();
         for (int i = 0; i < around.size(); i++) {
             String regionName = around.get(i).getRegionName();
             Long regionScore = around.get(i).getScore();
             regionRankDtos.add(RegionRankDto.of(regionName, regionScore));
         }
-        return RegionRankRaceResponseDto.of(myRegionName, regionRankDtos);
+        return RegionRankRaceResponseDto.of(regionRankDtos);
     }
 
 }

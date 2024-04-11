@@ -48,8 +48,7 @@ public class UserRankService {
             findSchool.getScore());
         schoolRaceStatus.addEntity(findSchool);
         schoolRaceStatus.sortAroundEntitys();
-        return schoolRaceStatus.toResponseDto(schoolRaceStatus.aroundUsers(),
-            findSchool.getSchoolName());
+        return schoolRaceStatus.toResponseDto(schoolRaceStatus.aroundUsers());
     }
 
     @Transactional(readOnly = true)
@@ -59,7 +58,6 @@ public class UserRankService {
             findRegion.getScore());
         regionRaceStatus.addEntity(findRegion);
         regionRaceStatus.sortAroundEntitys();
-        return regionRaceStatus.toResponseDto(regionRaceStatus.aroundUsers(),
-            findRegion.getRegionName());
+        return regionRaceStatus.toResponseDto(regionRaceStatus.aroundUsers());
     }
 }

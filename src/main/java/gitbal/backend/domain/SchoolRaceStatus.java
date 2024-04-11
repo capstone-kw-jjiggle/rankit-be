@@ -23,14 +23,14 @@ public record SchoolRaceStatus(List<School> aroundUsers) implements RaceStatus<S
         aroundUsers.add(school);
     }
 
-    public SchoolRankRaceResponseDto toResponseDto(List<School> around, String mySchoolName) {
+    public SchoolRankRaceResponseDto toResponseDto(List<School> around) {
         List<SchoolRankDto> schoolRankDtos = new ArrayList<>();
         for (int i = 0; i < around.size(); i++) {
             String schoolName = around.get(i).getSchoolName();
             Long schoolScore = around.get(i).getScore();
             schoolRankDtos.add(SchoolRankDto.of(schoolName, schoolScore));
         }
-        return SchoolRankRaceResponseDto.of(mySchoolName, schoolRankDtos);
+        return SchoolRankRaceResponseDto.of(schoolRankDtos);
     }
 
 }
