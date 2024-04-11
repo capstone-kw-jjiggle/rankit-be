@@ -7,6 +7,7 @@ import gitbal.backend.domain.GitbalApiDto;
 import gitbal.backend.domain.GitbalScore;
 import gitbal.backend.domain.SurroundingRankStatus;
 import gitbal.backend.domain.UserRaceStatus;
+import gitbal.backend.entity.Region;
 import gitbal.backend.entity.School;
 import gitbal.backend.entity.User;
 import gitbal.backend.entity.dto.UserScoreInfoDto;
@@ -84,5 +85,11 @@ public class UserService {
         User findUser = userRepository.findByNickname(username)
             .orElseThrow(() -> new UserRankException("학교를 찾던 도중 유저를 못 찾았습니다"));
         return findUser.getSchool();
+    }
+
+    public Region findRegionByUserName(String username) {
+        User findUser = userRepository.findByNickname(username)
+            .orElseThrow(() -> new UserRankException("지역을 찾던 도중 유저를 못 찾았습니다."));
+        return findUser.getRegion();
     }
 }

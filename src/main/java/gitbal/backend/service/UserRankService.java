@@ -1,9 +1,12 @@
 package gitbal.backend.service;
 
+import gitbal.backend.domain.RegionRaceStatus;
 import gitbal.backend.domain.SchoolRaceStatus;
 import gitbal.backend.domain.UserRaceStatus;
+import gitbal.backend.entity.Region;
 import gitbal.backend.entity.School;
 import gitbal.backend.entity.User;
+import gitbal.backend.entity.dto.RegionRankRaceResponseDto;
 import gitbal.backend.entity.dto.SchoolRankRaceResponseDto;
 import gitbal.backend.entity.dto.UserRankRaceResponseDto;
 import gitbal.backend.entity.dto.UserRankScoreResponseDto;
@@ -20,6 +23,7 @@ public class UserRankService {
 
     private final UserService userService;
     private final SchoolService schoolService;
+    private final RegionService regionService;
 
     @Transactional(readOnly = true)
     public UserRankScoreResponseDto makeUserRankResponse(String username) {
@@ -44,7 +48,16 @@ public class UserRankService {
             findSchool.getScore());
         schoolRaceStatus.addEntity(findSchool);
         schoolRaceStatus.sortAroundEntitys();
-        return schoolRaceStatus.toResponseDto(schoolRaceStatus.aroundUsers(),
-            findSchool.getSchoolName());
+        return schoolRaceStatus.toResponseDto(schoolRaceStatus.aroundUsers());
+    }
+
+    @Transactional(readOnly = true)
+    public RegionRankRaceResponseDto makeUserRankRegionStatusByUsername(String username) {
+        Region findRegion = userService.findRegionByUserName(username);
+        RegionRaceStatus regionRaceStatus = regionService.findRegionScoreRaced(
+            findRegion.getScore());
+        regionRaceStatus.addEntity(findRegion);
+        regionRaceStatus.sortAroundEntitys();
+        return regionRaceStatus.toResponseDto(regionRaceStatus.aroundUsers());
     }
 }

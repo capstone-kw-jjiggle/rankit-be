@@ -1,6 +1,7 @@
 package gitbal.backend.controller;
 
 
+import gitbal.backend.entity.dto.RegionRankRaceResponseDto;
 import gitbal.backend.entity.dto.SchoolRankRaceResponseDto;
 import gitbal.backend.entity.dto.UserRankRaceResponseDto;
 import gitbal.backend.entity.dto.UserRankScoreResponseDto;
@@ -56,13 +57,13 @@ public class UserRankContorller {
     }
 
     @GetMapping("/region")
-    @Operation(summary = "유저랭크 지역 탭 부분", description = "유저 랭크 페이지의 지역 탭의 정보를 위한 api(미개발)")
+    @Operation(summary = "유저랭크 지역 탭 부분", description = "유저 랭크 페이지의 지역 탭의 정보를 위한 api(개발 완료)")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "유저 지역 탭 정보 요청을 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저 지역 탭 정보 요청을 실패했습니다.")
     })
-    public void regionTab(@RequestParam String username){
-
+    public ResponseEntity<RegionRankRaceResponseDto> regionTab(@RequestParam String username){
+        return ResponseEntity.ok(userRankService.makeUserRankRegionStatusByUsername(username));
     }
 
     @GetMapping("/lang")
