@@ -51,4 +51,11 @@ public class School {
   public void addScore(Long score) {
     this.score += score;
   }
+
+  public void updateContributerInfo(String nickname, Long score) {
+    if (this.contributorScore == null || this.contributorScore < score) {
+      this.topContributor = nickname;
+      this.contributorScore = score;
+    }
+  }
 }
