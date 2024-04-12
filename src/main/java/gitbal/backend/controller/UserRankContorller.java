@@ -3,6 +3,7 @@ package gitbal.backend.controller;
 
 import gitbal.backend.entity.dto.RegionRankRaceResponseDto;
 import gitbal.backend.entity.dto.SchoolRankRaceResponseDto;
+import gitbal.backend.entity.dto.UserRankMajorLanguageResponseDto;
 import gitbal.backend.entity.dto.UserRankRaceResponseDto;
 import gitbal.backend.entity.dto.UserRankScoreResponseDto;
 import gitbal.backend.service.UserRankService;
@@ -72,8 +73,8 @@ public class UserRankContorller {
         @ApiResponse(responseCode = "200", description = "유저 사용 언어 탭 정보 요청을 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저 사용 언어 탭 정보 요청을 실패했습니다.")
     })
-    public void majorLanguageTab(@RequestParam String username){
-
+    public ResponseEntity<List<UserRankMajorLanguageResponseDto>> majorLanguageTab(@RequestParam String username){
+        return ResponseEntity.ok(userRankService.makeUserRankLanguageResponseByUsername(username));
     }
 
 

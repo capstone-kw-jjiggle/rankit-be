@@ -3,9 +3,13 @@ package gitbal.backend.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gitbal.backend.domain.LanguageResponseConverter;
 import gitbal.backend.entity.MajorLanguage;
+import gitbal.backend.entity.User;
 import gitbal.backend.entity.dto.MajorLanguageDto;
+import gitbal.backend.entity.dto.UserRankMajorLanguageResponseDto;
 import gitbal.backend.repository.MajorLanguageRepository;
+import gitbal.backend.repository.UserRepository;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -24,6 +28,7 @@ public class MajorLanguageService {
 
 
     private final MajorLanguageRepository majorLanguageRepository;
+    private final UserRepository userRepository;
     private final GraphQLService graphQlService;
 
     public List<MajorLanguage> getUserTopLaunguages(String username) {
@@ -76,6 +81,13 @@ public class MajorLanguageService {
     }
 
 
+    public List<UserRankMajorLanguageResponseDto> findLanguagePercentByUser(User findUser) {
+        List<MajorLanguage> majorLanguages = findUser.getMajorLanguages();
+        List<MajorLanguageDto> convertDtos = majorLanguages.stream().map(MajorLanguageDto::of)
+            .collect(Collectors.toList());
 
-
+        LanguageResponseConverter languageResponseConverter = LanguageResponseConverter.of(
+            convertDtos);
+        return languageResponseConverter.convert();
+    }
 }
