@@ -96,8 +96,8 @@ public class MockDataGenerator implements CommandLineRunner {
         int languagesCount = 5; // Random number of languages between 1 and 5
 
         for (int i = 0; i < languagesCount; i++) {
-            String[] languages = {"Java", "C#", "JavaScript", "Python"};
-            String randomLanguage = languages[random.nextInt(languages.length)];
+            String[] languages = {"Java", "C#", "JavaScript", "Python", "C"};
+            String randomLanguage = languages[i];
             Long randomLanguageCount = (long) random.nextInt(100); // Example count
 
             MajorLanguage majorLanguage = MajorLanguage.builder()
