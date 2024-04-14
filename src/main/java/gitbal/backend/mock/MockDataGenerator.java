@@ -98,9 +98,9 @@ public class MockDataGenerator implements CommandLineRunner {
     int languagesCount = 5; // Random number of languages between 1 and 5
 
     for (int i = 0; i < languagesCount; i++) {
-      String[] languages = {"Java", "C#", "JavaScript", "Python"};
-      String randomLanguage = languages[random.nextInt(languages.length)];
-      Long randomLanguageCount = (long) random.nextInt(100); // Example count
+            String[] languages = {"Java", "C#", "JavaScript", "Python", "C"};
+            String randomLanguage = languages[i];
+            Long randomLanguageCount = (long) random.nextInt(100); // Example count
 
       MajorLanguage majorLanguage = MajorLanguage.builder()
           .majorLanguage(randomLanguage)
@@ -112,10 +112,12 @@ public class MockDataGenerator implements CommandLineRunner {
     return majorLanguages;
   }
 
+
   private void scoring(User findUser) {
     schoolService.joinNewUserScore(findUser);
     regionService.joinNewUserScore(findUser);
   }
+
 
   private void insertRegionSchoolTopContributorInfo() {
     regionService.insertTopContributorInfo();
