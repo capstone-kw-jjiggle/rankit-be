@@ -8,6 +8,7 @@ import gitbal.backend.entity.School;
 import gitbal.backend.entity.User;
 import gitbal.backend.entity.dto.RegionRankRaceResponseDto;
 import gitbal.backend.entity.dto.SchoolRankRaceResponseDto;
+import gitbal.backend.entity.dto.UserRankMajorLanguageResponseDto;
 import gitbal.backend.entity.dto.UserRankRaceResponseDto;
 import gitbal.backend.entity.dto.UserRankScoreResponseDto;
 import java.util.List;
@@ -24,6 +25,7 @@ public class UserRankService {
     private final UserService userService;
     private final SchoolService schoolService;
     private final RegionService regionService;
+    private final MajorLanguageService majorLanguageService;
 
     @Transactional(readOnly = true)
     public UserRankScoreResponseDto makeUserRankResponse(String username) {
@@ -59,5 +61,11 @@ public class UserRankService {
         regionRaceStatus.addEntity(findRegion);
         regionRaceStatus.sortAroundEntitys();
         return regionRaceStatus.toResponseDto(regionRaceStatus.aroundUsers());
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserRankMajorLanguageResponseDto> makeUserRankLanguageResponseByUsername(String username) {
+        User findUser = userService.findByUserName(username);
+        return majorLanguageService.findLanguagePercentByUser(findUser);
     }
 }
