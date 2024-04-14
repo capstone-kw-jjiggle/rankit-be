@@ -7,13 +7,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Setter //todo : MockDataGenerator에서 score값을 0으로 초기화하기 위한 세팅
 public class Region {
 
   @Id
@@ -52,6 +56,13 @@ public class Region {
   // TODO: test 용도여서 나중에 실제로 값 넣으면 변경해야함.
   public static Region of() {
     return new Region("부산", 0L, "khyojun", 0L);
+  }
+
+  public void updateContributerInfo(String nickname, Long score) {
+    if (this.contributorScore == null || this.contributorScore < score) {
+      this.topContributor = nickname;
+      this.contributorScore = score;
+    }
   }
 
 
