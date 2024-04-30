@@ -1,18 +1,26 @@
 package gitbal.backend.controller;
 
+import gitbal.backend.entity.dto.MainPageUserResponseDto;
+import gitbal.backend.service.MainPageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/mainPage")
+@RequiredArgsConstructor
 @Tag(name = "메인페이지 API(구현중)", description = "메인페이지에 필요한 정보를 위한 api입니다.")
 public class MainPageController {
+
+    private final MainPageService mainPageService;
 
     @GetMapping("/users")
     @Operation(summary = "메인 페이지 유저들에 대한 API입니다.", description = "메인에 나타나는 유저들에 대한 API 12명씩")
@@ -20,8 +28,8 @@ public class MainPageController {
         @ApiResponse(responseCode = "200", description = "유저들을 가져오는데 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저들을 가져오는데 실패했습니다.")
     })
-    public void users(){
-
+    public ResponseEntity<MainPageUserResponseDto> users(@RequestParam int page){
+        return ResponseEntity.ok(mainPageService.getUsers(page));
     }
 
 
