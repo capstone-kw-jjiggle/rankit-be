@@ -1,5 +1,6 @@
 package gitbal.backend.controller;
 
+import gitbal.backend.entity.dto.FirstRankSchoolDto;
 import gitbal.backend.entity.dto.SchoolListDto;
 import gitbal.backend.entity.dto.SchoolListPageResponseDto;
 import gitbal.backend.service.SchoolRankService;
@@ -19,39 +20,39 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "학교 랭킹 API(구현중)", description = "학교 랭킹페이지를 위한 api입니다.")
 public class SchoolRankController {
 
-    private final SchoolRankService schoolRankService;
+  private final SchoolRankService schoolRankService;
 
-    @GetMapping("/mySchool")
-    @Operation(summary = "내 학교 정보", description = "내 학교 정보 탭 관련 api 요청입니다.")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "내 학교 정보 요청을 성공했습니다."),
-        @ApiResponse(responseCode = "5xx", description = "내 학교 정보 요청을 실패했습니다.")
-    })
-    public void mySchoolInfo(){ // TODO : 로그인한 유저로 봐야함.
+  @GetMapping("/mySchool")
+  @Operation(summary = "내 학교 정보 (미구현)", description = "내 학교 정보 탭 관련 api 요청입니다.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "내 학교 정보 요청을 성공했습니다."),
+      @ApiResponse(responseCode = "5xx", description = "내 학교 정보 요청을 실패했습니다.")
+  })
+  public void mySchoolInfo() { // TODO : 로그인한 유저로 봐야함.
 
-    }
+  }
 
 
-    @GetMapping("/firstSchool")
-    @Operation(summary = "1등 학교 정보", description = "1등 학교 정보 탭 관련 api 요청입니다.")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "1등 학교 정보 요청을 성공했습니다."),
-        @ApiResponse(responseCode = "5xx", description = "1등 학교 정보 요청을 실패했습니다.")
-    })
-    public void firstRankSchoolInfo(){
+  @GetMapping("/firstSchool")
+  @Operation(summary = "1등 학교 정보 (구현 완료)", description = "1등 학교 정보 탭 관련 api 요청입니다.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "1등 학교 정보 요청을 성공했습니다."),
+      @ApiResponse(responseCode = "5xx", description = "1등 학교 정보 요청을 실패했습니다.")
+  })
+  public FirstRankSchoolDto firstRankSchoolInfo() {
+    return schoolRankService.getFirstRankSchoolInfo();
+  }
 
-    }
+  @GetMapping("/schoolList")
+  @Operation(summary = "학교 리스트 (구현 완료)", description = "학교 리스트 탭 관련 api 요청입니다.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "학교 리스트 요청을 성공했습니다."),
+      @ApiResponse(responseCode = "5xx", description = "학교 리스트 요청을 실패했습니다.")
+  })
+  public SchoolListPageResponseDto<SchoolListDto> schoolList(@RequestParam int page) {
 
-    @GetMapping("/schoolList")
-    @Operation(summary = "학교 리스트 (구현 완료)", description = "학교 리스트 탭 관련 api 요청입니다.")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "학교 리스트 요청을 성공했습니다."),
-        @ApiResponse(responseCode = "5xx", description = "학교 리스트 요청을 실패했습니다.")
-    })
-    public SchoolListPageResponseDto<SchoolListDto> schoolList(@RequestParam int page){
+    return schoolRankService.getSchoolList(page);
 
-        return schoolRankService.getSchoolList(page);
-
-    }
+  }
 
 }
