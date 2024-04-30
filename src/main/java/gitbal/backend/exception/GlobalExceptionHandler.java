@@ -18,6 +18,12 @@ public class GlobalExceptionHandler{
     }
 
 
+    @ExceptionHandler(MainPageException.class)
+    public ResponseEntity<String> handleMainPageException(MainPageException e){
+        return ResponseEntity.status(500).body(e.getMessage());
+    }
+
+
 
 
 
