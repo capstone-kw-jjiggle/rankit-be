@@ -1,6 +1,5 @@
 package gitbal.backend.entity.dto;
 
-import gitbal.backend.domain.PageInfoDto;
 import java.util.List;
 import lombok.Getter;
 

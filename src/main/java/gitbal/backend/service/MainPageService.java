@@ -1,7 +1,7 @@
 package gitbal.backend.service;
 
 import gitbal.backend.domain.PageCalculator;
-import gitbal.backend.domain.PageInfoDto;
+import gitbal.backend.entity.dto.PageInfoDto;
 import gitbal.backend.entity.User;
 import gitbal.backend.entity.dto.MainPageUserDto;
 import gitbal.backend.entity.dto.MainPageUserResponseDto;
