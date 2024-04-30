@@ -1,10 +1,10 @@
 package gitbal.backend.service;
 
 import gitbal.backend.domain.PageCalculator;
-import gitbal.backend.entity.dto.PageInfoDto;
 import gitbal.backend.entity.User;
 import gitbal.backend.entity.dto.MainPageUserDto;
 import gitbal.backend.entity.dto.MainPageUserResponseDto;
+import gitbal.backend.entity.dto.PageInfoDto;
 import gitbal.backend.exception.MainPageException;
 import gitbal.backend.repository.UserRepository;
 import java.util.List;
@@ -43,8 +43,9 @@ public class MainPageService {
     }
 
     private void validatePage(int pageNumber, long totalNumber) {
-        if(checkRemainPage( pageNumber, totalNumber))
+        if (checkRemainPage(pageNumber, totalNumber)) {
             return;
+        }
 
         if (rangeCheck(pageNumber, totalNumber)) {
             throw new IllegalArgumentException();

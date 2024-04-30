@@ -28,7 +28,7 @@ public class MainPageController {
         @ApiResponse(responseCode = "200", description = "유저들을 가져오는데 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저들을 가져오는데 실패했습니다.")
     })
-    public ResponseEntity<MainPageUserResponseDto> users(@RequestParam int page){
+    public ResponseEntity<MainPageUserResponseDto> users(@RequestParam int page) {
         return ResponseEntity.ok(mainPageService.getUsers(page));
     }
 
@@ -39,7 +39,7 @@ public class MainPageController {
         @ApiResponse(responseCode = "200", description = "메인 페이지 1등 표시 지역, 학교 표시에 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "메인 페이지 1등 표시 지역, 학교 표시에 실패했습니다.")
     })
-    public void firstRank(){
+    public void firstRank() {
 
     }
 
@@ -49,10 +49,9 @@ public class MainPageController {
         @ApiResponse(responseCode = "200", description = "유저 검색에 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저 검색에 실패했습니다.")
     })
-    public void search(){
+    public void search() {
 
     }
-
 
 
 }

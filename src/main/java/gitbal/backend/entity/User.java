@@ -94,7 +94,7 @@ public class User {
     }
 
     public static User of(String username, String avatarUrl) {
-        return new User(null,null,null,null, username,0L, avatarUrl, Grade.NEWBIE);
+        return new User(null, null, null, null, username, 0L, avatarUrl, Grade.NEWBIE);
     }
 
 

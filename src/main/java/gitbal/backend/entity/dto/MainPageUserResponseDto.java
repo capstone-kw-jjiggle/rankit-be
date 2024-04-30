@@ -21,7 +21,8 @@ public class MainPageUserResponseDto {
         this.totalPages = pageInfoDto.totalPage();
     }
 
-    public static MainPageUserResponseDto of(List<MainPageUserDto> userList, PageInfoDto pageInfoDto){
+    public static MainPageUserResponseDto of(List<MainPageUserDto> userList,
+        PageInfoDto pageInfoDto) {
         return new MainPageUserResponseDto(userList, pageInfoDto);
     }
 

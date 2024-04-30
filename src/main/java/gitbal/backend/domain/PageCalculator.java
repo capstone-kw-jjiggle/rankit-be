@@ -13,10 +13,10 @@ public class PageCalculator {
         int startPage = Math.max(1, currentPage - 2);
         int endPage = Math.min(currentPage + 2, totalPage);
 
-        if (currentPage - startPage < PAGE_RANGE/2) {
+        if (currentPage - startPage < PAGE_RANGE / 2) {
             endPage = startPage + (PAGE_RANGE - 1);
         }
-        if (endPage - currentPage < PAGE_RANGE/2) {
+        if (endPage - currentPage < PAGE_RANGE / 2) {
             startPage = endPage - (PAGE_RANGE - 1);
         }
 
