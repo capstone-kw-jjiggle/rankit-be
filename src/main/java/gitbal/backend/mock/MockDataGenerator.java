@@ -90,6 +90,7 @@ public class MockDataGenerator implements CommandLineRunner {
         .nickname(randomNickname)
         .score(randomScore) // Random userScore
         .profile_img(randomProfileImg)
+        .grade(Grade.NEWBIE)
         .build();
   }
 

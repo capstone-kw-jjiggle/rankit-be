@@ -80,6 +80,7 @@ public class User {
         this.grade = grade;
     }
 
+
     public void joinUpdateUser(School school, Region region, OneDayCommit oneDayCommit,
         List<MajorLanguage> majorLanguages,
         String nickname, Long score, String profile_img, Grade grade) {
@@ -92,8 +93,9 @@ public class User {
         this.profile_img = profile_img;
     }
 
-
-
+    public static User of(String username, String avatarUrl) {
+        return new User(null,null,null,null, username,0L, avatarUrl, Grade.NEWBIE);
+    }
 
 
 }
