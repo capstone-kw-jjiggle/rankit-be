@@ -4,6 +4,8 @@ package gitbal.backend.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -60,11 +62,14 @@ public class User {
     @ColumnDefault(value = "'nothing'")
     private String profile_img;
 
+    // 등급 관련 설정
+    @Enumerated(value = EnumType.STRING)
+    private Grade grade;
 
     @Builder
     public User(School school, Region region, OneDayCommit oneDayCommit,
         List<MajorLanguage> majorLanguages,
-        String nickname, Long score, String profile_img) {
+        String nickname, Long score, String profile_img, Grade grade) {
         this.school = school;
         this.region = region;
         this.oneDayCommit = oneDayCommit;
@@ -72,11 +77,12 @@ public class User {
         this.nickname = nickname;
         this.score = score;
         this.profile_img = profile_img;
+        this.grade = grade;
     }
 
     public void joinUpdateUser(School school, Region region, OneDayCommit oneDayCommit,
         List<MajorLanguage> majorLanguages,
-        String nickname, Long score, String profile_img) {
+        String nickname, Long score, String profile_img, Grade grade) {
         this.school = school;
         this.region = region;
         this.oneDayCommit = oneDayCommit;
@@ -87,10 +93,7 @@ public class User {
     }
 
 
-    public static User of(String nickname, String profile_imgUrl) {
-        return new User(null, null, null, null, nickname, 0L,
-            profile_imgUrl);
-    }
+
 
 
 }
