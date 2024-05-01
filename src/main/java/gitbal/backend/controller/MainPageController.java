@@ -23,7 +23,7 @@ public class MainPageController {
     private final MainPageService mainPageService;
 
     @GetMapping("/users")
-    @Operation(summary = "메인 페이지 유저들에 대한 API입니다.", description = "메인에 나타나는 유저들에 대한 API 12명씩")
+    @Operation(summary = "메인 페이지 유저들에 대한 API입니다.(일부 구현 완료 -> 등급 기획 완성시 다시 개발 진행)", description = "메인에 나타나는 유저들에 대한 API 12명씩")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "유저들을 가져오는데 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저들을 가져오는데 실패했습니다.")
