@@ -1,5 +1,6 @@
 package gitbal.backend.mock;
 
+import gitbal.backend.entity.Grade;
 import gitbal.backend.entity.MajorLanguage;
 import gitbal.backend.entity.OneDayCommit;
 import gitbal.backend.entity.Region;
@@ -67,7 +68,7 @@ public class MockDataGenerator implements CommandLineRunner {
 
       // Update user with the new relations
       newUser.joinUpdateUser(randomSchool, randomRegion, oneDayCommit, majorLanguages,
-          newUser.getNickname(), newUser.getScore(), newUser.getProfile_img());
+          newUser.getNickname(), newUser.getScore(), newUser.getProfile_img(), Grade.NEWBIE);
       User saveUser = userRepository.save(newUser);
       scoring(saveUser);
 
@@ -89,6 +90,7 @@ public class MockDataGenerator implements CommandLineRunner {
         .nickname(randomNickname)
         .score(randomScore) // Random userScore
         .profile_img(randomProfileImg)
+        .grade(Grade.NEWBIE)
         .build();
   }
 

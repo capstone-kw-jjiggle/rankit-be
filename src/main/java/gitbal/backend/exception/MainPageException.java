@@ -1,0 +1,8 @@
+package gitbal.backend.exception;
+
+import lombok.experimental.StandardException;
+
+@StandardException
+public class MainPageException extends RuntimeException {
+
+}

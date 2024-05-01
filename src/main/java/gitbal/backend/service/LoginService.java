@@ -1,6 +1,7 @@
 package gitbal.backend.service;
 
 import gitbal.backend.domain.GitbalApiDto;
+import gitbal.backend.entity.Grade;
 import gitbal.backend.entity.User;
 import gitbal.backend.entity.dto.JoinRequestDto;
 import gitbal.backend.entity.dto.UserDto;
@@ -56,6 +57,8 @@ public class LoginService {
         );
     }
 
+
+
     private void joinUpdate(User findUser, UserDto userDto) {
         findUser.joinUpdateUser(userDto.school(),
             userDto.region(),
@@ -63,7 +66,8 @@ public class LoginService {
             userDto.majorLanguages(),
             userDto.nickname(),
             userDto.score(),
-            userDto.profile_img()
+            userDto.profile_img(),
+            Grade.NEWBIE //TODO : 일단 들어올 때 뉴비로 측정하기로 함! -> 이후에 기획 확정된 이후에 등급 계산 로직 넣고 수정해야함!
         );
         schoolService.joinNewUserScore(findUser);
         regionService.joinNewUserScore(findUser);
