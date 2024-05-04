@@ -89,8 +89,12 @@ public class MainPageService {
 
     @Transactional(readOnly = true)
     public MainPageFirstRankResponseDto getMainPageFirstSchoolRegionRank() {
-        Region region = regionRepository.firstRankedRegion();
-        School school = schoolRepository.firstRankedSchool();
-        return MainPageFirstRankResponseDto.of(school,region);
+        try {
+            Region region = regionRepository.firstRankedRegion();
+            School school = schoolRepository.firstRankedSchool();
+            return MainPageFirstRankResponseDto.of(school,region);
+        }catch (Exception e){
+            throw new MainPageException("firstRank 찾던 도중 오류가 발생하였습니다.");
+        }
     }
 }
