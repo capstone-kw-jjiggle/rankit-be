@@ -42,6 +42,25 @@ public class MainPageService {
         }
     }
 
+    public MainPageUserResponseDto getSearchedUserList(String searchedname, int page) {
+        if(page == 0){
+            page=1;
+        }try {
+            Page<User> searchUsersIgnoreCase = userRepository.findByNicknameContainingIgnoreCase(searchedname,
+                PageRequest.of(page - 1, PAGE_SIZE, Sort.by("score").descending()));
+            validatePage(page, searchUsersIgnoreCase.getTotalElements());
+            List<MainPageUserDto> searchUserList = searchUsersIgnoreCase.stream().map(
+                (user) -> new MainPageUserDto(user.getNickname(), user.getScore(), user.getGrade())
+            ).toList();
+            PageInfoDto pageInfoDto = PageCalculator.calculatePageInfo(searchUsersIgnoreCase);
+            return MainPageUserResponseDto.of(searchUserList, pageInfoDto);
+        }catch (IllegalArgumentException e){
+            throw new MainPageException("올바른 page 값을 던져주시기 바랍니다 현재 페이지는: " + page + "입니다.");
+        }
+    }
+
+
+
     private void validatePage(int pageNumber, long totalNumber) {
         if (checkRemainPage(pageNumber, totalNumber)) {
             return;
@@ -59,4 +78,6 @@ public class MainPageService {
     private boolean checkRemainPage(int pageNumber, long totalNumber) {
         return (long) pageNumber * PAGE_SIZE - totalNumber < PAGE_SIZE;
     }
+
+
 }
