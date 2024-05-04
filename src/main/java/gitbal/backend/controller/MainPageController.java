@@ -1,5 +1,6 @@
 package gitbal.backend.controller;
 
+import gitbal.backend.entity.dto.MainPageFirstRankResponseDto;
 import gitbal.backend.entity.dto.MainPageUserResponseDto;
 import gitbal.backend.service.MainPageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,7 +10,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,8 +39,8 @@ public class MainPageController {
         @ApiResponse(responseCode = "200", description = "메인 페이지 1등 표시 지역, 학교 표시에 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "메인 페이지 1등 표시 지역, 학교 표시에 실패했습니다.")
     })
-    public void firstRank() {
-
+    public ResponseEntity<MainPageFirstRankResponseDto> firstRank() {
+        return ResponseEntity.ok(mainPageService.getMainPageFirstSchoolRegionRank());
     }
 
     @GetMapping("/search")

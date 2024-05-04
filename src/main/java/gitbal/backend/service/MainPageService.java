@@ -1,11 +1,16 @@
 package gitbal.backend.service;
 
 import gitbal.backend.domain.PageCalculator;
+import gitbal.backend.entity.Region;
+import gitbal.backend.entity.School;
 import gitbal.backend.entity.User;
+import gitbal.backend.entity.dto.MainPageFirstRankResponseDto;
 import gitbal.backend.entity.dto.MainPageUserDto;
 import gitbal.backend.entity.dto.MainPageUserResponseDto;
 import gitbal.backend.entity.dto.PageInfoDto;
 import gitbal.backend.exception.MainPageException;
+import gitbal.backend.repository.RegionRepository;
+import gitbal.backend.repository.SchoolRepository;
 import gitbal.backend.repository.UserRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +28,8 @@ public class MainPageService {
 
     private final int PAGE_SIZE = 12;
     private final UserRepository userRepository;
+    private final SchoolRepository schoolRepository;
+    private final RegionRepository regionRepository;
 
 
     @Transactional(readOnly = true)
@@ -80,4 +87,14 @@ public class MainPageService {
     }
 
 
+    @Transactional(readOnly = true)
+    public MainPageFirstRankResponseDto getMainPageFirstSchoolRegionRank() {
+        try {
+            Region region = regionRepository.firstRankedRegion();
+            School school = schoolRepository.firstRankedSchool();
+            return MainPageFirstRankResponseDto.of(school,region);
+        }catch (Exception e){
+            throw new MainPageException("firstRank 찾던 도중 오류가 발생하였습니다.");
+        }
+    }
 }
