@@ -17,9 +17,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(500).body("요청에 대한 처리를 제대로 수행하지 못했습니다.");
     }
 
+    @ExceptionHandler(NotFoundUserException.class)
+    public ResponseEntity<String> handleNotFoundUserException(NotFoundUserException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
 
-    @ExceptionHandler(MainPageException.class)
-    public ResponseEntity<String> handleMainPageException(MainPageException e) {
+    @ExceptionHandler(WrongPageNumberException.class)
+    public ResponseEntity<String> handleWrongPageNumberException(WrongPageNumberException e){
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+
+    @ExceptionHandler(MainPageFirstRankException.class)
+    public ResponseEntity<String> handleMainPageFirstRankException(MainPageFirstRankException e){
         return ResponseEntity.status(500).body(e.getMessage());
     }
 
