@@ -8,7 +8,9 @@ import gitbal.backend.entity.dto.MainPageFirstRankResponseDto;
 import gitbal.backend.entity.dto.MainPageUserDto;
 import gitbal.backend.entity.dto.MainPageUserResponseDto;
 import gitbal.backend.entity.dto.PageInfoDto;
-import gitbal.backend.exception.MainPageException;
+import gitbal.backend.exception.MainPageFirstRankException;
+import gitbal.backend.exception.NotFoundUserException;
+import gitbal.backend.exception.WrongPageNumberException;
 import gitbal.backend.repository.RegionRepository;
 import gitbal.backend.repository.SchoolRepository;
 import gitbal.backend.repository.UserRepository;
@@ -45,7 +47,8 @@ public class MainPageService {
             PageInfoDto pageInfoDto = PageCalculator.calculatePageInfo(users);
             return MainPageUserResponseDto.of(userList, pageInfoDto);
         } catch (IllegalArgumentException e) {
-            throw new MainPageException("올바른 page 값을 던져주시기 바랍니다 현재 페이지는: " + page + "입니다.");
+            e.printStackTrace();
+            throw new WrongPageNumberException(page);
         }
     }
 
@@ -55,6 +58,7 @@ public class MainPageService {
         }try {
             Page<User> searchUsersIgnoreCase = userRepository.findByNicknameContainingIgnoreCase(searchedname,
                 PageRequest.of(page - 1, PAGE_SIZE, Sort.by("score").descending()));
+            validateSearchUsername(searchUsersIgnoreCase);
             validatePage(page, searchUsersIgnoreCase.getTotalElements());
             List<MainPageUserDto> searchUserList = searchUsersIgnoreCase.stream().map(
                 (user) -> new MainPageUserDto(user.getNickname(), user.getScore(), user.getGrade())
@@ -62,10 +66,16 @@ public class MainPageService {
             PageInfoDto pageInfoDto = PageCalculator.calculatePageInfo(searchUsersIgnoreCase);
             return MainPageUserResponseDto.of(searchUserList, pageInfoDto);
         }catch (IllegalArgumentException e){
-            throw new MainPageException("올바른 page 값을 던져주시기 바랍니다 현재 페이지는: " + page + "입니다.");
+            e.printStackTrace();
+            throw new WrongPageNumberException(page);
         }
     }
 
+    private void validateSearchUsername(Page<User> searchUsersIgnoreCase) {
+        if(searchUsersIgnoreCase.getTotalElements()==0){
+            throw new NotFoundUserException();
+        }
+    }
 
 
     private void validatePage(int pageNumber, long totalNumber) {
@@ -94,7 +104,8 @@ public class MainPageService {
             School school = schoolRepository.firstRankedSchool();
             return MainPageFirstRankResponseDto.of(school,region);
         }catch (Exception e){
-            throw new MainPageException("firstRank 찾던 도중 오류가 발생하였습니다.");
+            e.printStackTrace();
+            throw new MainPageFirstRankException();
         }
     }
 }
