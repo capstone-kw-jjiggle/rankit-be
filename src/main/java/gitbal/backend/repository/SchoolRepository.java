@@ -30,4 +30,7 @@ public interface SchoolRepository extends JpaRepository<School, Long> {
   @Query("SELECT s FROM School s ORDER BY s.score DESC LIMIT 1")
   School firstRankedSchool();
 
+
+  @Query(value = "SELECT RANK() OVER (ORDER BY score DESC) AS `rank` FROM school WHERE school_name = :schoolName", nativeQuery = true)
+  int getSchoolRanking(String schoolName);
 }
