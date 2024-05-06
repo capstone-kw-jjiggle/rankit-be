@@ -1,6 +1,7 @@
 package gitbal.backend.controller;
 
 import gitbal.backend.entity.dto.FirstRankSchoolDto;
+import gitbal.backend.entity.dto.MySchoolInfoResponseDto;
 import gitbal.backend.entity.dto.SchoolListDto;
 import gitbal.backend.entity.dto.SchoolListPageResponseDto;
 import gitbal.backend.service.SchoolRankService;
@@ -9,6 +10,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,13 +26,13 @@ public class SchoolRankController {
   private final SchoolRankService schoolRankService;
 
   @GetMapping("/mySchool")
-  @Operation(summary = "내 학교 정보 (미구현)", description = "내 학교 정보 탭 관련 api 요청입니다.")
+  @Operation(summary = "내 학교 정보 (구현만 완료 -> fe 와 api 통신해서 인증 확인 진행)", description = "내 학교 정보 탭 관련 api 요청입니다.")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "내 학교 정보 요청을 성공했습니다."),
-      @ApiResponse(responseCode = "5xx", description = "내 학교 정보 요청을 실패했습니다.")
+      @ApiResponse(responseCode = "4xx", description = "내 학교 정보 요청을 실패했습니다.")
   })
-  public void mySchoolInfo() { // TODO : 로그인한 유저로 봐야함.
-
+  public ResponseEntity<MySchoolInfoResponseDto> mySchoolInfo(Authentication authentication) {
+    return ResponseEntity.ok(schoolRankService.getMySchoolInfo(authentication));
   }
 
 

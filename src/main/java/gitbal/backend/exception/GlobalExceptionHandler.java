@@ -27,6 +27,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(400).body(e.getMessage());
     }
 
+    @ExceptionHandler(NotLoginedException.class)
+    public ResponseEntity<String> handleNotLoginedException(WrongPageNumberException e){
+        return ResponseEntity.status(401).body(e.getMessage());
+    }
+
 
     @ExceptionHandler(MainPageFirstRankException.class)
     public ResponseEntity<String> handleMainPageFirstRankException(MainPageFirstRankException e){
