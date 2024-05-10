@@ -44,11 +44,11 @@ public class User {
     @JoinColumn(name = "region_id")
     private Region region;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "commit_date_id")
     private OneDayCommit oneDayCommit;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinColumn(name = "major_user_id")
     private List<MajorLanguage> majorLanguages = new ArrayList<>();
 
@@ -65,6 +65,18 @@ public class User {
     // 등급 관련 설정
     @Enumerated(value = EnumType.STRING)
     private Grade grade;
+
+    public void setSchool(School school) {
+        this.school = school;
+    }
+
+    public void setRegion(Region region) {
+        this.region = region;
+    }
+
+    public void setProfileImg(String profile_img) {
+        this.profile_img = profile_img;
+    }
 
     @Builder
     public User(School school, Region region, OneDayCommit oneDayCommit,
