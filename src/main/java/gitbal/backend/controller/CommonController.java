@@ -63,7 +63,7 @@ public class CommonController {
   }
 
   @GetMapping("/userInfo/{username}")
-  @Operation(summary = "내 정보 조회 (구현 완료)", description = "내 정보 조회를 위한 api입니다.")
+  @Operation(summary = "내 정보 조회 (예외 처리 필요)", description = "내 정보 조회를 위한 api입니다.")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "내 정보를 가져오는데 성공했습니다."),
       @ApiResponse(responseCode = "5xx", description = "내 정보를 가져오는데 실패했습니다.")
@@ -83,7 +83,7 @@ public class CommonController {
   }
 
   @DeleteMapping("/withdraw")
-  @Operation(summary = "회원탈퇴 (구현 완료)", description = "회원탈퇴를 위한 api입니다.")
+  @Operation(summary = "회원탈퇴 (예외 처리 필요)", description = "회원탈퇴를 위한 api입니다.")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "회원탈퇴에 성공했습니다."),
       @ApiResponse(responseCode = "5xx", description = "회원탈퇴에 실패했습니다.")
@@ -93,7 +93,7 @@ public class CommonController {
   }
 
   @PutMapping("/profileImg")
-  @Operation(summary = "프로필 이미지수정 (구현 완료)", description = "프로필 이미지 수정을 위한 api입니다.")
+  @Operation(summary = "프로필 이미지수정 (예외 처리 필요)", description = "프로필 이미지 수정을 위한 api입니다.")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "프로필 이미지 수정에 성공했습니다."),
       @ApiResponse(responseCode = "5xx", description = "프로필 이미지 수정에 실패했습니다.")
@@ -103,7 +103,7 @@ public class CommonController {
   }
 
   @DeleteMapping("/profileImg")
-  @Operation(summary = "프로필 이미지 삭제 (구현 완료)", description = "프로필 이미지 삭제를 위한 api입니다.")
+  @Operation(summary = "프로필 이미지 삭제 (예외 처리 필요)", description = "프로필 이미지 삭제를 위한 api입니다.")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "프로필 이미지 삭제에 성공했습니다."),
       @ApiResponse(responseCode = "5xx", description = "프로필 이미지 삭제에 실패했습니다.")

@@ -35,7 +35,7 @@ public class MyPageController {
 
 
     @PutMapping("/config/school")
-    @Operation(summary = "학교 수정 (구현 완료)", description = "학교 수정을 위한 api입니다.")
+    @Operation(summary = "학교 수정 (예외 처리 필요)", description = "학교 수정을 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "학교 수정에 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "학교 수정에 실패했습니다.")
@@ -45,7 +45,7 @@ public class MyPageController {
     }
 
     @PutMapping("/config/region")
-    @Operation(summary = "지역 수정 (구현 완료)", description = "지역 수정을 위한 api입니다.")
+    @Operation(summary = "지역 수정 (예외 처리 필요)", description = "지역 수정을 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "지역 수정에 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "지역 수정에 실패했습니다.")
