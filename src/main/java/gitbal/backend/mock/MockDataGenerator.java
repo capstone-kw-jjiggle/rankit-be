@@ -74,6 +74,10 @@ public class MockDataGenerator implements CommandLineRunner {
 
 
     }
+    // Test를 위한 나(이승준)의 githubid와 동일한 nickname data
+    createUserWithNickname("leesj000603");
+
+
     insertRegionSchoolTopContributorInfo();
     log.info("Mock data creation completed");
   }
@@ -92,6 +96,34 @@ public class MockDataGenerator implements CommandLineRunner {
         .profile_img(randomProfileImg)
         .grade(Grade.NEWBIE)
         .build();
+  }
+
+  private void createUserWithNickname(String nickName) {
+    School school = schoolRepository.findById(1L)
+        .orElse(null);
+    Region region = regionRepository.findById(1L)
+        .orElse(null);
+    OneDayCommit oneDayCommit = OneDayCommit.of(true);
+    oneDayCommitRepository.save(oneDayCommit);
+
+    User leesj000603 = User.builder()
+        .school(school)
+        .region(region)
+        .nickname(nickName)
+        .score(500L)
+        .profile_img("sdqsdqwefqwef")
+        .grade(Grade.PURPLE)
+        .build();
+
+    List<MajorLanguage> majorLanguages = createRandomMajorLanguagesForUser(leesj000603);
+    majorLanguages.forEach(majorLanguageRepository::save);
+
+    OneDayCommit oneDayCommit1 = OneDayCommit.of(true);
+    oneDayCommitRepository.save(oneDayCommit1);
+    leesj000603.joinUpdateUser(school, region, oneDayCommit, majorLanguages,
+        leesj000603.getNickname(), leesj000603.getScore(), leesj000603.getProfile_img(), Grade.NEWBIE);
+    userRepository.save(leesj000603);
+
   }
 
   private List<MajorLanguage> createRandomMajorLanguagesForUser(User user) {
