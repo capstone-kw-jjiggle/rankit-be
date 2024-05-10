@@ -5,6 +5,7 @@ import gitbal.backend.entity.dto.JoinRequestDto;
 import gitbal.backend.entity.dto.UserInfoDto;
 import gitbal.backend.security.CustomUserDetails;
 import gitbal.backend.service.LoginService;
+import gitbal.backend.service.MyPageService;
 import gitbal.backend.service.UserInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,21 +22,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
-@Tag(name = "공통사항 API(미구현)", description = "공통 기능 사항에 대한 api 명세입니다.")
+@Tag(name = "공통사항 API(로그아웃 제외 구현 완료)", description = "공통 기능 사항에 대한 api 명세입니다.")
 public class CommonController {
 
 
   // TODO : 여기 정보들은 회원가입 제외 전부 로그인한 유저 기준으로 작업 진행해야함
   private final LoginService loginService;
   private final UserInfoService userInfoService;
+  private final MyPageService myPageService;
 
   @PostMapping("/join")
-  @Operation(summary = "회원가입", description = "회원가입을 위한 api입니다.")
+  @Operation(summary = "회원가입 (구현 완료)", description = "회원가입을 위한 api입니다.")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "회원가입에 성공했습니다."),
   })
@@ -60,18 +63,17 @@ public class CommonController {
   }
 
   @GetMapping("/userInfo/{username}")
-  @Operation(summary = "내 정보 조회", description = "내 정보 조회를 위한 api입니다.")
+  @Operation(summary = "내 정보 조회 (구현 완료)", description = "내 정보 조회를 위한 api입니다.")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "내 정보를 가져오는데 성공했습니다."),
       @ApiResponse(responseCode = "5xx", description = "내 정보를 가져오는데 실패했습니다.")
   })
   public UserInfoDto userInfo(@PathVariable String username) {
-    System.out.println("컨트롤러 진입");
     return userInfoService.getUserInfoByUserName(username);
   }
 
   @GetMapping("/logout")
-  @Operation(summary = "로그아웃", description = "로그아웃을 위한 api입니다.")
+  @Operation(summary = "로그아웃 (미구현)", description = "로그아웃을 위한 api입니다.")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "로그아웃에 성공했습니다."),
       @ApiResponse(responseCode = "5xx", description = "로그아웃에 실패했습니다.")
@@ -81,33 +83,33 @@ public class CommonController {
   }
 
   @DeleteMapping("/withdraw")
-  @Operation(summary = "회원탈퇴", description = "회원탈퇴를 위한 api입니다.")
+  @Operation(summary = "회원탈퇴 (구현 완료)", description = "회원탈퇴를 위한 api입니다.")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "회원탈퇴에 성공했습니다."),
       @ApiResponse(responseCode = "5xx", description = "회원탈퇴에 실패했습니다.")
   })
-  public void withdrawService() {
-
+  public void withdrawService(Authentication authentication) {
+    myPageService.withDrawUser(authentication);
   }
 
   @PutMapping("/profileImg")
-  @Operation(summary = "프로필 이미지수정", description = "프로필 이미지 수정을 위한 api입니다.")
+  @Operation(summary = "프로필 이미지수정 (구현 완료)", description = "프로필 이미지 수정을 위한 api입니다.")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "프로필 이미지 수정에 성공했습니다."),
       @ApiResponse(responseCode = "5xx", description = "프로필 이미지 수정에 실패했습니다.")
   })
-  public void modifyImg() {
-
+  public void modifyImg(Authentication authentication, @RequestParam String newProfileImgUrl ) {
+    myPageService.modifyProfileImg(authentication, newProfileImgUrl);
   }
 
   @DeleteMapping("/profileImg")
-  @Operation(summary = "프로필 이미지 삭제", description = "프로필 이미지 삭제를 위한 api입니다.")
+  @Operation(summary = "프로필 이미지 삭제 (구현 완료)", description = "프로필 이미지 삭제를 위한 api입니다.")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "프로필 이미지 삭제에 성공했습니다."),
       @ApiResponse(responseCode = "5xx", description = "프로필 이미지 삭제에 실패했습니다.")
   })
-  public void deleteImg() {
-
+  public void deleteImg(Authentication authentication) {
+    myPageService.deleteProfileImg(authentication);
   }
 
 
