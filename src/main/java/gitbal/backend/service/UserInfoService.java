@@ -21,8 +21,7 @@ public class UserInfoService {
   private final RegionRepository regionRepository;
   private final SchoolRepository schoolRepository;
 
-  public UserInfoDto getUserInfoByUserName(String userName) { // Todo: 현재 컨트롤러로 보내는 과정에서 문제 있음.
-    System.out.println("서비스 진입");
+  public UserInfoDto getUserInfoByUserName(String userName) {
     Optional<User> result = userRepository.findByNickname(userName);
 
     if (result.isPresent()) {
