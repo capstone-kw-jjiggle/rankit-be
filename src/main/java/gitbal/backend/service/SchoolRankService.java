@@ -1,9 +1,9 @@
 package gitbal.backend.service;
 
-import gitbal.backend.entity.dto.MySchoolInfoResponseDto;
 import gitbal.backend.entity.School;
 import gitbal.backend.entity.User;
 import gitbal.backend.entity.dto.FirstRankSchoolDto;
+import gitbal.backend.entity.dto.MySchoolInfoResponseDto;
 import gitbal.backend.entity.dto.SchoolListDto;
 import gitbal.backend.entity.dto.SchoolListPageResponseDto;
 import gitbal.backend.exception.NotFoundUserException;
@@ -56,7 +56,7 @@ public class SchoolRankService {
         return FirstRankSchoolDto.builder()
             .schoolName(firstSchool.getSchoolName())
             .schoolScore(firstSchool.getScore())
-            .schoolChangeScore(null)
+            .schoolChangeScore(firstSchool.getChangedScore())
             .mvpName(firstSchool.getTopContributor())
             .build();
     }
@@ -65,10 +65,10 @@ public class SchoolRankService {
         return new SchoolListDto(
             school.getSchoolName(),
             school.getScore(),
-            0L,
+            school.getChangedScore(),
+            school.getSchoolRank(),
             school.getTopContributor()
         );
-
     }
 
     @Transactional(readOnly = true)
@@ -82,6 +82,6 @@ public class SchoolRankService {
             NotFoundUserException::new
         );
         School school = user.getSchool();
-        return MySchoolInfoResponseDto.of(schoolRepository.getSchoolRanking(school.getSchoolName()), school);
+        return MySchoolInfoResponseDto.of(school);
     }
 }

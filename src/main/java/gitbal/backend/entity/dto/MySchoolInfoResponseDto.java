@@ -21,8 +21,8 @@ public class MySchoolInfoResponseDto {
         this.mvpTotalScore = mvpTotalScore;
     }
 
-    public static MySchoolInfoResponseDto of(int schoolRank, School school) {
-        return new MySchoolInfoResponseDto(schoolRank, school.getSchoolName(), school.getScore(),
+    public static MySchoolInfoResponseDto of(School school) {
+        return new MySchoolInfoResponseDto(school.getSchoolRank(), school.getSchoolName(), school.getScore(),
             school.getTopContributor(), school.getContributorScore());
     }
 }

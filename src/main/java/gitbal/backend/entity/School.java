@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,12 @@ public class School {
   @ColumnDefault(value = "0")
   private Long score;
 
+
+  @ColumnDefault(value= "0")
+  private Long changedScore;
+
+  @ColumnDefault(value = "0")
+  private int schoolRank;
 
   @NotNull
   private String topContributor;
@@ -57,5 +64,25 @@ public class School {
       this.topContributor = nickname;
       this.contributorScore = score;
     }
+  }
+
+  public void setSchoolRank(int rank) {
+    this.schoolRank=rank;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof School school)) {
+      return false;
+    }
+    return Objects.equals(schoolName, school.schoolName);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(schoolName);
   }
 }
