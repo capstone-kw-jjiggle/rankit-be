@@ -19,6 +19,7 @@ import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,15 +72,41 @@ public class MockDataGenerator implements CommandLineRunner {
           newUser.getNickname(), newUser.getScore(), newUser.getProfile_img(), Grade.NEWBIE);
       User saveUser = userRepository.save(newUser);
       scoring(saveUser);
-
-
     }
     // Test를 위한 나(이승준)의 githubid와 동일한 nickname data
     createUserWithNickname("leesj000603");
 
 
     insertRegionSchoolTopContributorInfo();
+    fetchSchoolScore();
     log.info("Mock data creation completed");
+  }
+
+  private void fetchSchoolScore() {
+    List<School> schools = schoolRepository.findAll(Sort.by("score").descending());
+    int rank = 1;
+    long previousScore=0;
+    scoreRankingCalculate(schools, rank, previousScore);
+  }
+
+  private void scoreRankingCalculate(List<School> schools, int rank, long previousScore) {
+    for(int i=0; i< schools.size(); i++){
+      School school = schools.get(i);
+      if(i==0) {
+        school.setSchoolRank(rank++);
+        previousScore =school.getScore();
+        continue;
+      }
+      if(previousScore == school.getScore()){
+        rank--;
+        school.setSchoolRank(rank++);
+        previousScore=school.getScore();
+      }
+      else{
+        school.setSchoolRank(rank++);
+        previousScore =school.getScore();
+      }
+    }
   }
 
   private User createUser(School school, Region region, int index) {
