@@ -56,4 +56,16 @@ public class SchoolRankController {
         return schoolRankService.getSchoolList(page);
     }
 
+
+
+    @GetMapping("/search")
+    @Operation(summary = "학교 페이지에서 검색한 학교를 나오게 하는 API입니다.(일부 구현 완료 -> 등급 기획 완성시 다시 개발 진행)", description = "학교 검색시 api 10개씩 검색(영어는 대소문자 구분 안함).")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "유저이름 검색에 성공했습니다."),
+        @ApiResponse(responseCode = "400", description = "유저이름 검색에 실패했습니다.")
+    })
+    public ResponseEntity<SchoolListPageResponseDto<SchoolListDto>> searchSchoolList(@RequestParam String searchedSchoolName, @RequestParam(required = false, defaultValue = "0") int page){
+        return ResponseEntity.ok(schoolRankService.getSearchedSchoolList(searchedSchoolName, page));
+    }
+
 }

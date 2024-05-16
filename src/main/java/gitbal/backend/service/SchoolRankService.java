@@ -1,13 +1,19 @@
 package gitbal.backend.service;
 
+import gitbal.backend.domain.PageCalculator;
 import gitbal.backend.entity.School;
 import gitbal.backend.entity.User;
 import gitbal.backend.entity.dto.FirstRankSchoolDto;
+import gitbal.backend.entity.dto.MainPageUserDto;
+import gitbal.backend.entity.dto.MainPageUserResponseDto;
 import gitbal.backend.entity.dto.MySchoolInfoResponseDto;
+import gitbal.backend.entity.dto.PageInfoDto;
 import gitbal.backend.entity.dto.SchoolListDto;
 import gitbal.backend.entity.dto.SchoolListPageResponseDto;
+import gitbal.backend.exception.NotFoundSchoolException;
 import gitbal.backend.exception.NotFoundUserException;
 import gitbal.backend.exception.NotLoginedException;
+import gitbal.backend.exception.WrongPageNumberException;
 import gitbal.backend.repository.SchoolRepository;
 import gitbal.backend.repository.UserRepository;
 import gitbal.backend.security.CustomUserDetails;
@@ -25,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class SchoolRankService {
 
+    private static final int PAGE_SIZE = 10;
     private final SchoolRepository schoolRepository;
     private final UserRepository userRepository;
 
@@ -84,4 +91,62 @@ public class SchoolRankService {
         School school = user.getSchool();
         return MySchoolInfoResponseDto.of(school);
     }
+
+
+    @Transactional(readOnly = true)
+    public SchoolListPageResponseDto<SchoolListDto> getSearchedSchoolList(String searchedSchoolName,
+        int page) {
+            if(page == 0){
+                page=1;
+            }try {
+            Page<School> schoolPage = schoolRepository.findBySchoolNameContainingIgnoreCase(
+                searchedSchoolName,
+                PageRequest.of(page - 1, PAGE_SIZE, Sort.by("score").descending()));
+            validateSearchSchoolName(schoolPage);
+            validatePage(page,schoolPage.getTotalElements());
+            List<SchoolListDto> searchedSchoolList = schoolPage.stream()
+                .map(this::convertToDto)
+                .toList();
+
+            return SchoolListPageResponseDto.<SchoolListDto>withALl()
+                .schoolList(searchedSchoolList)
+                .page(page)
+                .total(schoolPage.getTotalElements())
+                .build();
+            }catch (IllegalArgumentException e){
+                e.printStackTrace();
+                throw new WrongPageNumberException(page);
+            }
+        }
+
+
+    private void validateSearchSchoolName(Page<School> searchUsersIgnoreCase) {
+        if(searchUsersIgnoreCase.getTotalElements()==0){
+            throw new NotFoundSchoolException();
+        }
+    }
+
+
+    private void validatePage(int pageNumber, long totalNumber) {
+        if (checkRemainPage(pageNumber, totalNumber)) {
+            return;
+        }
+
+        if (rangeCheck(pageNumber, totalNumber)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private boolean rangeCheck(int pageNumber, long totalNumber) {
+        return (long) pageNumber * PAGE_SIZE > totalNumber || pageNumber < 0;
+    }
+
+    private boolean checkRemainPage(int pageNumber, long totalNumber) {
+        return (long) pageNumber * PAGE_SIZE - totalNumber < PAGE_SIZE;
+    }
+
+
+
+
+
 }

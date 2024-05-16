@@ -4,6 +4,8 @@ import gitbal.backend.entity.School;
 import gitbal.backend.entity.User;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,6 +31,8 @@ public interface SchoolRepository extends JpaRepository<School, Long> {
 
   @Query("SELECT s FROM School s ORDER BY s.score DESC LIMIT 1")
   School firstRankedSchool();
+
+  Page<School> findBySchoolNameContainingIgnoreCase(String searchedSchoolName, Pageable pageable);
 
 
   @Query(value = "SELECT RANK() OVER (ORDER BY score DESC) AS `rank` FROM school WHERE school_name = :schoolName", nativeQuery = true)

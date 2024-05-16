@@ -38,5 +38,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(500).body(e.getMessage());
     }
 
+    @ExceptionHandler(NotFoundSchoolException.class)
+    public ResponseEntity<String> handleNotFoundSchoolException(NotFoundSchoolException e){
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
 
 }
