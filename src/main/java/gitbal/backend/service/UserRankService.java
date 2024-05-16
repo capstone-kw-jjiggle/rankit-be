@@ -45,12 +45,12 @@ public class UserRankService {
 
     @Transactional(readOnly = true)
     public SchoolRankRaceResponseDto makeUserRankSchoolStatusByUsername(String username) {
-        School findSchool = userService.findSchoolByUserName(username);
+        School findUserScool = userService.findSchoolByUserName(username);
         SchoolRaceStatus schoolRaceStatus = schoolService.findSchoolScoreRaced(
-            findSchool.getScore());
-        schoolRaceStatus.addEntity(findSchool);
+            findUserScool.getScore());
+        schoolRaceStatus.addEntity(findUserScool);
         schoolRaceStatus.sortAroundEntitys();
-        return schoolRaceStatus.toResponseDto(schoolRaceStatus.aroundUsers());
+        return schoolRaceStatus.toResponseDto(findUserScool,schoolRaceStatus.aroundUsers());
     }
 
     @Transactional(readOnly = true)
