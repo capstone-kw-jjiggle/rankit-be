@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +32,7 @@ public class UnivController {
       @ApiResponse(responseCode = "200", description = "대학 인증 요청을 성공했습니다."),
       @ApiResponse(responseCode = "400", description = "대학 인증 요청을 실패했습니다.")
   })
-  public ResponseEntity<?> univRequestCertificate(@RequestBody UnivCertStartDto univCertStartDto)
+  public ResponseEntity<Map<String, Object>> univRequestCertificate(@RequestBody UnivCertStartDto univCertStartDto)
       throws IOException {
     return ResponseEntity.ok(univSerivce.CertStart(univCertStartDto));
   }
@@ -43,7 +44,7 @@ public class UnivController {
       @ApiResponse(responseCode = "200", description = "인증번호 검증을 성공했습니다."),
       @ApiResponse(responseCode = "400", description = "인증번호 검증을 실패했습니다.")
   })
-  public ResponseEntity<?> univCertNumValidate(@RequestBody UnivCertCodeDto univCertCodeDto)
+  public ResponseEntity<Map<String, Object>> univCertNumValidate(@RequestBody UnivCertCodeDto univCertCodeDto)
       throws IOException {
     return ResponseEntity.ok(univSerivce.CertCode(univCertCodeDto));
   }

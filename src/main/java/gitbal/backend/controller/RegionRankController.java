@@ -41,7 +41,7 @@ public class RegionRankController {
         @ApiResponse(responseCode = "200", description = "1등 지역 정보 요청을 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "1등 지역 정보 요청을 실패했습니다.")
     })
-    public FirstRankRegionDto firstRankRegionInfo() {
+    public ResponseEntity<FirstRankRegionDto> firstRankRegionInfo() {
         return regionRankService.getFirstRankRegionnfo();
     }
 
@@ -52,7 +52,7 @@ public class RegionRankController {
         @ApiResponse(responseCode = "200", description = "지역 리스트 요청을 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "지역 리스트 요청을 실패했습니다.")
     })
-    public RegionListPageResponseDto<RegionListDto> regionList() {
+    public ResponseEntity<RegionListPageResponseDto<RegionListDto>> regionList() {
         return regionRankService.getRegionList();
     }
 

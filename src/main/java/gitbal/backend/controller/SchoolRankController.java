@@ -42,7 +42,7 @@ public class SchoolRankController {
         @ApiResponse(responseCode = "200", description = "1등 학교 정보 요청을 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "1등 학교 정보 요청을 실패했습니다.")
     })
-    public FirstRankSchoolDto firstRankSchoolInfo() {
+    public ResponseEntity<FirstRankSchoolDto> firstRankSchoolInfo() {
         return schoolRankService.getFirstRankSchoolInfo();
     }
 
@@ -52,7 +52,7 @@ public class SchoolRankController {
         @ApiResponse(responseCode = "200", description = "학교 리스트 요청을 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "학교 리스트 요청을 실패했습니다.")
     })
-    public SchoolListPageResponseDto<SchoolListDto> schoolList(@RequestParam int page) {
+    public ResponseEntity<SchoolListPageResponseDto<SchoolListDto>> schoolList(@RequestParam int page) {
         return schoolRankService.getSchoolList(page);
     }
 

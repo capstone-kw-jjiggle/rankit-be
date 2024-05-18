@@ -1,18 +1,15 @@
 package gitbal.backend.service;
 
-import gitbal.backend.domain.PageCalculator;
 import gitbal.backend.entity.School;
 import gitbal.backend.entity.User;
 import gitbal.backend.entity.dto.FirstRankSchoolDto;
-import gitbal.backend.entity.dto.MainPageUserDto;
-import gitbal.backend.entity.dto.MainPageUserResponseDto;
 import gitbal.backend.entity.dto.MySchoolInfoResponseDto;
-import gitbal.backend.entity.dto.PageInfoDto;
 import gitbal.backend.entity.dto.SchoolListDto;
 import gitbal.backend.entity.dto.SchoolListPageResponseDto;
 import gitbal.backend.exception.NotFoundSchoolException;
 import gitbal.backend.exception.NotFoundUserException;
 import gitbal.backend.exception.NotLoginedException;
+import gitbal.backend.exception.PageOutOfRangeException;
 import gitbal.backend.exception.WrongPageNumberException;
 import gitbal.backend.repository.SchoolRepository;
 import gitbal.backend.repository.UserRepository;
@@ -24,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,31 +39,45 @@ public class SchoolRankService {
         this.userRepository = userRepository;
     }
 
-    public SchoolListPageResponseDto<SchoolListDto> getSchoolList(Integer page) {
-        Sort sort = Sort.by("score").descending();
-        Pageable pageable = PageRequest.of(page - 1, 10, sort);
-        Page<School> schoolPage = schoolRepository.findAll(pageable);
+    public ResponseEntity<SchoolListPageResponseDto<SchoolListDto>> getSchoolList(Integer page) {
+        try{
+            Sort sort = Sort.by("score").descending();
+            Pageable pageable = PageRequest.of(page - 1, 10, sort);
+            Page<School> schoolPage = schoolRepository.findAll(pageable);
 
-        List<SchoolListDto> schoolDtoList = schoolPage.stream()
-            .map(this::convertToDto)
-            .collect(Collectors.toList());
+            List<SchoolListDto> schoolDtoList = schoolPage.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
 
-        // PageResponseDto 생성
-        return SchoolListPageResponseDto.<SchoolListDto>withALl()
-            .schoolList(schoolDtoList)
-            .page(page)
-            .total(schoolPage.getTotalElements())
-            .build();
+            // PageResponseDto 생성
+            SchoolListPageResponseDto<SchoolListDto> schoolList = SchoolListPageResponseDto.<SchoolListDto>withALl()
+                .schoolList(schoolDtoList)
+                .page(page)
+                .total(schoolPage.getTotalElements())
+                .build();
+            // 페이지 범위 넘겼을때
+            if(schoolList.getTotalPages() < page ) {
+                throw new PageOutOfRangeException();
+            }
+            return ResponseEntity.ok(schoolList);
+
+            //페이지로 음수 또는 문자열을 받았을때
+        } catch (IllegalArgumentException e) {
+            throw new PageOutOfRangeException();
+        }
+
+
     }
 
-    public FirstRankSchoolDto getFirstRankSchoolInfo() {
+    public ResponseEntity<FirstRankSchoolDto> getFirstRankSchoolInfo() {
         School firstSchool = schoolRepository.firstRankedSchool(); // TODO: 우선 가장 높은 점수의 학교를 가져오는 쿼리로 가져옴. (나중엔 미리 점수별로 정렬해둘 것이므로 수정)
-        return FirstRankSchoolDto.builder()
+        FirstRankSchoolDto FirstRankInfo = FirstRankSchoolDto.builder()
             .schoolName(firstSchool.getSchoolName())
             .schoolScore(firstSchool.getScore())
             .schoolChangeScore(firstSchool.getChangedScore())
             .mvpName(firstSchool.getTopContributor())
             .build();
+        return ResponseEntity.ok(FirstRankInfo);
     }
 
     private SchoolListDto convertToDto(School school) {

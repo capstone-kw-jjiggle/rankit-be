@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,10 +29,10 @@ public class RegionRankService {
 
     private final RegionRepository regionRepository;
     private final UserRepository userRepository;
+    private final int page = 1;
 
-    public RegionListPageResponseDto<RegionListDto> getRegionList() {
+    public ResponseEntity<RegionListPageResponseDto<RegionListDto>> getRegionList() {
         Sort sort = Sort.by("score").descending();
-        int page = 1;
         Pageable pageable = PageRequest.of(page - 1, 10, sort);
         Page<Region> regionPage = regionRepository.findAll(pageable);
 
@@ -40,19 +41,23 @@ public class RegionRankService {
             .collect(Collectors.toList());
 
         // 3. PageResponseDto 생성
-        return RegionListPageResponseDto.<RegionListDto>withALl()
+        RegionListPageResponseDto<RegionListDto> RegionList = RegionListPageResponseDto.<RegionListDto>withALl()
             .regionList(regionDtoList)
             .build();
+
+        return ResponseEntity.ok(RegionList);
     }
 
-    public FirstRankRegionDto getFirstRankRegionnfo() {
+    public ResponseEntity<FirstRankRegionDto> getFirstRankRegionnfo() {
         Region firstRegion = regionRepository.firstRankedRegion(); // TODO: 우선 가장 높은 점수의 학교를 가져오는 쿼리로 가져옴. (나중엔 미리 점수별로 정렬해둘 것이므로 수정)
-        return FirstRankRegionDto.builder()
+        FirstRankRegionDto firstRankInfo = FirstRankRegionDto.builder()
             .regionName(firstRegion.getRegionName())
             .regionScore(firstRegion.getScore())
             .regionChangeScore(null)
             .mvpName(firstRegion.getTopContributor())
             .build();
+
+        return ResponseEntity.ok(firstRankInfo);
     }
 
     private RegionListDto convertToDto(Region region) {
