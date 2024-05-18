@@ -43,5 +43,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(400).body(e.getMessage());
     }
 
+    @ExceptionHandler(NotFoundRegionException.class)
+    public  ResponseEntity<String> handleNotFoundRegionException(NotFoundRegionException e){
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(PageOutOfRangeException.class)
+    public  ResponseEntity<String> handlePageOutOfRangeException(PageOutOfRangeException e){
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
 
 }

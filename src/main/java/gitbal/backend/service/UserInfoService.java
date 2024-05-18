@@ -4,14 +4,17 @@ import gitbal.backend.entity.Region;
 import gitbal.backend.entity.School;
 import gitbal.backend.entity.User;
 import gitbal.backend.entity.dto.UserInfoDto;
+import gitbal.backend.exception.NotFoundRegionException;
+import gitbal.backend.exception.NotFoundSchoolException;
+import gitbal.backend.exception.NotFoundUserException;
 import gitbal.backend.repository.RegionRepository;
 import gitbal.backend.repository.SchoolRepository;
 import gitbal.backend.repository.UserRepository;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.hibernate.HibernateException;
+import org.springframework.dao.DataAccessException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -21,29 +24,25 @@ public class UserInfoService {
   private final RegionRepository regionRepository;
   private final SchoolRepository schoolRepository;
 
-  public UserInfoDto getUserInfoByUserName(String userName) {
-    Optional<User> result = userRepository.findByNickname(userName);
+  public ResponseEntity<UserInfoDto> getUserInfoByUserName(String userName) {
 
-    if (result.isPresent()) {
-      User user = result.get();
-      Long univId = user.getSchool().getId();
-      Long regionId = user.getRegion().getRegionId();
-      String imgName = user.getProfile_img().toString();
-      String userTitle = null;
+    User user = userRepository.findByNickname(userName).orElseThrow(NotFoundUserException::new);
 
-      Optional<Region> userRegion = regionRepository.findById(regionId);
-      Optional<School> userUniv = schoolRepository.findById(univId);
+    Long univId = user.getSchool().getId();
+    Long regionId = user.getRegion().getRegionId();
+    String imgName = user.getProfile_img().toString();
+    String userTitle = null;
 
-      String regionName = userRegion.get().getRegionName();
-      String univName = userUniv.get().getSchoolName();
+    Region userRegion = regionRepository.findById(regionId).orElseThrow(NotFoundRegionException::new);
+    School userUniv = schoolRepository.findById(univId).orElseThrow(NotFoundSchoolException::new);
 
-      UserInfoDto userInfoDto = new UserInfoDto(userName, univName, regionName, imgName,
-          userTitle);
-      return userInfoDto;
-    } else {
-      // 값이 존재하지 않을 때 404 상태 코드를 반환하는 예외를 던집니다.
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-    }
+    String regionName = userRegion.getRegionName();
+    String univName = userUniv.getSchoolName();
+
+    UserInfoDto userInfoDto = new UserInfoDto(userName, univName, regionName, imgName, userTitle);
+
+    return ResponseEntity.ok(userInfoDto);
+
   }
 
 }

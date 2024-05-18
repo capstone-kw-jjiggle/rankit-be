@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,13 +36,13 @@ public class MyPageController {
 
 
     @PutMapping("/config/school")
-    @Operation(summary = "학교 수정 (예외 처리 필요)", description = "학교 수정을 위한 api입니다.")
+    @Operation(summary = "학교 수정 (구현 완료)", description = "학교 수정을 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "학교 수정에 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "학교 수정에 실패했습니다.")
     })
-    public void modifySchool(Authentication authentication, @RequestParam String modifySchoolName){
-        myPageService.modifySchoolName(authentication, modifySchoolName);
+    public ResponseEntity<String> modifySchool(Authentication authentication, @RequestParam String modifySchoolName){
+        return myPageService.modifySchoolName(authentication, modifySchoolName);
     }
 
     @PutMapping("/config/region")
@@ -50,8 +51,8 @@ public class MyPageController {
         @ApiResponse(responseCode = "200", description = "지역 수정에 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "지역 수정에 실패했습니다.")
     })
-    public void modifyRegion(Authentication authentication, @RequestParam String modifyRegionName){
-        myPageService.modifyRegionName(authentication, modifyRegionName);
+    public ResponseEntity<String> modifyRegion(Authentication authentication, @RequestParam String modifyRegionName){
+        return myPageService.modifyRegionName(authentication, modifyRegionName);
     }
 
 
