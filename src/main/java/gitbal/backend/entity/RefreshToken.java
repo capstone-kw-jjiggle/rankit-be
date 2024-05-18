@@ -4,31 +4,25 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 
 @Getter
-@RedisHash(value = "RefreshToken", timeToLive = 60 * 60 * 24 * 3)
+@RedisHash(value = "refreshToken", timeToLive = 60 * 10) // 초단위 10분
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TokenInfo {
+public class RefreshToken {
 
 
     @Id
-    private String nickname;
-
-    @Indexed
-    @Setter
-    private String accessToken;
-
     private String refreshToken;
+    @Indexed
+    private String userID;
 
 
     @Builder
-    public TokenInfo(String nickname, String accessToken, String refreshToken) {
-        this.nickname = nickname;
-        this.accessToken = accessToken;
+    public RefreshToken(String refreshToken, String userID) {
         this.refreshToken = refreshToken;
+        this.userID = userID;
     }
 }
