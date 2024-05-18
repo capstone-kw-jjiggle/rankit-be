@@ -26,7 +26,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final String URL_PREFIX = "accessToken=";
 
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
@@ -36,27 +35,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             if (isValidAccessToken(token)) {
                 Authentication authentication = registerAuthenticationToContext(token);
-                log.info(authentication.getName() + "의 인증정보 저장");
-
+                log.info("[doFilterInternal]" + authentication.getName() + "의 인증정보 저장");
             } else if (isValidRefreshToken(token)) {
-                log.info("다시 로그인을 해야합니다! 리프레시 토큰을 확인한 후 재발급합니다.");
+                log.info("[doFilterInternal] 다시 로그인을 해야합니다! 리프레시 토큰을 확인한 후 재발급합니다.");
                 String regenerateToken = tokenProvider.regenerateToken(token);
                 Authentication authentication = registerAuthenticationToContext(regenerateToken);
                 response.setHeader(AUTHORIZATION_HEADER, regenerateToken);
-                log.info("다시 발급받은 정보로 인증정보 {} 저장", authentication.getName());
+                log.info("[doFilterInternal] 다시 발급받은 정보로 인증정보 {} 저장", authentication.getName());
             } else {
-                log.info("유효한 JWT 토큰이 없습니다.");
+                log.info("[doFilterInternal] 유효한 JWT 토큰이 없습니다.");
             }
         } catch (RedisConnectionFailureException e) {
-            log.error("redis 연결에 오류가 발생했습니다.");
+            log.error("[doFilterInternal] redis 연결에 오류가 발생했습니다.");
         }
 
         filterChain.doFilter(request, response);
     }
 
     private boolean isValidRefreshToken(String token) {
-        return StringUtils.hasText(token) && !tokenProvider.validateToken(token)
-            && tokenProvider.validateRefreshToken(token);
+        return StringUtils.hasText(token) && tokenProvider.validateRefreshToken(token);
     }
 
     private boolean isValidAccessToken(String token) {
@@ -74,12 +71,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String checkUrlOrBearerToken(String bearerToken, String urlToken) {
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             String token = bearerToken.split(BEARER_PREFIX)[1];
-            log.info("header accessToken is =" + token);
+            log.info("[checkUrlOrBearerToken] header accessToken is =" + token);
             return token;
         }
         if (StringUtils.hasText(urlToken) && urlToken.startsWith(URL_PREFIX)) {
             String token = urlToken.split(URL_PREFIX)[1];
-            log.info("url Token is =" + token);
+            log.info("[checkUrlOrBearerToken] url Token is =" + token);
             return token;
         }
         return null;
