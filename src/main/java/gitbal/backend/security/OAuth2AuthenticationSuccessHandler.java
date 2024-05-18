@@ -55,14 +55,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private boolean isUserEmptyRefreshToken(GithubOAuth2UserInfo githubOAuth2UserInfo) {
 
-        if (refreshTokenRepository.findByUserID(githubOAuth2UserInfo.getNickname())
+        if (refreshTokenRepository.findByUserNickname(githubOAuth2UserInfo.getNickname())
             .isEmpty()) {
             log.info("[isUserHasRefreshToken] userHas RefreshToken");
             return true;
         }
         log.info("[isUserHasRefreshToken] : {}",
-            refreshTokenRepository.findByUserID(githubOAuth2UserInfo.getNickname()).get()
-                .getUserID());
+            refreshTokenRepository.findByUserNickname(githubOAuth2UserInfo.getNickname()).get()
+                .getUserNickname());
 
         return false;
     }

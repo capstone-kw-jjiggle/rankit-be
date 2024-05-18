@@ -17,12 +17,12 @@ public class RefreshToken {
     @Id
     private String refreshToken;
     @Indexed
-    private String userID;
+    private String userNickname;
 
 
     @Builder
-    public RefreshToken(String refreshToken, String userID) {
+    public RefreshToken(String refreshToken, String userNickname) {
         this.refreshToken = refreshToken;
-        this.userID = userID;
+        this.userNickname = userNickname;
     }
 }
