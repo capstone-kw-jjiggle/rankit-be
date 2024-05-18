@@ -73,7 +73,7 @@ public class JwtTokenProvider {
 
 
     public String regenerateToken(String accessToken) {
-        RefreshToken tokenInfo = refreshTokenRepository.findByUserID(findUserNicknameByToken(accessToken))
+        RefreshToken tokenInfo = refreshTokenRepository.findByUserNickname(findUserNicknameByToken(accessToken))
             .orElseThrow(() -> new IllegalArgumentException("[regenerateToken] 어세스 토큰으로 찾을 수 없었습니다."));
         Date now = new Date();
         Date validity = new Date(now.getTime() + ACCESS_EXPIRE_LENGTH);
@@ -90,7 +90,7 @@ public class JwtTokenProvider {
 
     public boolean validateRefreshToken(String token) {
         try {
-            RefreshToken tokenInfo = refreshTokenRepository.findByUserID(findUserNicknameByToken(token))
+            RefreshToken tokenInfo = refreshTokenRepository.findByUserNickname(findUserNicknameByToken(token))
                 .orElseThrow(() -> new IllegalArgumentException("[validateRefreshToken] 찾으려는 리프레시토큰은 없습니다."));
             JwtParser build = JwtUtils.generateJwtParser(key);
             build.parseClaimsJws(tokenInfo.getRefreshToken());
