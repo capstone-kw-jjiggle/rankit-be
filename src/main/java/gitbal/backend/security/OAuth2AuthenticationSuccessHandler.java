@@ -1,7 +1,7 @@
 package gitbal.backend.security;
 
-import gitbal.backend.entity.TokenInfo;
-import gitbal.backend.repository.TokenInfoRepository;
+import gitbal.backend.entity.RefreshToken;
+import gitbal.backend.repository.RefreshTokenRepository;
 import gitbal.backend.security.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,29 +23,28 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     // TODO : 프론트 url 받아서 보내줘야함!
     private final String REDIRECT_URL = "http://localhost:8080/api/v1/logincheck";
     private final String ACCESS_TOKEN_PREFIX = "accessToken";
-    private final TokenInfoRepository tokenInfoRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-        Authentication authentication) throws IOException{
+        Authentication authentication) throws IOException {
 
         GithubOAuth2UserInfo githubOAuth2UserInfo = changeGithubOAuth2UserInfo(
             authentication);
 
-        // 여기에 jwt 토큰 생성하는 코드 제작
-        // 이후 redirection
+        // TODO: 여기 관련 부분 뒤로 넘길 수 없는지 관련하여 고민
         String accessToken = jwtTokenProvider.createAccessToken(githubOAuth2UserInfo);
-
-        //여기서 refresh를 redis에 저장!
         String refreshToken = jwtTokenProvider.createRefreshToken(githubOAuth2UserInfo);
 
-        tokenInfoRepository.save(TokenInfo.builder().nickname(
-                githubOAuth2UserInfo.getNickname())
-            .accessToken(accessToken)
-            .refreshToken(refreshToken)
-            .build()
-        );
+        if (isUserEmptyRefreshToken(githubOAuth2UserInfo)) {
+            log.info("[onAuthenticationSuccess] refreshtoken이 발견되지 않았기에 제작하고 있는것입니다.");
+            refreshTokenRepository.save(RefreshToken.builder().userID(
+                    githubOAuth2UserInfo.getNickname())
+                .refreshToken(refreshToken)
+                .build()
+            );
+        }
 
         String uriString = UriComponentsBuilder.fromUriString(REDIRECT_URL)
             .queryParam(ACCESS_TOKEN_PREFIX, accessToken)
@@ -54,10 +53,24 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         response.sendRedirect(uriString);
     }
 
+    private boolean isUserEmptyRefreshToken(GithubOAuth2UserInfo githubOAuth2UserInfo) {
+
+        if (refreshTokenRepository.findByUserID(githubOAuth2UserInfo.getNickname())
+            .isEmpty()) {
+            log.info("[isUserHasRefreshToken] userHas RefreshToken");
+            return true;
+        }
+        log.info("[isUserHasRefreshToken] : {}",
+            refreshTokenRepository.findByUserID(githubOAuth2UserInfo.getNickname()).get()
+                .getUserID());
+
+        return false;
+    }
+
     private static GithubOAuth2UserInfo changeGithubOAuth2UserInfo(Authentication authentication) {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-        log.info("oauthUser is = {}", oAuth2User.getAttributes());
+        log.info("[changeGithubOAuth2UserInfo]oauthUser is = {}", oAuth2User.getAttributes());
         return GithubOAuth2UserInfo.of(
             oAuth2User.getAttributes());
     }
