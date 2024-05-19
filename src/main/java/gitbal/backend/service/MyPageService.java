@@ -1,9 +1,10 @@
 package gitbal.backend.service;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
+import gitbal.backend.domain.AuthenticationChecker;
 import gitbal.backend.entity.Region;
 import gitbal.backend.entity.School;
 import gitbal.backend.entity.User;
+import gitbal.backend.exception.NotDrawUserException;
 import gitbal.backend.exception.NotFoundRegionException;
 import gitbal.backend.exception.NotFoundSchoolException;
 import gitbal.backend.exception.NotFoundUserException;
@@ -12,12 +13,12 @@ import gitbal.backend.repository.RegionRepository;
 import gitbal.backend.repository.SchoolRepository;
 import gitbal.backend.repository.UserRepository;
 import gitbal.backend.security.CustomUserDetails;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -120,23 +121,21 @@ public class MyPageService {
 
   }
 
-  public ResponseEntity<String> withDrawUser (Authentication authentication) {
-    if (authentication == null){
-      throw new NotLoginedException();
-    }
-    CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-    String username = principal.getNickname();
-
-    User user = userRepository.findByNickname(username).orElseThrow(NotFoundUserException::new);
+  @Transactional
+  public String withDrawUser (Authentication authentication) {
+    User user = getAuthenticatedUser(authentication);
     try {
       userRepository.delete(user);
-      return ResponseEntity.ok("성공적으로 탈퇴 처리 되었습니다.");
-
+      return "성공적으로 탈퇴 처리 되었습니다.";
     } catch (Exception e){
-
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-
+      throw new NotDrawUserException();
     }
+  }
 
+  private User getAuthenticatedUser(Authentication authentication) {
+    AuthenticationChecker authenticationChecker = new AuthenticationChecker(authentication);
+    String username = authenticationChecker.checkAndRetrieveNickname();
+    return userRepository.findByNickname(username).
+        orElseThrow(NotFoundUserException::new);
   }
 }

@@ -89,7 +89,7 @@ public class CommonController {
       @ApiResponse(responseCode = "5xx", description = "회원탈퇴에 실패했습니다.")
   })
   public ResponseEntity<String> withdrawService(Authentication authentication) {
-    return myPageService.withDrawUser(authentication);
+    return ResponseEntity.ok(myPageService.withDrawUser(authentication));
   }
 
   @PutMapping("/profileImg")
