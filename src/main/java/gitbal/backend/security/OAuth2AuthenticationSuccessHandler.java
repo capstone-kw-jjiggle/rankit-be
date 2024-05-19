@@ -21,7 +21,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
 
     // TODO : 프론트 url 받아서 보내줘야함!
-    private final String REDIRECT_URL = "http://localhost:8080/api/v1/logincheck";
+    private final String REDIRECT_URL = "http://localhost:5173/auth/school";
     private final String ACCESS_TOKEN_PREFIX = "accessToken";
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
