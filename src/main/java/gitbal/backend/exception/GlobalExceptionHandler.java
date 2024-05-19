@@ -53,4 +53,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(400).body(e.getMessage());
     }
 
+
+    @ExceptionHandler(NotDrawUserException.class)
+    public  ResponseEntity<String> handleDrawUserException(NotDrawUserException e){
+        return ResponseEntity.status(500).body(e.getMessage());
+    }
+
 }
