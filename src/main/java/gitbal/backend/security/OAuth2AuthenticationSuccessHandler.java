@@ -39,7 +39,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         if (isUserEmptyRefreshToken(githubOAuth2UserInfo)) {
             log.info("[onAuthenticationSuccess] refreshtoken이 발견되지 않았기에 제작하고 있는것입니다.");
-            refreshTokenRepository.save(RefreshToken.builder().userID(
+            refreshTokenRepository.save(RefreshToken.builder().userNickname(
                     githubOAuth2UserInfo.getNickname())
                 .refreshToken(refreshToken)
                 .build()
