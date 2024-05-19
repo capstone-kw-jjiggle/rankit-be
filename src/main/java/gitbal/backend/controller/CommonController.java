@@ -63,10 +63,10 @@ public class CommonController {
   }
 
   @GetMapping("/userInfo/{username}")
-  @Operation(summary = "내 정보 조회 (구현 완료)", description = "내 정보 조회를 위한 api입니다.")
+  @Operation(summary = "유저 정보 조회 (구현 완료)", description = "유저 정보 조회를 위한 api입니다.")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "내 정보를 가져오는데 성공했습니다."),
-      @ApiResponse(responseCode = "5xx", description = "내 정보를 가져오는데 실패했습니다.")
+      @ApiResponse(responseCode = "200", description = "유저 정보를 가져오는데 성공했습니다."),
+      @ApiResponse(responseCode = "400", description = "유저 정보를 가져오는데 실패했습니다.")
   })
   public ResponseEntity<UserInfoDto> userInfo(@PathVariable String username) {
     return userInfoService.getUserInfoByUserName(username);
