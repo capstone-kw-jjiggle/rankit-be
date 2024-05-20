@@ -8,6 +8,7 @@ import gitbal.backend.global.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/auth")
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "인증 관련 처리 API(일부 구현 완료)", description = "인증에 필요한 api입니다.")
 public class AuthController {
 
     private final LoginService loginService;

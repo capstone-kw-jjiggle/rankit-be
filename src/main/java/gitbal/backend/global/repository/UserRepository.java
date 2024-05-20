@@ -1,4 +1,4 @@
-package gitbal.backend.domain.repository;
+package gitbal.backend.global.repository;
 
 
 import gitbal.backend.global.entity.User;

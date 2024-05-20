@@ -4,7 +4,7 @@ import gitbal.backend.domain.auth.dto.JoinRequestDto;
 import gitbal.backend.domain.auth.dto.UserDto;
 import gitbal.backend.global.entity.Grade;
 import gitbal.backend.global.entity.User;
-import gitbal.backend.domain.repository.UserRepository;
+import gitbal.backend.global.repository.UserRepository;
 import gitbal.backend.global.service.MajorLanguageService;
 import gitbal.backend.global.service.OneDayCommitService;
 import gitbal.backend.global.service.RegionService;

@@ -11,7 +11,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-@EnableRedisRepositories(basePackages = {"gitbal.backend.repository"})
+@EnableRedisRepositories(basePackages = {"gitbal.backend.global.repository"})
 public class RedisConfig {
 
     @Value("${spring.data.redis.host}")

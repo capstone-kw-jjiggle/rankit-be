@@ -1,11 +1,12 @@
 package gitbal.backend.global.security.jwt;
 
-import gitbal.backend.entity.RefreshToken;
-import gitbal.backend.entity.User;
+
+import gitbal.backend.global.entity.RefreshToken;
+import gitbal.backend.global.entity.User;
 import gitbal.backend.global.security.CustomUserDetails;
 import gitbal.backend.global.security.GithubOAuth2UserInfo;
-import gitbal.backend.domain.repository.RefreshTokenRepository;
-import gitbal.backend.domain.repository.UserRepository;
+import gitbal.backend.global.repository.RefreshTokenRepository;
+import gitbal.backend.global.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;

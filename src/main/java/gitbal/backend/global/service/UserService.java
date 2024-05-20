@@ -13,7 +13,7 @@ import gitbal.backend.global.util.SurroundingRankStatus;
 import gitbal.backend.global.util.UserRaceStatus;
 
 import gitbal.backend.global.exception.UserRankException;
-import gitbal.backend.domain.repository.UserRepository;
+import gitbal.backend.global.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

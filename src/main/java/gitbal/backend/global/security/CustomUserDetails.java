@@ -1,6 +1,6 @@
 package gitbal.backend.global.security;
 
-import gitbal.backend.entity.User;
+import gitbal.backend.global.entity.User;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
