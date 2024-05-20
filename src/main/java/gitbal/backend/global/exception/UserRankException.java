@@ -1,4 +1,4 @@
-package gitbal.backend.exception;
+package gitbal.backend.global.exception;
 
 import lombok.experimental.StandardException;
 

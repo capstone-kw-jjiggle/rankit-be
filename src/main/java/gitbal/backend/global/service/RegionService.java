@@ -1,10 +1,10 @@
-package gitbal.backend.domain.service;
+package gitbal.backend.global.service;
 
-import gitbal.backend.domain.entity.Region;
-import gitbal.backend.domain.entity.User;
+import gitbal.backend.global.entity.Region;
+import gitbal.backend.global.entity.User;
 import gitbal.backend.global.util.RegionRaceStatus;
 import gitbal.backend.global.util.SurroundingRankStatus;
-import gitbal.backend.exception.JoinException;
+import gitbal.backend.global.exception.JoinException;
 import gitbal.backend.domain.repository.RegionRepository;
 import gitbal.backend.domain.repository.UserRepository;
 import java.util.List;

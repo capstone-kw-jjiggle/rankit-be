@@ -1,7 +1,7 @@
 package gitbal.backend.domain.repository;
 
 
-import gitbal.backend.domain.entity.Region;
+import gitbal.backend.global.entity.Region;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

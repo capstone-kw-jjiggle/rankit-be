@@ -1,6 +1,6 @@
-package gitbal.backend.domain.dto;
+package gitbal.backend.global.dto;
 
-import gitbal.backend.domain.entity.School;
+import gitbal.backend.global.entity.School;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

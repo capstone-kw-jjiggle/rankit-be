@@ -1,6 +1,6 @@
 package gitbal.backend.global.util;
 
-import gitbal.backend.domain.dto.PageInfoDto;
+import gitbal.backend.global.dto.PageInfoDto;
 import org.springframework.data.domain.Page;
 
 public class PageCalculator {

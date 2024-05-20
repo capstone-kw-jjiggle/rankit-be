@@ -1,7 +1,7 @@
 package gitbal.backend.domain.userPage.dto;
 
 
-import gitbal.backend.domain.dto.RegionRankDto;
+import gitbal.backend.global.dto.RegionRankDto;
 import java.util.List;
 import lombok.Getter;
 

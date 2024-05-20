@@ -1,14 +1,13 @@
 package gitbal.backend.domain.userPage.service;
 
-import gitbal.backend.domain.entity.Region;
-import gitbal.backend.domain.entity.School;
-import gitbal.backend.domain.entity.User;
+import gitbal.backend.global.entity.Region;
+import gitbal.backend.global.entity.School;
+import gitbal.backend.global.entity.User;
 import gitbal.backend.global.util.AuthenticationChecker;
-import gitbal.backend.exception.NotDrawUserException;
-import gitbal.backend.exception.NotFoundRegionException;
-import gitbal.backend.exception.NotFoundSchoolException;
-import gitbal.backend.exception.NotFoundUserException;
-import gitbal.backend.exception.NotLoginedException;
+import gitbal.backend.global.exception.NotFoundRegionException;
+import gitbal.backend.global.exception.NotFoundSchoolException;
+import gitbal.backend.global.exception.NotFoundUserException;
+import gitbal.backend.global.exception.NotLoginedException;
 import gitbal.backend.domain.repository.RegionRepository;
 import gitbal.backend.domain.repository.SchoolRepository;
 import gitbal.backend.domain.repository.UserRepository;
@@ -18,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor

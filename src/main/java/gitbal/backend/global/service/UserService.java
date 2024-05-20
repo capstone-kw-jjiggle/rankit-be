@@ -1,18 +1,18 @@
-package gitbal.backend.domain.service;
+package gitbal.backend.global.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gitbal.backend.domain.dto.UserScoreInfoDto;
-import gitbal.backend.domain.entity.Region;
-import gitbal.backend.domain.entity.School;
-import gitbal.backend.domain.entity.User;
+import gitbal.backend.global.dto.UserScoreInfoDto;
+import gitbal.backend.global.entity.Region;
+import gitbal.backend.global.entity.School;
+import gitbal.backend.global.entity.User;
 import gitbal.backend.global.dto.GitbalApiDto;
 import gitbal.backend.global.util.GitbalScoreCalculator;
 import gitbal.backend.global.util.SurroundingRankStatus;
 import gitbal.backend.global.util.UserRaceStatus;
 
-import gitbal.backend.exception.UserRankException;
+import gitbal.backend.global.exception.UserRankException;
 import gitbal.backend.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

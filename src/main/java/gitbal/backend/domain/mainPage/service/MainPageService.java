@@ -1,16 +1,16 @@
 package gitbal.backend.domain.mainPage.service;
 
-import gitbal.backend.domain.dto.PageInfoDto;
-import gitbal.backend.domain.entity.Region;
-import gitbal.backend.domain.entity.School;
+import gitbal.backend.global.dto.PageInfoDto;
+import gitbal.backend.global.entity.Region;
+import gitbal.backend.global.entity.School;
 import gitbal.backend.domain.mainPage.dto.MainPageFirstRankResponseDto;
 import gitbal.backend.domain.mainPage.dto.MainPageUserDto;
-import gitbal.backend.domain.entity.User;
+import gitbal.backend.global.entity.User;
 import gitbal.backend.domain.mainPage.dto.MainPageUserResponseDto;
 import gitbal.backend.global.util.PageCalculator;
 
-import gitbal.backend.exception.MainPageFirstRankException;
-import gitbal.backend.exception.NotFoundUserException;
+import gitbal.backend.global.exception.MainPageFirstRankException;
+import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.exception.WrongPageNumberException;
 import gitbal.backend.domain.repository.RegionRepository;
 import gitbal.backend.domain.repository.SchoolRepository;

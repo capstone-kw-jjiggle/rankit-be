@@ -1,7 +1,7 @@
 package gitbal.backend.domain.repository;
 
 
-import gitbal.backend.domain.entity.RefreshToken;
+import gitbal.backend.global.entity.RefreshToken;
 import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 

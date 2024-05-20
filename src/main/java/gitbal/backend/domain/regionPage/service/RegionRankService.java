@@ -1,14 +1,14 @@
 package gitbal.backend.domain.regionPage.service;
 
 
-import gitbal.backend.domain.entity.Region;
-import gitbal.backend.domain.entity.User;
+import gitbal.backend.global.entity.Region;
+import gitbal.backend.global.entity.User;
 import gitbal.backend.domain.regionPage.dto.FirstRankRegionDto;
 import gitbal.backend.domain.regionPage.dto.MyRegionInfoResponseDto;
 import gitbal.backend.domain.regionPage.dto.RegionListDto;
 import gitbal.backend.domain.regionPage.dto.RegionListPageResponseDto;
-import gitbal.backend.exception.NotFoundUserException;
-import gitbal.backend.exception.NotLoginedException;
+import gitbal.backend.global.exception.NotFoundUserException;
+import gitbal.backend.global.exception.NotLoginedException;
 import gitbal.backend.domain.repository.RegionRepository;
 import gitbal.backend.domain.repository.UserRepository;
 import gitbal.backend.global.security.CustomUserDetails;

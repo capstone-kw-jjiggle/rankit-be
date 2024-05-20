@@ -1,6 +1,6 @@
 package gitbal.backend.global.util;
 
-import gitbal.backend.exception.NotLoginedException;
+import gitbal.backend.global.exception.NotLoginedException;
 import gitbal.backend.global.security.CustomUserDetails;
 import org.springframework.security.core.Authentication;
 

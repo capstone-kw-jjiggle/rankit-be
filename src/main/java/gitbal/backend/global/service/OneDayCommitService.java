@@ -1,6 +1,6 @@
-package gitbal.backend.domain.service;
+package gitbal.backend.global.service;
 
-import gitbal.backend.domain.entity.OneDayCommit;
+import gitbal.backend.global.entity.OneDayCommit;
 import gitbal.backend.domain.repository.OneDayCommitRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -2,7 +2,7 @@ package gitbal.backend.domain.auth.controller;
 
 import gitbal.backend.domain.auth.dto.JoinRequestDto;
 import gitbal.backend.domain.auth.service.LoginService;
-import gitbal.backend.domain.dto.UserInfoDto;
+import gitbal.backend.global.dto.UserInfoDto;
 import gitbal.backend.domain.auth.service.UserInfoService;
 import gitbal.backend.global.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;

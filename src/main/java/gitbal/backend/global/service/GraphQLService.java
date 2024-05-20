@@ -1,4 +1,4 @@
-package gitbal.backend.domain.service;
+package gitbal.backend.global.service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;

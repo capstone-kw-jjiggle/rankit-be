@@ -1,6 +1,6 @@
 package gitbal.backend.domain.userPage.dto;
 
-import gitbal.backend.domain.dto.SchoolRankDto;
+import gitbal.backend.global.dto.SchoolRankDto;
 import java.util.List;
 import lombok.Getter;
 

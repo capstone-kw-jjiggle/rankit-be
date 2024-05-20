@@ -1,11 +1,11 @@
 package gitbal.backend.domain.auth.dto;
 
 
-import gitbal.backend.domain.entity.MajorLanguage;
-import gitbal.backend.domain.entity.OneDayCommit;
-import gitbal.backend.domain.entity.Region;
-import gitbal.backend.domain.entity.School;
-import gitbal.backend.domain.entity.User;
+import gitbal.backend.global.entity.MajorLanguage;
+import gitbal.backend.global.entity.OneDayCommit;
+import gitbal.backend.global.entity.Region;
+import gitbal.backend.global.entity.School;
+import gitbal.backend.global.entity.User;
 import java.util.List;
 
 public record UserDto(

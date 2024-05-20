@@ -1,4 +1,4 @@
-package gitbal.backend.domain.dto;
+package gitbal.backend.global.dto;
 
 
 public record UserScoreInfoDto(Long prCount, Long commitCount, Long issues,

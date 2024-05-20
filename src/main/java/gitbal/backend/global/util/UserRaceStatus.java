@@ -1,7 +1,7 @@
 package gitbal.backend.global.util;
 
 
-import gitbal.backend.domain.entity.User;
+import gitbal.backend.global.entity.User;
 import gitbal.backend.domain.userPage.dto.UserRankRaceResponseDto;
 import java.util.ArrayList;
 import java.util.Comparator;

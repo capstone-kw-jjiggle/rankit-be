@@ -1,6 +1,6 @@
 package gitbal.backend.domain.mainPage.dto;
 
-import gitbal.backend.domain.dto.PageInfoDto;
+import gitbal.backend.global.dto.PageInfoDto;
 import java.util.List;
 import lombok.Getter;
 

@@ -1,7 +1,7 @@
 package gitbal.backend.domain.repository;
 
 
-import gitbal.backend.domain.entity.School;
+import gitbal.backend.global.entity.School;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;

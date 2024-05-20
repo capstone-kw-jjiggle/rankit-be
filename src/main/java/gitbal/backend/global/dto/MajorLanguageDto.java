@@ -1,7 +1,7 @@
-package gitbal.backend.domain.dto;
+package gitbal.backend.global.dto;
 
 
-import gitbal.backend.domain.entity.MajorLanguage;
+import gitbal.backend.global.entity.MajorLanguage;
 
 public record MajorLanguageDto(String languageName, Long languageUsageCount) {
 

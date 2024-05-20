@@ -1,4 +1,4 @@
-package gitbal.backend.domain.entity;
+package gitbal.backend.global.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -6,36 +6,31 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
-import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class School {
+@Setter //todo : MockDataGenerator에서 score값을 0으로 초기화하기 위한 세팅
+public class Region {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "school_id")
-  private Long id;
+  @Column(name = "region_id")
+  private Long regionId;
 
 
   @NotNull
   @Column(length = 40)
-  private String schoolName;
+  private String regionName;
 
+  @NotNull
   @ColumnDefault(value = "0")
   private Long score;
-
-
-  @ColumnDefault(value= "0")
-  private Long changedScore;
-
-  @ColumnDefault(value = "0")
-  private int schoolRank;
 
   @NotNull
   private String topContributor;
@@ -43,20 +38,22 @@ public class School {
   @NotNull
   private Long contributorScore;
 
-  public School(String schoolName, Long score, String topContributor, Long contributorScore) {
-    this.schoolName = schoolName;
+
+  public Region(String regionName, Long score, String topContributor, Long contributorScore) {
+    this.regionName = regionName;
     this.score = score;
     this.topContributor = topContributor;
     this.contributorScore = contributorScore;
   }
 
-  // TODO: test 용도여서 나중에 실제로 값 넣으면 변경해야함.
-  public static School of() {
-    return new School("광운대학교", 0L, "khyojun", 0L);
-  }
-
   public void addScore(Long score) {
     this.score += score;
+  }
+
+
+  // TODO: test 용도여서 나중에 실제로 값 넣으면 변경해야함.
+  public static Region of() {
+    return new Region("부산", 0L, "khyojun", 0L);
   }
 
   public void updateContributerInfo(String nickname, Long score) {
@@ -66,23 +63,5 @@ public class School {
     }
   }
 
-  public void setSchoolRank(int rank) {
-    this.schoolRank=rank;
-  }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (!(o instanceof School school)) {
-      return false;
-    }
-    return Objects.equals(schoolName, school.schoolName);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(schoolName);
-  }
 }

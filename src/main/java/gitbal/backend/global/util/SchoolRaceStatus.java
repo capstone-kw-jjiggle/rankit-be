@@ -1,8 +1,8 @@
 package gitbal.backend.global.util;
 
 
-import gitbal.backend.domain.dto.SchoolRankDto;
-import gitbal.backend.domain.entity.School;
+import gitbal.backend.global.dto.SchoolRankDto;
+import gitbal.backend.global.entity.School;
 import gitbal.backend.domain.userPage.dto.SchoolRankRaceResponseDto;
 import java.util.ArrayList;
 import java.util.Comparator;

@@ -1,8 +1,8 @@
 package gitbal.backend.domain.mainPage.dto;
 
 
-import gitbal.backend.domain.entity.Region;
-import gitbal.backend.domain.entity.School;
+import gitbal.backend.global.entity.Region;
+import gitbal.backend.global.entity.School;
 import lombok.Getter;
 
 @Getter

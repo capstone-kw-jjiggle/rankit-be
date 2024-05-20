@@ -1,7 +1,7 @@
-package gitbal.backend.domain.dto;
+package gitbal.backend.global.dto;
 
 
-import gitbal.backend.domain.entity.User;
+import gitbal.backend.global.entity.User;
 
 public class UserInfoDto {
 

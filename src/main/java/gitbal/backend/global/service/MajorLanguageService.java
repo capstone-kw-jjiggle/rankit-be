@@ -1,11 +1,11 @@
-package gitbal.backend.domain.service;
+package gitbal.backend.global.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gitbal.backend.domain.dto.MajorLanguageDto;
-import gitbal.backend.domain.entity.MajorLanguage;
-import gitbal.backend.domain.entity.User;
+import gitbal.backend.global.dto.MajorLanguageDto;
+import gitbal.backend.global.entity.MajorLanguage;
+import gitbal.backend.global.entity.User;
 import gitbal.backend.domain.userPage.dto.UserRankMajorLanguageResponseDto;
 import gitbal.backend.global.util.LanguageResponseConverter;
 import gitbal.backend.domain.repository.MajorLanguageRepository;

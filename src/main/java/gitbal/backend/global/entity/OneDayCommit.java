@@ -1,4 +1,4 @@
-package gitbal.backend.domain.entity;
+package gitbal.backend.global.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

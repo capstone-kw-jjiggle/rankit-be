@@ -1,15 +1,15 @@
 package gitbal.backend.domain.schoolPage.service;
 
 
-import gitbal.backend.domain.entity.School;
-import gitbal.backend.domain.entity.User;
+import gitbal.backend.global.entity.School;
+import gitbal.backend.global.entity.User;
 import gitbal.backend.domain.schoolPage.dto.FirstRankSchoolDto;
 import gitbal.backend.domain.schoolPage.dto.MySchoolInfoResponseDto;
 import gitbal.backend.domain.schoolPage.dto.SchoolListDto;
 import gitbal.backend.domain.schoolPage.dto.SchoolListPageResponseDto;
-import gitbal.backend.exception.NotFoundSchoolException;
-import gitbal.backend.exception.NotFoundUserException;
-import gitbal.backend.exception.NotLoginedException;
+import gitbal.backend.global.exception.NotFoundSchoolException;
+import gitbal.backend.global.exception.NotFoundUserException;
+import gitbal.backend.global.exception.NotLoginedException;
 import gitbal.backend.global.exception.PageOutOfRangeException;
 import gitbal.backend.global.exception.WrongPageNumberException;
 import gitbal.backend.domain.repository.SchoolRepository;

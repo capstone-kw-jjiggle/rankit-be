@@ -1,14 +1,14 @@
 package gitbal.backend.global.handler;
 
-import gitbal.backend.exception.JoinException;
-import gitbal.backend.exception.MainPageFirstRankException;
-import gitbal.backend.exception.NotDrawUserException;
-import gitbal.backend.exception.NotFoundRegionException;
-import gitbal.backend.exception.NotFoundSchoolException;
-import gitbal.backend.exception.NotFoundUserException;
-import gitbal.backend.exception.NotLoginedException;
+import gitbal.backend.global.exception.JoinException;
+import gitbal.backend.global.exception.MainPageFirstRankException;
+import gitbal.backend.global.exception.NotDrawUserException;
+import gitbal.backend.global.exception.NotFoundRegionException;
+import gitbal.backend.global.exception.NotFoundSchoolException;
+import gitbal.backend.global.exception.NotFoundUserException;
+import gitbal.backend.global.exception.NotLoginedException;
 import gitbal.backend.global.exception.PageOutOfRangeException;
-import gitbal.backend.exception.UserRankException;
+import gitbal.backend.global.exception.UserRankException;
 import gitbal.backend.global.exception.WrongPageNumberException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

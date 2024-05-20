@@ -1,9 +1,9 @@
 package gitbal.backend.domain.auth.service;
 
 
-import gitbal.backend.domain.dto.UserInfoDto;
-import gitbal.backend.domain.entity.User;
-import gitbal.backend.exception.NotFoundUserException;
+import gitbal.backend.global.dto.UserInfoDto;
+import gitbal.backend.global.entity.User;
+import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

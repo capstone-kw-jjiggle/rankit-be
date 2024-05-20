@@ -1,6 +1,6 @@
 package gitbal.backend.domain.regionPage.dto;
 
-import gitbal.backend.domain.entity.Region;
+import gitbal.backend.global.entity.Region;
 import lombok.Getter;
 
 @Getter

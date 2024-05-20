@@ -1,6 +1,6 @@
 package gitbal.backend.global.util;
 
-import gitbal.backend.domain.dto.UserScoreInfoDto;
+import gitbal.backend.global.dto.UserScoreInfoDto;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,14 +1,14 @@
 package gitbal.backend.domain.userPage.service;
 
-import gitbal.backend.domain.entity.Region;
-import gitbal.backend.domain.entity.School;
+import gitbal.backend.global.entity.Region;
+import gitbal.backend.global.entity.School;
 import gitbal.backend.domain.userPage.dto.RegionRankRaceResponseDto;
 import gitbal.backend.domain.userPage.dto.SchoolRankRaceResponseDto;
-import gitbal.backend.domain.entity.User;
-import gitbal.backend.domain.service.MajorLanguageService;
-import gitbal.backend.domain.service.RegionService;
-import gitbal.backend.domain.service.SchoolService;
-import gitbal.backend.domain.service.UserService;
+import gitbal.backend.global.entity.User;
+import gitbal.backend.global.service.MajorLanguageService;
+import gitbal.backend.global.service.RegionService;
+import gitbal.backend.global.service.SchoolService;
+import gitbal.backend.global.service.UserService;
 import gitbal.backend.domain.userPage.dto.UserRankMajorLanguageResponseDto;
 import gitbal.backend.domain.userPage.dto.UserRankRaceResponseDto;
 import gitbal.backend.domain.userPage.dto.UserRankScoreResponseDto;
