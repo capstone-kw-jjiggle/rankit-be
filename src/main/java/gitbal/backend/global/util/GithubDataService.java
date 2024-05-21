@@ -53,6 +53,8 @@ public class GithubDataService implements UserInfoService, TopLanguageService {
         return new HttpEntity<>(query, headers);
     }
 
+
+    // 작업 진행하기
     @Override
     public ResponseEntity<String> requestUserInfo(String username) {
         LocalDate yesterday = LocalDate.now(ZoneId.of("UTC")).minusDays(1);
@@ -64,8 +66,7 @@ public class GithubDataService implements UserInfoService, TopLanguageService {
         String query = getUserInfoQuery(username, from, to);
 
 
-        return restTemplate.exchange(
-            "https://api.github.com/graphql",
+        return restTemplate.exchange(GITHUB_GRAPHQL_URL,
             HttpMethod.POST,
             createHttpEntity(query),
             String.class

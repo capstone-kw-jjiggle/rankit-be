@@ -2,7 +2,7 @@ package gitbal.backend.api.auth.service;
 
 import gitbal.backend.api.auth.dto.JoinRequestDto;
 import gitbal.backend.api.auth.dto.UserDto;
-import gitbal.backend.domain.grade.Grade;
+import gitbal.backend.global.constant.Grade;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.domain.majorlanguage.MajorLanguageService;

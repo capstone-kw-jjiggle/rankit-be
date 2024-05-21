@@ -1,7 +1,7 @@
 package gitbal.backend.global.mock;
 
 
-import gitbal.backend.domain.grade.Grade;
+import gitbal.backend.global.constant.Grade;
 import gitbal.backend.domain.majorlanguage.MajorLanguage;
 import gitbal.backend.domain.onedaycommit.OneDayCommit;
 import gitbal.backend.domain.region.Region;

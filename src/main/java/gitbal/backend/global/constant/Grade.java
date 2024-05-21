@@ -1,4 +1,4 @@
-package gitbal.backend.domain.grade;
+package gitbal.backend.global.constant;
 
 public enum Grade {
     NEWBIE, GREEN, RED, PURPLE

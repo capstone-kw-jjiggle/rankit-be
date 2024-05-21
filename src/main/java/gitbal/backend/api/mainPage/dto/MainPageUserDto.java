@@ -1,7 +1,7 @@
 package gitbal.backend.api.mainPage.dto;
 
 
-import gitbal.backend.domain.grade.Grade;
+import gitbal.backend.global.constant.Grade;
 
 public record MainPageUserDto(String username, long userscore, Grade grade) {
 
