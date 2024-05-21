@@ -1,5 +1,7 @@
-package gitbal.backend.global.service;
+package gitbal.backend.global.util;
 
+import gitbal.backend.domain.majorlanguage.TopLanguageService;
+import gitbal.backend.domain.user.UserInfoService;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -14,28 +16,28 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
-public class GraphQLService {
+public class GithubDataService implements UserInfoService, TopLanguageService {
 
     @Value("${token}")
     private String token;
     private final RestTemplate restTemplate;
-    private final String GraphQL_URL = "https://api.github.com/graphql";
+    private static final String GITHUB_GRAPHQL_URL = "https://api.github.com/graphql";
 
 
+    @Override
     public ResponseEntity<String> requestTopLanguageQuery(String username) {
-
-        String query = getTopLanguageQueryh(username);
+        String query = getTopLanguageQuery(username);
 
         // GitHub GraphQL API 호출
         return restTemplate.exchange(
-            GraphQL_URL,
+            GITHUB_GRAPHQL_URL,
             HttpMethod.POST,
             createHttpEntity(query),
             String.class
         );
     }
 
-    private static String getTopLanguageQueryh(String username) {
+    private String getTopLanguageQuery(String username) {
         String query =
             "{ \"query\": \"query getUserLanguages($username: String!) { user(login: $username) { repositories(first: 100) { nodes { languages(first: 10) { edges { size node { name } } } } } } }\", \"variables\": { \"username\": \""
                 + username + "\" } }";
@@ -51,6 +53,7 @@ public class GraphQLService {
         return new HttpEntity<>(query, headers);
     }
 
+    @Override
     public ResponseEntity<String> requestUserInfo(String username) {
         LocalDate yesterday = LocalDate.now(ZoneId.of("UTC")).minusDays(1);
         String from = yesterday.format(DateTimeFormatter.ISO_DATE) + "T00:00:00Z";
@@ -59,6 +62,7 @@ public class GraphQLService {
         String to = now.format(DateTimeFormatter.ISO_DATE) + "T00:00:00Z";
 
         String query = getUserInfoQuery(username, from, to);
+
 
         return restTemplate.exchange(
             "https://api.github.com/graphql",
@@ -69,7 +73,7 @@ public class GraphQLService {
 
     }
 
-    private static String getUserInfoQuery(String username, String from, String to) {
+    private String getUserInfoQuery(String username, String from, String to) {
         return "{" +
             "\"query\": \"query GetUserContributions($username: String!, $from: DateTime!, $to: DateTime!) {"
             +

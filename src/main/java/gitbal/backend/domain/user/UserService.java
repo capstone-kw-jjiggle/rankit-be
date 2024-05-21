@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.api.auth.dto.GitbalApiDto;
-import gitbal.backend.global.util.GithubApiRequest;
 import gitbal.backend.global.util.SurroundingRankStatus;
 
 import gitbal.backend.global.exception.UserRankException;
