@@ -1,12 +1,15 @@
 package gitbal.backend.global.util;
 
 
-public record SurroundingRankStatus(int forwardCount, int backwardCount) {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-    public SurroundingRankStatus(int forwardCount, int backwardCount) {
-        this.forwardCount = forwardCount;
-        this.backwardCount = backwardCount;
-    }
+@Getter
+@AllArgsConstructor
+public class SurroundingRankStatus {
+
+    private int forwardCount;
+    private int backwardCount;
 
     public static SurroundingRankStatus calculateUserForwardBackward(int forwardCount, int backwardCount,
         int range) {

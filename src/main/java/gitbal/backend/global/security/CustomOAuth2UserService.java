@@ -1,7 +1,7 @@
 package gitbal.backend.global.security;
 
-import gitbal.backend.global.repository.UserRepository;
-import gitbal.backend.global.entity.User;
+import gitbal.backend.domain.user.UserRepository;
+import gitbal.backend.domain.user.User;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

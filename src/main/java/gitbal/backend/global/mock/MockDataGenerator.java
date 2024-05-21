@@ -1,19 +1,19 @@
 package gitbal.backend.global.mock;
 
 
-import gitbal.backend.global.entity.Grade;
-import gitbal.backend.global.entity.MajorLanguage;
-import gitbal.backend.global.entity.OneDayCommit;
-import gitbal.backend.global.entity.Region;
-import gitbal.backend.global.entity.School;
-import gitbal.backend.global.entity.User;
-import gitbal.backend.global.repository.MajorLanguageRepository;
-import gitbal.backend.global.repository.OneDayCommitRepository;
-import gitbal.backend.global.repository.RegionRepository;
-import gitbal.backend.global.repository.SchoolRepository;
-import gitbal.backend.global.repository.UserRepository;
-import gitbal.backend.global.service.RegionService;
-import gitbal.backend.global.service.SchoolService;
+import gitbal.backend.domain.grade.Grade;
+import gitbal.backend.domain.majorlanguage.MajorLanguage;
+import gitbal.backend.domain.onedaycommit.OneDayCommit;
+import gitbal.backend.domain.region.Region;
+import gitbal.backend.domain.school.School;
+import gitbal.backend.domain.user.User;
+import gitbal.backend.domain.majorlanguage.MajorLanguageRepository;
+import gitbal.backend.domain.onedaycommit.OneDayCommitRepository;
+import gitbal.backend.domain.region.RegionRepository;
+import gitbal.backend.domain.school.SchoolRepository;
+import gitbal.backend.domain.user.UserRepository;
+import gitbal.backend.domain.region.RegionService;
+import gitbal.backend.domain.school.SchoolService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
