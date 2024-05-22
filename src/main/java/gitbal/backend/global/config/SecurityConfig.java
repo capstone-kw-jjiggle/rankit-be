@@ -34,7 +34,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/swagger-ui/**", "/").permitAll();
                     auth.requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                         .permitAll();
-                    auth.requestMatchers("/api/v1/logincheck", "/api/v1/join", "/api/v1/schoolRank/mySchool") // TODO : 로그인 필요한 uri 다 집어넣기
+                    auth.requestMatchers("/api/v1/login", "/api/v1/join", "/api/v1/schoolRank/mySchool") // TODO : 로그인 필요한 uri 다 집어넣기
                         .authenticated();
                     auth.anyRequest().permitAll();
                 }
