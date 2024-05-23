@@ -1,7 +1,7 @@
 package gitbal.backend.global.security;
 
-import gitbal.backend.domain.refreshtoken.RefreshTokenRepository;
 import gitbal.backend.domain.refreshtoken.RefreshToken;
+import gitbal.backend.domain.refreshtoken.RefreshTokenRepository;
 import gitbal.backend.global.security.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,7 +21,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
 
     // TODO : 프론트 url 받아서 보내줘야함!
-    private final String REDIRECT_URL = "http://localhost:5173/auth/school";
+    private final String REDIRECT_URL = "http://localhost:8080/api/v1/login/success";
     private final String ACCESS_TOKEN_PREFIX = "accessToken";
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
@@ -34,11 +34,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             authentication);
 
         // TODO: 여기 관련 부분 뒤로 넘길 수 없는지 관련하여 고민
-        String accessToken = jwtTokenProvider.createAccessToken(githubOAuth2UserInfo);
-        String refreshToken = jwtTokenProvider.createRefreshToken(githubOAuth2UserInfo);
 
         if (isUserEmptyRefreshToken(githubOAuth2UserInfo)) {
             log.info("[onAuthenticationSuccess] refreshtoken이 발견되지 않았기에 제작하고 있는것입니다.");
+            String refreshToken = jwtTokenProvider.createRefreshToken(githubOAuth2UserInfo);
             refreshTokenRepository.save(RefreshToken.builder().userNickname(
                     githubOAuth2UserInfo.getNickname())
                 .refreshToken(refreshToken)
@@ -47,7 +46,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
 
         String uriString = UriComponentsBuilder.fromUriString(REDIRECT_URL)
-            .queryParam(ACCESS_TOKEN_PREFIX, accessToken)
+            .queryParam("username", githubOAuth2UserInfo.getNickname())
             .build().toUriString();
 
         response.sendRedirect(uriString);
@@ -67,7 +66,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         return false;
     }
 
-    private static GithubOAuth2UserInfo changeGithubOAuth2UserInfo(Authentication authentication) {
+    private GithubOAuth2UserInfo changeGithubOAuth2UserInfo(Authentication authentication) {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
         log.info("[changeGithubOAuth2UserInfo]oauthUser is = {}", oAuth2User.getAttributes());

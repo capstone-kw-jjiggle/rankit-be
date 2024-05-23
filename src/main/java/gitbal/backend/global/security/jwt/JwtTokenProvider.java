@@ -33,10 +33,10 @@ public class JwtTokenProvider {
     private final Long REFRESH_EXPIRE_LENGTH = 1000L * 600; // 10분
 
 
-    public String createAccessToken(GithubOAuth2UserInfo authentication) {
+    public String createAccessToken(String nickname) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + ACCESS_EXPIRE_LENGTH);
-        return JwtUtils.generateToken(authentication.getNickname(), now, validity, key);
+        return JwtUtils.generateToken(nickname, now, validity, key);
     }
 
     public String createRefreshToken(GithubOAuth2UserInfo authentication) {

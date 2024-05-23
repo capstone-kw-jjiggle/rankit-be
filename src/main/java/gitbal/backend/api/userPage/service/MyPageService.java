@@ -96,7 +96,7 @@ public class MyPageService {
   }
 
   public ResponseEntity<String> deleteProfileImg (Authentication authentication) {
-    if (authentication == null){
+    if (authentication == null) {
       throw new NotLoginedException();
     }
     CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
@@ -116,12 +116,5 @@ public class MyPageService {
 
     }
 
-  }
-
-  private User getAuthenticatedUser(Authentication authentication) {
-    AuthenticationChecker authenticationChecker = new AuthenticationChecker(authentication);
-    String username = authenticationChecker.checkAndRetrieveNickname();
-    return userRepository.findByNickname(username).
-        orElseThrow(NotFoundUserException::new);
   }
 }

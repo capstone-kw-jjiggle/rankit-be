@@ -1,7 +1,7 @@
 package gitbal.backend.api.auth.controller;
 
 import gitbal.backend.api.auth.dto.JoinRequestDto;
-import gitbal.backend.api.auth.service.LoginService;
+import gitbal.backend.api.auth.service.AuthService;
 import gitbal.backend.api.auth.dto.UserInfoDto;
 import gitbal.backend.api.auth.service.UserInfoService;
 import gitbal.backend.global.security.CustomUserDetails;
@@ -27,9 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "인증 관련 처리 API(일부 구현 완료)", description = "인증에 필요한 api입니다.")
 public class AuthController {
 
-    private final LoginService loginService;
+    private final AuthService authService;
     private final UserInfoService userInfoService;
-
 
     @PostMapping("/join")
     @Operation(summary = "회원가입 (구현 완료)", description = "회원가입을 위한 api입니다.")
@@ -41,19 +40,13 @@ public class AuthController {
 
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
 
-        loginService.join(joinRequestDto, principal);
+        authService.join(joinRequestDto, principal);
 
         response.setHeader("accessToken", principal.getAccessToken());
         return ResponseEntity.ok("회원 가입 성공!");
     }
 
-    @GetMapping("/logincheck")
-    public String joinTest(Authentication authentication, HttpServletResponse response) {
-        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-        System.out.println(principal.getNickname());
-        response.setHeader("AccessToken", principal.getAccessToken());
-        return "hello";
-    }
+
 
     @GetMapping("/userInfo/{username}")
     @Operation(summary = "유저 정보 조회 (구현 완료)", description = "유저 정보 조회를 위한 api입니다.")
@@ -84,6 +77,6 @@ public class AuthController {
         @ApiResponse(responseCode = "5xx", description = "회원탈퇴에 실패했습니다.")
     })
     public ResponseEntity<String> withdrawService(Authentication authentication) {
-        return ResponseEntity.ok(loginService.withDrawUser(authentication));
+        return ResponseEntity.ok(authService.withDrawUser(authentication));
     }
 }
