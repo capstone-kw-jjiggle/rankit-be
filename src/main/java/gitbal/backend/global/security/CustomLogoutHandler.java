@@ -24,15 +24,9 @@ public class CustomLogoutHandler implements LogoutHandler {
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication) {
-        try {
-            String bearerToken = request.getHeader("Authorization");
-            String bearer = bearerToken.split("Bearer ")[1];
-            log.info(bearer);
-            Claims claims = JwtUtils.parseClaims(bearer, jwtKey);
-            authService.logoutUser(claims.getSubject());
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new LogoutException();
-        }
+        String bearer = JwtUtils.extractBearerToken(request);
+        log.info(bearer);
+        Claims claims = JwtUtils.parseClaims(bearer, jwtKey);
+        authService.logoutUser(claims.getSubject());
     }
 }

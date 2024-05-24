@@ -1,8 +1,11 @@
 package gitbal.backend.global.handler;
 
 import gitbal.backend.global.exception.JoinException;
+import gitbal.backend.global.exception.LogoutException;
 import gitbal.backend.global.exception.MainPageFirstRankException;
+import gitbal.backend.global.exception.NoTokenException;
 import gitbal.backend.global.exception.NotDrawUserException;
+import gitbal.backend.global.exception.NotFoundRefreshTokenException;
 import gitbal.backend.global.exception.NotFoundRegionException;
 import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.exception.NotFoundUserException;
@@ -67,6 +70,23 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotDrawUserException.class)
     public  ResponseEntity<String> handleDrawUserException(NotDrawUserException e){
         return ResponseEntity.status(500).body(e.getMessage());
+    }
+
+
+    @ExceptionHandler(LogoutException.class)
+    public  ResponseEntity<String> handleLogoutException(LogoutException e){
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(NotFoundRefreshTokenException.class)
+    public  ResponseEntity<String> handleRefreshTokenException(NotFoundRefreshTokenException e){
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+
+    @ExceptionHandler(NoTokenException.class)
+    public  ResponseEntity<String> handleNoTokenException(NoTokenException e){
+        return ResponseEntity.status(400).body(e.getMessage());
     }
 
 }
