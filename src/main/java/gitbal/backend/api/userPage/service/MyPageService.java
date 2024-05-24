@@ -59,12 +59,10 @@ public class MyPageService {
   }
 
   private void updateUserSchool(User user, String schoolName) {
-    School school = schoolService.findBySchoolName(schoolName);
-    userService.updateUserSchool(user, school);
+    userService.updateUserSchool(user, schoolService.findBySchoolName(schoolName));
   }
 
   private void updateUserRegion(User user, String regionName) {
-    Region region = regionService.findByRegionName(regionName);
-    userService.updateUserRegion(user, region);
+    userService.updateUserRegion(user, regionService.findByRegionName(regionName));
   }
 }
