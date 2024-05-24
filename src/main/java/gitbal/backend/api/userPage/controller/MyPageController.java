@@ -45,7 +45,8 @@ public class MyPageController {
         @ApiResponse(responseCode = "5xx", description = "학교 수정에 실패했습니다.")
     })
     public ResponseEntity<String> modifySchool(Authentication authentication, @RequestParam String modifySchoolName){
-        return myPageService.modifySchoolName(authentication, modifySchoolName);
+        myPageService.modifySchoolName(authentication, modifySchoolName);
+        return ResponseEntity.ok("학교 수정에 성공했습니다.");
     }
 
     @PutMapping("/config/region")
@@ -55,7 +56,8 @@ public class MyPageController {
         @ApiResponse(responseCode = "5xx", description = "지역 수정에 실패했습니다.")
     })
     public ResponseEntity<String> modifyRegion(Authentication authentication, @RequestParam String modifyRegionName){
-        return myPageService.modifyRegionName(authentication, modifyRegionName);
+        myPageService.modifyRegionName(authentication, modifyRegionName);
+        return ResponseEntity.ok("지역 수정에 성공했습니다.");
     }
 
 
@@ -66,7 +68,8 @@ public class MyPageController {
         @ApiResponse(responseCode = "5xx", description = "프로필 이미지 수정에 실패했습니다.")
     })
     public ResponseEntity<String> modifyImg(Authentication authentication, @RequestParam String newProfileImgUrl ) {
-        return myPageService.modifyProfileImg(authentication, newProfileImgUrl);
+        myPageService.modifyProfileImg(authentication, newProfileImgUrl);
+        return ResponseEntity.ok("프로필 이미지 수정에 성공했습니다.");
     }
 
 
@@ -77,6 +80,7 @@ public class MyPageController {
         @ApiResponse(responseCode = "5xx", description = "프로필 이미지 삭제에 실패했습니다.")
     })
     public ResponseEntity<String> deleteImg(Authentication authentication) {
-        return myPageService.deleteProfileImg(authentication);
+        myPageService.deleteProfileImg(authentication);
+        return ResponseEntity.ok("프로필 이미지 삭제에 성공했습니다.");
     }
 }

@@ -43,7 +43,7 @@ public class SchoolRankService {
     public ResponseEntity<SchoolListPageResponseDto<SchoolListDto>> getSchoolList(Integer page) {
         try{
             Sort sort = Sort.by("score").descending();
-            Pageable pageable = PageRequest.of(page - 1, 10, sort);
+            Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE, sort);
             Page<School> schoolPage = schoolRepository.findAll(pageable);
 
             List<SchoolListDto> schoolDtoList = schoolPage.stream()

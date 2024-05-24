@@ -1,6 +1,7 @@
 package gitbal.backend.domain.region;
 
 import gitbal.backend.domain.user.User;
+import gitbal.backend.global.exception.NotFoundRegionException;
 import gitbal.backend.global.util.SurroundingRankStatus;
 import gitbal.backend.global.exception.JoinException;
 import gitbal.backend.domain.user.UserRepository;
@@ -21,7 +22,7 @@ public class RegionService {
 
   public Region findByRegionName(String regionName) {
     return regionRepository.findByRegionName(regionName)
-        .orElseThrow(() -> new JoinException("회원가입 중 지역이름에 대한 정보를 db에서 읽어오는데 실패했습니다."));
+        .orElseThrow(NotFoundRegionException::new);
   }
 
   public void joinNewUserScore(User findUser) {
@@ -55,5 +56,7 @@ public class RegionService {
       }
     }
   }
+
+
 
 }
