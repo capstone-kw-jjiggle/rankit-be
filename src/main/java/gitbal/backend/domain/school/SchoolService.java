@@ -1,6 +1,7 @@
 package gitbal.backend.domain.school;
 
 import gitbal.backend.domain.user.User;
+import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.util.SurroundingRankStatus;
 import gitbal.backend.global.exception.JoinException;
 import gitbal.backend.domain.user.UserRepository;
@@ -21,7 +22,7 @@ public class SchoolService {
 
   public School findBySchoolName(String schoolName) {
     return schoolRepository.findBySchoolName(schoolName)
-        .orElseThrow(() -> new JoinException("존재하지 않는 학교 이름입니다."));
+        .orElseThrow(NotFoundSchoolException::new);
   }
 
   public void joinNewUserScore(User findUser) {

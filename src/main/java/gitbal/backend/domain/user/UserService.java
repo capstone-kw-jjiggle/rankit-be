@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.api.auth.dto.GitbalApiDto;
+import gitbal.backend.global.exception.NotFoundRegionException;
+import gitbal.backend.global.exception.NotFoundSchoolException;
+import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.util.SurroundingRankStatus;
 
 import gitbal.backend.global.exception.UserRankException;
@@ -61,7 +64,7 @@ public class UserService {
 
 
     public User findByUserName(String username) {
-        return userRepository.findByNickname(username).orElseThrow(UserRankException::new);
+        return userRepository.findByNickname(username).orElseThrow(NotFoundUserException::new);
     }
 
     public UserRaceStatus findUsersScoreRaced(Long score) {
@@ -78,13 +81,33 @@ public class UserService {
 
     public School findSchoolByUserName(String username) {
         User findUser = userRepository.findByNickname(username)
-            .orElseThrow(() -> new UserRankException("학교를 찾던 도중 유저를 못 찾았습니다"));
+            .orElseThrow(NotFoundSchoolException::new);
         return findUser.getSchool();
     }
 
     public Region findRegionByUserName(String username) {
         User findUser = userRepository.findByNickname(username)
-            .orElseThrow(() -> new UserRankException("지역을 찾던 도중 유저를 못 찾았습니다."));
+            .orElseThrow(NotFoundRegionException::new);
         return findUser.getRegion();
+    }
+
+    public void updateUserSchool(User user, School school) {
+        user.setSchool(school);
+        userRepository.save(user);
+    }
+
+    public void updateUserRegion(User user, Region region) {
+        user.setRegion(region);
+        userRepository.save(user);
+    }
+
+    public void updateUserProfileImg (User user, String imgUrl) {
+        user.setProfileImg(imgUrl);
+        userRepository.save(user);
+    }
+
+    public void deleteUserProfileImg (User user) {
+        user.setProfileImg(null);
+        userRepository.save(user);
     }
 }
