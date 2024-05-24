@@ -85,7 +85,7 @@ public class JwtTokenProvider {
         return regenerateToken;
     }
 
-    private String findUserNicknameByToken(String accessToken) {
+    public String findUserNicknameByToken(String accessToken) {
         return JwtUtils.parseClaims(accessToken, key).getSubject();
     }
 

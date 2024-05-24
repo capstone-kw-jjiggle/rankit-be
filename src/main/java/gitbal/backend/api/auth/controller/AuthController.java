@@ -48,6 +48,7 @@ public class AuthController {
 
 
 
+    //TODO : 리팩토링 과정에서 Authentication 으로 처리하도록 하기
     @GetMapping("/userInfo/{username}")
     @Operation(summary = "유저 정보 조회 (구현 완료)", description = "유저 정보 조회를 위한 api입니다.")
     @ApiResponses(value = {
@@ -56,17 +57,6 @@ public class AuthController {
     })
     public ResponseEntity<UserInfoDto> userInfo(@PathVariable String username) {
         return userInfoService.getUserInfoByUserName(username);
-    }
-
-
-    @GetMapping("/logout")
-    @Operation(summary = "로그아웃 (미구현)", description = "로그아웃을 위한 api입니다.")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "로그아웃에 성공했습니다."),
-        @ApiResponse(responseCode = "5xx", description = "로그아웃에 실패했습니다.")
-    })
-    public void logout() {
-
     }
 
 
