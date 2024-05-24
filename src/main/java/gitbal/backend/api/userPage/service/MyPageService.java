@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,23 +28,26 @@ public class MyPageService {
   private final UserRepository userRepository;
 
   //지역이나 학교 수정해도 수정하기 전 후의 지역점수나 학교점수에 유저 점수 직접 더하고 빼지 않음. (어짜피 점수 업데이트 할 때 반영되니깐)
-
+  @Transactional
   public void modifySchoolName(Authentication authentication, String newSchoolName) {
     User user = checkAuthAndGetUser(authentication);
     updateUserSchool(user, newSchoolName);
   }
 
+  @Transactional
   public void modifyRegionName(Authentication authentication, String newRegionName){
     User user = checkAuthAndGetUser(authentication);
     updateUserRegion(user, newRegionName);
   }
 
+  @Transactional
   public void modifyProfileImg (Authentication authentication, String newProfileImgUrl) {
 
     User user = checkAuthAndGetUser(authentication);
     userService.updateUserProfileImg(user, newProfileImgUrl);
   }
 
+  @Transactional
   public void deleteProfileImg (Authentication authentication) {
     User user = checkAuthAndGetUser(authentication);
     userService.deleteUserProfileImg(user);
