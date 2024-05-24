@@ -22,8 +22,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider tokenProvider;
     private final String AUTHORIZATION_HEADER = "Authorization";
-    private final String BEARER_PREFIX = "Bearer ";
-    private final String URL_PREFIX = "accessToken=";
+
 
 
     @Override
@@ -64,22 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String extractAccessToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         String urlToken = request.getQueryString();
-
-        return checkUrlOrBearerToken(bearerToken, urlToken);
-    }
-
-    private String checkUrlOrBearerToken(String bearerToken, String urlToken) {
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-            String token = bearerToken.split(BEARER_PREFIX)[1];
-            log.info("[checkUrlOrBearerToken] header accessToken is =" + token);
-            return token;
-        }
-        if (StringUtils.hasText(urlToken) && urlToken.startsWith(URL_PREFIX)) {
-            String token = urlToken.split(URL_PREFIX)[1];
-            log.info("[checkUrlOrBearerToken] url Token is =" + token);
-            return token;
-        }
-        return null;
+        return JwtUtils.extractUrlOrBearerToken(bearerToken, urlToken);
     }
 
 
