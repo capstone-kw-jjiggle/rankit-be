@@ -43,7 +43,6 @@ public class AuthService {
     public void join(JoinRequestDto joinRequestDto, CustomUserDetails user) {
 
         String nickname = user.getNickname();
-        String avatarUrl = user.getAvatarUrl();
 
         User findUser = userRepository.findByNickname(nickname)
             .orElseThrow(() -> new JoinException("유저가 존재하지 않습니다."));
@@ -52,21 +51,20 @@ public class AuthService {
         GitbalApiDto gitbalApiDto = userService.callUsersGithubApi(nickname);
 
         //loginRequestDto 학교이름, 지역이름, 프로필 이미지 이름
-        UserDto userDto = initUserDto(joinRequestDto, gitbalApiDto, nickname,
-            avatarUrl);
+        UserDto userDto = initUserDto(joinRequestDto, gitbalApiDto, nickname);
 
         joinUpdate(findUser, userDto);
     }
 
     private UserDto initUserDto(JoinRequestDto joinRequestDto, GitbalApiDto gitbalApiDto,
-        String nickname, String avatarUrl) {
+        String nickname) {
         return UserDto.of(schoolService.findBySchoolName(joinRequestDto.univName()),
             regionService.findByRegionName(joinRequestDto.region()),
             oneDayCommitService.calculateRecentCommit(gitbalApiDto.getRecentCommit()),
             majorLanguageService.getUserTopLaunguages(nickname),
             nickname,
             gitbalApiDto.getScore(),
-            userService.findUserImg(joinRequestDto.imgName(), avatarUrl)
+            userService.findUserImgByUsername(nickname)
         );
     }
 

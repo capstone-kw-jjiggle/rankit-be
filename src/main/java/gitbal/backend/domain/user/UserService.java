@@ -3,15 +3,13 @@ package gitbal.backend.domain.user;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gitbal.backend.api.auth.dto.GitbalApiDto;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
-import gitbal.backend.api.auth.dto.GitbalApiDto;
 import gitbal.backend.global.exception.NotFoundRegionException;
 import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.util.SurroundingRankStatus;
-
-import gitbal.backend.global.exception.UserRankException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -55,11 +53,9 @@ public class UserService {
         ));
     }
 
-    public String findUserImg(String userSettingImage, String profileImg) {
-        if (userSettingImage == null) {
-            return profileImg;
-        }
-        return userSettingImage;
+    public String findUserImgByUsername(String username) {
+        return userRepository.findProfileImgByNickname(username)
+            .orElseThrow(NotFoundUserException::new);
     }
 
 
@@ -73,7 +69,8 @@ public class UserService {
         log.info("forwardCount = {} backwardCount = {}", forwardCount, backwardCount);
         SurroundingRankStatus surroundingRankStatus = SurroundingRankStatus.calculateUserForwardBackward(
             forwardCount, backwardCount, USER_AROUND_RANGE);
-        log.info("after forwardCount = {} backwardCount = {}", surroundingRankStatus.getForwardCount(), surroundingRankStatus.getBackwardCount());
+        log.info("after forwardCount = {} backwardCount = {}",
+            surroundingRankStatus.getForwardCount(), surroundingRankStatus.getBackwardCount());
         return UserRaceStatus.of(
             userRepository.usersScoreRaced(score, surroundingRankStatus.getForwardCount(),
                 surroundingRankStatus.getBackwardCount()));
@@ -101,12 +98,12 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void updateUserProfileImg (User user, String imgUrl) {
+    public void updateUserProfileImg(User user, String imgUrl) {
         user.setProfileImg(imgUrl);
         userRepository.save(user);
     }
 
-    public void deleteUserProfileImg (User user) {
+    public void deleteUserProfileImg(User user) {
         user.setProfileImg(null);
         userRepository.save(user);
     }
