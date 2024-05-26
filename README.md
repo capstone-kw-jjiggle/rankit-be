@@ -14,7 +14,6 @@
 
 
 <br>
-
 ## 팀원 구성
 
 <div align="center">
