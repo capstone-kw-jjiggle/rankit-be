@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SchoolInfoService implements InfoService {
 
-    private SchoolRepository schoolRepository;
+    private final SchoolRepository schoolRepository;
 
     @Override
     public List<String> findAllList() {
