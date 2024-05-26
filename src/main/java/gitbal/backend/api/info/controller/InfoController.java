@@ -18,24 +18,26 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "회원가입 진행 시 학교, 지역 이름들을 불러오기 위한 API(구현 완료)")
 public class InfoController {
 
+
     private final RegionInfoService regionInfoService;
     private final SchoolInfoService schoolInfoService;
-    @GetMapping("/school")
+
+    @GetMapping("/schoolNames")
     @Operation(summary = "학교 이름들 불러오기 (구현 완료)", description = "학교 이름들을 부르기 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "학교 이름 리스트 전달."),
     })
-    public List<String> findAllSchoolName(){
+    public List<String> findAllSchoolName() {
         return schoolInfoService.findAllList();
     }
 
 
-    @GetMapping("/region")
+    @GetMapping("/regionNames")
     @Operation(summary = "지역 이름들 불러오기 (구현 완료)", description = "지역 이름들을 부르기 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "지역 이름 리스트 전달."),
     })
-    public List<String> findAllRegionName(){
+    public List<String> findAllRegionName() {
         return regionInfoService.findAllList();
     }
 
