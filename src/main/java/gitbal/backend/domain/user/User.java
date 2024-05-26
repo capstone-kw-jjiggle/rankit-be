@@ -70,6 +70,14 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private Grade grade;
 
+    @Column(name = "user_rank")
+    @ColumnDefault("0")
+    private Integer userRank;
+
+    public void setGrade(Grade grade) { this.grade = grade; }
+
+    public void setUserRank(Integer userRank) {this.userRank = userRank;}
+
     public void setSchool(School school) {
         this.school = school;
     }
@@ -85,7 +93,7 @@ public class User {
     @Builder
     public User(School school, Region region, OneDayCommit oneDayCommit,
         List<MajorLanguage> majorLanguages,
-        String nickname, Long score, String profile_img, Grade grade) {
+        String nickname, Long score, String profile_img, Grade grade,Integer userRank) {
         this.school = school;
         this.region = region;
         this.oneDayCommit = oneDayCommit;
@@ -94,12 +102,13 @@ public class User {
         this.score = score;
         this.profile_img = profile_img;
         this.grade = grade;
+        this.userRank = userRank;
     }
 
 
     public void joinUpdateUser(School school, Region region, OneDayCommit oneDayCommit,
         List<MajorLanguage> majorLanguages,
-        String nickname, Long score, String profile_img, Grade grade) {
+        String nickname, Long score, String profile_img, Grade grade, Integer userRank) {
         this.school = school;
         this.region = region;
         this.oneDayCommit = oneDayCommit;
@@ -107,10 +116,11 @@ public class User {
         this.nickname = nickname;
         this.score = score;
         this.profile_img = profile_img;
+        this.userRank = userRank;
     }
 
     public static User of(String username, String avatarUrl) {
-        return new User(null, null, null, null, username, 0L, avatarUrl, Grade.NEWBIE);
+        return new User(null, null, null, null, username, 0L, avatarUrl, Grade.YELLOW, 0);
     }
 
 

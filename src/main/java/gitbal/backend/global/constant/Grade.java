@@ -1,5 +1,5 @@
 package gitbal.backend.global.constant;
 
 public enum Grade {
-    NEWBIE, GREEN, RED, PURPLE
+    YELLOW, GREEN, BLUE, RED, GREY, PURPLE
 }

@@ -89,7 +89,8 @@ public class AuthService {
             userDto.nickname(),
             userDto.score(),
             userDto.profile_img(),
-            Grade.NEWBIE //TODO : 일단 들어올 때 뉴비로 측정하기로 함! -> 이후에 기획 확정된 이후에 등급 계산 로직 넣고 수정해야함!
+            Grade.YELLOW, //TODO : 일단 들어올 때 최하 등급으로 측정하기로 함! -> 이후에 기획 확정된 이후에 등급 계산 로직 넣고 수정해야함!
+            0
         );
         schoolService.joinNewUserScore(findUser);
         regionService.joinNewUserScore(findUser);

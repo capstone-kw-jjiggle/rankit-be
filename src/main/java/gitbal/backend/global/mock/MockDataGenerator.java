@@ -14,9 +14,11 @@ import gitbal.backend.domain.school.SchoolRepository;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.domain.region.RegionService;
 import gitbal.backend.domain.school.SchoolService;
+import gitbal.backend.global.constant.SchoolGrade;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -59,6 +61,7 @@ public class MockDataGenerator implements CommandLineRunner {
 
       // Create a random user
       User newUser = createUser(randomSchool, randomRegion, i);
+      calculateGradeByScore(newUser);
 
       // Create a list of MajorLanguage entities for this user
       List<MajorLanguage> majorLanguages = createRandomMajorLanguagesForUser(newUser);
@@ -70,16 +73,16 @@ public class MockDataGenerator implements CommandLineRunner {
 
       // Update user with the new relations
       newUser.joinUpdateUser(randomSchool, randomRegion, oneDayCommit, majorLanguages,
-          newUser.getNickname(), newUser.getScore(), newUser.getProfile_img(), Grade.NEWBIE);
+          newUser.getNickname(), newUser.getScore(), newUser.getProfile_img(), newUser.getGrade(), 0);
       User saveUser = userRepository.save(newUser);
       scoring(saveUser);
     }
     // Test를 위한 나(이승준)의 githubid와 동일한 nickname data
     createUserWithNickname("leesj000603");
-
-
+    updateUsersRank();
     insertRegionSchoolTopContributorInfo();
     fetchSchoolScore();
+    updateSchoolGrade();
     log.info("Mock data creation completed");
   }
 
@@ -122,7 +125,7 @@ public class MockDataGenerator implements CommandLineRunner {
         .nickname(randomNickname)
         .score(randomScore) // Random userScore
         .profile_img(randomProfileImg)
-        .grade(Grade.NEWBIE)
+        .grade(Grade.YELLOW)
         .build();
   }
 
@@ -149,7 +152,7 @@ public class MockDataGenerator implements CommandLineRunner {
     OneDayCommit oneDayCommit1 = OneDayCommit.of(true);
     oneDayCommitRepository.save(oneDayCommit1);
     leesj000603.joinUpdateUser(school, region, oneDayCommit, majorLanguages,
-        leesj000603.getNickname(), leesj000603.getScore(), leesj000603.getProfile_img(), Grade.NEWBIE);
+        leesj000603.getNickname(), leesj000603.getScore(), leesj000603.getProfile_img(), Grade.YELLOW, 0);
     userRepository.save(leesj000603);
 
   }
@@ -185,4 +188,80 @@ public class MockDataGenerator implements CommandLineRunner {
     regionService.insertTopContributorInfo();
     schoolService.insertSchoolTopContributorInfo();
   }
+
+  private void updateUsersRank() {
+    List<User> users = userRepository.findAll(Sort.by("score").descending());
+    int rank = 1;
+    for (User user : users) {
+      user.setUserRank(rank++);
+      userRepository.save(user);
+    }
+  }
+
+  private void updateSchoolGrade() {
+    List<School> schools = schoolRepository.findAll(Sort.by("score").descending());
+    int totalSchools = schools.size();
+    int purpleCount = (int) Math.floor(totalSchools * 0.05);
+    int greyCount = (int) Math.floor(totalSchools * 0.1);
+    int redCount = (int) Math.floor(totalSchools * 0.15);
+    int blueCount = (int) Math.floor(totalSchools * 0.15);
+    int greenCount = (int) Math.floor(totalSchools * 0.2);
+
+    int currentRank = 1;
+    int currentCount = 0;
+    SchoolGrade currentGrade = SchoolGrade.PURPLE;
+
+    for (School school : schools) {
+      if (school.getScore() == 0) {
+        school.setGrade(SchoolGrade.YELLOW);
+      } else {
+        if (currentCount >= purpleCount && currentGrade == SchoolGrade.PURPLE) {
+          currentGrade = SchoolGrade.GREY;
+          currentCount = 0;
+        }
+        if (currentCount >= greyCount && currentGrade == SchoolGrade.GREY) {
+          currentGrade = SchoolGrade.RED;
+          currentCount = 0;
+        }
+        if (currentCount >= redCount && currentGrade == SchoolGrade.RED) {
+          currentGrade = SchoolGrade.BLUE;
+          currentCount = 0;
+        }
+        if (currentCount >= blueCount && currentGrade == SchoolGrade.BLUE) {
+          currentGrade = SchoolGrade.GREEN;
+          currentCount = 0;
+        }
+        if (currentCount >= greenCount && currentGrade == SchoolGrade.GREEN) {
+          currentGrade = SchoolGrade.YELLOW;
+          currentCount = 0;
+        }
+
+        school.setGrade(currentGrade);
+        currentCount++;
+      }
+
+      school.setSchoolRank(currentRank++);
+      schoolRepository.save(school);
+    }
+  }
+
+  private void calculateGradeByScore(User user) {
+    Long score = user.getScore();
+
+    if (score <= 60000) {
+      user.setGrade(Grade.YELLOW);
+    } else if (score <= 70000) {
+      user.setGrade(Grade.GREEN);
+    } else if (score <= 80000) {
+      user.setGrade(Grade.BLUE);
+    } else if (score <= 90000) {
+      user.setGrade(Grade.RED);
+    } else if (score <= 96000) {
+      user.setGrade(Grade.GREY);
+    } else {
+      user.setGrade(Grade.PURPLE);
+    }
+  }
+
+
 }

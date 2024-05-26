@@ -2,6 +2,8 @@ package gitbal.backend.domain.school;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import gitbal.backend.global.constant.SchoolGrade;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -36,6 +39,9 @@ public class School {
 
   @ColumnDefault(value = "0")
   private int schoolRank;
+
+  @Enumerated(value = EnumType.STRING)
+  private SchoolGrade grade;
 
   @NotNull
   private String topContributor;
@@ -65,6 +71,8 @@ public class School {
       this.contributorScore = score;
     }
   }
+
+  public void setGrade(SchoolGrade grade) { this.grade = grade; }
 
   public void setSchoolRank(int rank) {
     this.schoolRank=rank;
