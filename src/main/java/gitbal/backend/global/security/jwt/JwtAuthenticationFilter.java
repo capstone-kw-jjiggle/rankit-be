@@ -35,11 +35,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (isValidAccessToken(token)) {
                 Authentication authentication = registerAuthenticationToContext(token);
                 log.info("[doFilterInternal]" + authentication.getName() + "의 인증정보 저장");
+                response.setStatus(200);
             } else if (isValidRefreshToken(token)) {
                 log.info("[doFilterInternal] 다시 로그인을 해야합니다! 리프레시 토큰을 확인한 후 재발급합니다.");
                 String regenerateToken = tokenProvider.regenerateToken(token);
                 Authentication authentication = registerAuthenticationToContext(regenerateToken);
                 response.setHeader(AUTHORIZATION_HEADER, regenerateToken);
+                response.setStatus(200);
                 log.info("[doFilterInternal] 다시 발급받은 정보로 인증정보 {} 저장", authentication.getName());
             } else {
                 log.info("[doFilterInternal] 유효한 JWT 토큰이 없습니다.");
@@ -47,6 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (RedisConnectionFailureException e) {
             log.error("[doFilterInternal] redis 연결에 오류가 발생했습니다.");
         }
+
 
         filterChain.doFilter(request, response);
     }
