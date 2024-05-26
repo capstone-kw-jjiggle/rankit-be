@@ -55,8 +55,8 @@ public class AuthController {
         @ApiResponse(responseCode = "200", description = "유저 정보를 가져오는데 성공했습니다."),
         @ApiResponse(responseCode = "400", description = "유저 정보를 가져오는데 실패했습니다.")
     })
-    public ResponseEntity<UserInfoDto> userInfo(@PathVariable String username) {
-        return userInfoService.getUserInfoByUserName(username);
+    public ResponseEntity<UserInfoDto> userInfo(Authentication authentication) {
+        return userInfoService.getUserInfoByUserName(authentication);
     }
 
 

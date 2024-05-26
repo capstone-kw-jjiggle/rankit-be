@@ -40,19 +40,6 @@ public class MyPageService {
     updateUserRegion(user, newRegionName);
   }
 
-  @Transactional
-  public void modifyProfileImg (Authentication authentication, String newProfileImgUrl) {
-
-    User user = checkAuthAndGetUser(authentication);
-    userService.updateUserProfileImg(user, newProfileImgUrl);
-  }
-
-  @Transactional
-  public void deleteProfileImg (Authentication authentication) {
-    User user = checkAuthAndGetUser(authentication);
-    userService.deleteUserProfileImg(user);
-  }
-
   private User checkAuthAndGetUser(Authentication authentication) {
     if (authentication == null) {
       throw new NotLoginedException();

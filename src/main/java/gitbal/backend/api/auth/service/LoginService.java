@@ -19,7 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Slf4j
 public class LoginService {
 
-    private static final String FE_URL ="http://localhost:5173";
+    private static final String FE_URL ="http://localhost:5173/auth/token";
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
