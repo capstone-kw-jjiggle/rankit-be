@@ -1,5 +1,6 @@
 package gitbal.backend.domain.majorlanguage;
 
+import gitbal.backend.domain.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class MajorLanguage {
+public class MajorLanguage extends BaseTimeEntity {
 
 
     @Id

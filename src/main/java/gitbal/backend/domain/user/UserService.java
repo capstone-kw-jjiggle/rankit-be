@@ -135,6 +135,6 @@ public class UserService {
     }
 
     public void updateCommit(User findUser, Boolean recentCommit) {
-        findUser.updateCommit(recentCommit);
+        //findUser.updateCommit(recentCommit);
     }
 }
