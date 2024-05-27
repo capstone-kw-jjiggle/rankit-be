@@ -1,19 +1,16 @@
-package gitbal.backend.global.schedule;
+package gitbal.backend.schedule;
 
 import gitbal.backend.api.auth.dto.GitbalApiDto;
-import gitbal.backend.api.auth.service.UserInfoService;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.region.RegionService;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.domain.user.User;
-import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.domain.user.UserService;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
