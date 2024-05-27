@@ -59,4 +59,9 @@ public class RegionService {
 
 
 
+
+  public void updateRegion(Region region, String username, Long oldScore, Long newScore) {
+    region.updateScore(oldScore,newScore);
+    region.updateContributerInfo(username, newScore);
+  }
 }

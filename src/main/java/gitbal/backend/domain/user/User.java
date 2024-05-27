@@ -119,6 +119,10 @@ public class User {
         this.userRank = userRank;
     }
 
+    public void updateScore(Long score){
+        this.score=score;
+    }
+
     public static User of(String username, String avatarUrl) {
         return new User(null, null, null, null, username, 0L, avatarUrl, Grade.YELLOW, 0);
     }

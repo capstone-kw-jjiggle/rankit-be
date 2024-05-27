@@ -93,4 +93,8 @@ public class School {
   public int hashCode() {
     return Objects.hash(schoolName);
   }
+
+  public void updateScore(Long oldScore, Long newScore) {
+    this.score= this.score-oldScore+newScore;
+  }
 }

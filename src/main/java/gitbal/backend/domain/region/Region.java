@@ -64,4 +64,7 @@ public class Region {
   }
 
 
+  public void updateScore(Long oldScore, Long newScore) {
+    this.score=this.score-oldScore+newScore;
+  }
 }

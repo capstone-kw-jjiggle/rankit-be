@@ -3,7 +3,6 @@ package gitbal.backend.domain.school;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.util.SurroundingRankStatus;
-import gitbal.backend.global.exception.JoinException;
 import gitbal.backend.domain.user.UserRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -57,5 +56,10 @@ public class SchoolService {
       }
     }
 
+  }
+
+  public void updateSchool(School school, String username, Long oldScore, Long newScore) {
+    school.updateScore(oldScore,newScore);
+    school.updateContributerInfo(username, newScore);
   }
 }

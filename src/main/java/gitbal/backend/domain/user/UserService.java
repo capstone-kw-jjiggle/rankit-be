@@ -10,8 +10,10 @@ import gitbal.backend.global.exception.NotFoundRegionException;
 import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.util.SurroundingRankStatus;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +37,11 @@ public class UserService {
 
             return GitbalApiDto.of(delegateToGitbalScore(dataNode), checkOneDayCommit(dataNode));
         } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException(e.getMessage());
+            throw new NotFoundUserException();
+            //throw new IllegalArgumentException(e.getMessage());
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new NotFoundUserException();
         }
     }
 
@@ -106,5 +112,29 @@ public class UserService {
     public void deleteUserProfileImg(User user) {
         user.setProfileImg(null);
         userRepository.save(user);
+    }
+
+    public List<String> findAllUserNames() {
+        return userRepository.findAll().stream()
+            .map(u -> u.getNickname())
+            .toList();
+    }
+
+    public void updateUserScore(User findUser, Long newScore) {
+        findUser.updateScore(newScore);
+        updateUserRanking();
+    }
+
+    private void updateUserRanking() {
+        List<User> users = userRepository.findAll(Sort.by("score").descending());
+        int rank = 1;
+        for (User user : users) {
+            user.setUserRank(rank++);
+            userRepository.save(user);
+        }
+    }
+
+    public void updateCommit(User findUser, Boolean recentCommit) {
+        findUser.updateCommit(recentCommit);
     }
 }
