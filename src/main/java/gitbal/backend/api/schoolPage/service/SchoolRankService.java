@@ -87,7 +87,8 @@ public class SchoolRankService {
             school.getScore(),
             school.getChangedScore(),
             school.getSchoolRank(),
-            school.getTopContributor()
+            school.getTopContributor(),
+            school.getGrade()
         );
     }
 
