@@ -89,27 +89,18 @@ public class MockDataGenerator implements CommandLineRunner {
   private void fetchSchoolScore() {
     List<School> schools = schoolRepository.findAll(Sort.by("score").descending());
     int rank = 1;
-    long previousScore=0;
-    scoreRankingCalculate(schools, rank, previousScore);
+    scoreRankingCalculate(schools, rank);
   }
 
-  private void scoreRankingCalculate(List<School> schools, int rank, long previousScore) {
-    for(int i=0; i< schools.size(); i++){
+  private void scoreRankingCalculate(List<School> schools, int rank) {
+    int prevRank = rank;
+    for (int i = 0; i < schools.size(); i++) {
       School school = schools.get(i);
-      if(i==0) {
-        school.setSchoolRank(rank++);
-        previousScore =school.getScore();
-        continue;
+      if (i > 0 && schools.get(i - 1).getScore() != school.getScore()) {
+        prevRank = rank;
       }
-      if(previousScore == school.getScore()){
-        rank--;
-        school.setSchoolRank(rank++);
-        previousScore=school.getScore();
-      }
-      else{
-        school.setSchoolRank(rank++);
-        previousScore =school.getScore();
-      }
+      school.setSchoolRank(prevRank);
+      rank = prevRank + 1;
     }
   }
 
@@ -192,9 +183,15 @@ public class MockDataGenerator implements CommandLineRunner {
   private void updateUsersRank() {
     List<User> users = userRepository.findAll(Sort.by("score").descending());
     int rank = 1;
-    for (User user : users) {
-      user.setUserRank(rank++);
+    int prevRank = 1;
+    for (int i = 0; i < users.size(); i++) {
+      User user = users.get(i);
+      if (i > 0 && users.get(i - 1).getScore() != user.getScore()) {
+        prevRank = rank;
+      }
+      user.setUserRank(prevRank);
       userRepository.save(user);
+      rank = prevRank + 1;
     }
   }
 
@@ -207,40 +204,36 @@ public class MockDataGenerator implements CommandLineRunner {
     int blueCount = (int) Math.floor(totalSchools * 0.15);
     int greenCount = (int) Math.floor(totalSchools * 0.2);
 
-    int currentRank = 1;
     int currentCount = 0;
     SchoolGrade currentGrade = SchoolGrade.PURPLE;
 
     for (School school : schools) {
-      if (school.getScore() == 0) {
-        school.setGrade(SchoolGrade.YELLOW);
-      } else {
         if (currentCount >= purpleCount && currentGrade == SchoolGrade.PURPLE) {
           currentGrade = SchoolGrade.GREY;
           currentCount = 0;
         }
-        if (currentCount >= greyCount && currentGrade == SchoolGrade.GREY) {
+        else if (currentCount >= greyCount && currentGrade == SchoolGrade.GREY) {
           currentGrade = SchoolGrade.RED;
           currentCount = 0;
         }
-        if (currentCount >= redCount && currentGrade == SchoolGrade.RED) {
+        else if (currentCount >= redCount && currentGrade == SchoolGrade.RED) {
           currentGrade = SchoolGrade.BLUE;
           currentCount = 0;
         }
-        if (currentCount >= blueCount && currentGrade == SchoolGrade.BLUE) {
+        else if (currentCount >= blueCount && currentGrade == SchoolGrade.BLUE) {
           currentGrade = SchoolGrade.GREEN;
           currentCount = 0;
         }
-        if (currentCount >= greenCount && currentGrade == SchoolGrade.GREEN) {
+        else if (currentCount >= greenCount && currentGrade == SchoolGrade.GREEN) {
           currentGrade = SchoolGrade.YELLOW;
           currentCount = 0;
+        } else if (school.getScore() == 0) {
+        school.setGrade(SchoolGrade.YELLOW);
         }
 
         school.setGrade(currentGrade);
         currentCount++;
-      }
 
-      school.setSchoolRank(currentRank++);
       schoolRepository.save(school);
     }
   }

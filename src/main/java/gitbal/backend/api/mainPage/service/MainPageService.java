@@ -43,7 +43,7 @@ public class MainPageService {
             validatePage(page, users.getTotalElements());
             log.info(String.valueOf(users.getTotalElements()));
             List<MainPageUserDto> userList = users.stream().map(
-                    (user) -> new MainPageUserDto(user.getNickname(), user.getScore(), user.getGrade()))
+                    (user) -> new MainPageUserDto(user.getNickname(), user.getScore(), user.getUserRank(), user.getGrade()))
                 .toList();
             PageInfoDto pageInfoDto = PageCalculator.calculatePageInfo(users);
             return MainPageUserResponseDto.of(userList, pageInfoDto);
@@ -62,7 +62,7 @@ public class MainPageService {
             validateSearchUsername(searchUsersIgnoreCase);
             validatePage(page, searchUsersIgnoreCase.getTotalElements());
             List<MainPageUserDto> searchUserList = searchUsersIgnoreCase.stream().map(
-                (user) -> new MainPageUserDto(user.getNickname(), user.getScore(), user.getGrade())
+                (user) -> new MainPageUserDto(user.getNickname(), user.getScore(), user.getUserRank(), user.getGrade())
             ).toList();
             PageInfoDto pageInfoDto = PageCalculator.calculatePageInfo(searchUsersIgnoreCase);
             return MainPageUserResponseDto.of(searchUserList, pageInfoDto);
