@@ -3,7 +3,6 @@ package gitbal.backend.domain.user;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gitbal.backend.api.auth.dto.GitbalApiDto;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.global.exception.NotFoundRegionException;
@@ -28,14 +27,13 @@ public class UserService {
     private final int USER_AROUND_RANGE = 2;
 
 
-    public GitbalApiDto callUsersGithubApi(String nickname) {
+    public Long calculateUserScore(String nickname) {
         try {
             ResponseEntity<String> response = userInfoService.requestUserInfo(nickname);
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode root = objectMapper.readTree(response.getBody());
             JsonNode dataNode = root.get("data").get("user");
-
-            return GitbalApiDto.of(delegateToGitbalScore(dataNode), checkOneDayCommit(dataNode));
+            return delegateToGitbalScore(dataNode);
         } catch (JsonProcessingException e) {
             throw new NotFoundUserException();
             //throw new IllegalArgumentException(e.getMessage());
@@ -44,6 +42,20 @@ public class UserService {
             throw new NotFoundUserException();
         }
     }
+
+    public Boolean checkUserRecentCommit(String username) {
+        try {
+        ResponseEntity<String> response = userInfoService.requestUserRecentCommit(username);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode root = objectMapper.readTree(response.getBody());
+        JsonNode dataNode = root.get("data").get("user");
+        return checkOneDayCommit(dataNode);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e); // TODO : 추후 exception 처리하기
+        }
+    }
+
+
 
     private Boolean checkOneDayCommit(JsonNode dataNode) {
         return dataNode.get("yesterdayCommits").get("totalCommitContributions").asLong() > 0;
@@ -134,7 +146,5 @@ public class UserService {
         }
     }
 
-    public void updateCommit(User findUser, Boolean recentCommit) {
-        //findUser.updateCommit(recentCommit);
-    }
+
 }

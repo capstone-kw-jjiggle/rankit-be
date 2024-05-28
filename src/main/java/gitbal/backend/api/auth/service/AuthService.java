@@ -48,7 +48,8 @@ public class AuthService {
             .orElseThrow(() -> new JoinException("유저가 존재하지 않습니다."));
 
         // TODO: 이름 좀 더 생각해보기 -> 이거 승준씨랑 같이 회의때 고민
-        GitbalApiDto gitbalApiDto = userService.callUsersGithubApi(nickname);
+        GitbalApiDto gitbalApiDto = GitbalApiDto.of(userService.calculateUserScore(nickname),
+            userService.checkUserRecentCommit(nickname));
 
         //loginRequestDto 학교이름, 지역이름, 프로필 이미지 이름
         UserDto userDto = initUserDto(joinRequestDto, gitbalApiDto, nickname);
