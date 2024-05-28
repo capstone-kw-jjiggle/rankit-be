@@ -108,9 +108,9 @@ public class MockDataGenerator implements CommandLineRunner {
     List<MajorLanguage> majorLanguages2 = createRandomMajorLanguagesForUser(khyojun);
     majorLanguages2.forEach(majorLanguageRepository::save);
 
-    OneDayCommit oneDayCommit2 = OneDayCommit.of(true);
+    OneDayCommit oneDayCommit2 = OneDayCommit.of(false);
     oneDayCommitRepository.save(oneDayCommit2);
-    khyojun.joinUpdateUser(school, region, oneDayCommit, majorLanguages2,
+    khyojun.joinUpdateUser(school, region, oneDayCommit2, majorLanguages2,
         khyojun.getNickname(), khyojun.getScore(), khyojun.getProfile_img(), Grade.YELLOW, 0);
     userRepository.save(khyojun);
 
