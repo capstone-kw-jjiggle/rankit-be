@@ -49,8 +49,8 @@ public class User extends BaseTimeEntity {
     @JoinColumn(name = "region_id")
     private Region region;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "commit_date_id")
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "commit_user_id")
     private OneDayCommit oneDayCommit;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})

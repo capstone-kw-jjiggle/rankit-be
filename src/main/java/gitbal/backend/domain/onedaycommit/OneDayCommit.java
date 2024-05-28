@@ -6,13 +6,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OneDayCommit extends BaseTimeEntity {
 
@@ -36,6 +39,15 @@ public class OneDayCommit extends BaseTimeEntity {
             return new OneDayCommit(1L);
         }
         return new OneDayCommit(0L);
+    }
+
+
+    public void updateOneDayCommitSteadyCount(boolean hasRecent){
+        if(hasRecent) {
+            this.steadyCount += 1L;
+            return;
+        }
+        this.steadyCount=0L;
     }
 
 }
