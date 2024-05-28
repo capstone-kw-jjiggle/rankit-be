@@ -58,7 +58,7 @@ public class SchoolService {
 
   }
 
-  public void updateSchool(School school, String username, Long oldScore, Long newScore) {
+  public void updateByUserScore(School school, String username, Long oldScore, Long newScore) {
     school.updateScore(oldScore,newScore);
     school.updateContributerInfo(username, newScore);
   }
