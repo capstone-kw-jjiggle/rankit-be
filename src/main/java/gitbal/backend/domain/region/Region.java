@@ -1,5 +1,6 @@
 package gitbal.backend.domain.region;
 
+import gitbal.backend.domain.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +17,7 @@ import org.hibernate.annotations.ColumnDefault;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter //todo : MockDataGenerator에서 score값을 0으로 초기화하기 위한 세팅
-public class Region {
+public class Region extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,4 +65,7 @@ public class Region {
   }
 
 
+  public void updateScore(Long oldScore, Long newScore) {
+    this.score=this.score-oldScore+newScore;
+  }
 }

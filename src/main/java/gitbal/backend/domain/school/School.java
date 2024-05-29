@@ -1,5 +1,6 @@
 package gitbal.backend.domain.school;
 
+import gitbal.backend.domain.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,7 +19,7 @@ import gitbal.backend.global.constant.SchoolGrade;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class School {
+public class School extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -92,5 +93,9 @@ public class School {
   @Override
   public int hashCode() {
     return Objects.hash(schoolName);
+  }
+
+  public void updateScore(Long oldScore, Long newScore) {
+    this.score= this.score-oldScore+newScore;
   }
 }

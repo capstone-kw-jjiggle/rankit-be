@@ -3,15 +3,14 @@ package gitbal.backend.domain.majorlanguage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gitbal.backend.domain.user.User;
 import gitbal.backend.api.userPage.dto.UserRankMajorLanguageResponseDto;
-import gitbal.backend.domain.user.UserRepository;
+import gitbal.backend.domain.user.User;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,23 +21,24 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MajorLanguageService {
 
+    private final MajorLanguageRepository majorLanguageRepository;
 
     private final TopLanguageService topLanguageService;
 
     public List<MajorLanguage> getUserTopLaunguages(String username) {
-        return getUserTopLanguages(username).entrySet().stream()
-            .map(languageInfo -> MajorLanguageDto.of(languageInfo.getKey(), Long.valueOf(languageInfo.getValue())))
-            .map(MajorLanguageDto::toEntity).collect(Collectors.toList());
+        return requestFindUserTopLanguage(username).entrySet().stream()
+            .map(l -> MajorLanguageDto.of(l.getKey(), Long.valueOf(l.getValue())))
+            .map(MajorLanguageDto::toEntity).toList();
     }
 
-
-    public Map<String, Integer> getUserTopLanguages(String username) {
-
+    public Map<String, Integer> requestFindUserTopLanguage(String username) {
         ResponseEntity<String> response = topLanguageService.requestTopLanguageQuery(username);
+        log.info("response is {}", response.getBody());
         // JSON 응답에서 사용 언어 추출
         JsonNode repositoriesNode = getRepositoriesNode(response);
         // 사용자의 모든 레포지토리에서 사용된 언어 추출
-        Map<String, Integer> languageCounts = extractLanguages(repositoriesNode);
+        Map<String, Integer> languageCounts = extractLanguages(
+            Objects.requireNonNull(repositoriesNode));
         // 상위 5개 언어 추출
         Map<String, Integer> topLanguages = new LinkedHashMap<>();
         languageCounts.entrySet().stream()
@@ -68,7 +68,9 @@ public class MajorLanguageService {
             JsonNode languagesNode = repositoryNode.get("languages").get("edges");
             for (JsonNode languageNode : languagesNode) {
                 String languageName = languageNode.get("node").get("name").asText();
-                languageCounts.put(languageName, languageCounts.getOrDefault(languageName, 0) + 1);
+                int size = languageNode.get("size").asInt();
+                languageCounts.put(languageName,
+                    languageCounts.getOrDefault(languageName, 0) + size);
             }
         }
         return languageCounts;
@@ -78,10 +80,16 @@ public class MajorLanguageService {
     public List<UserRankMajorLanguageResponseDto> findLanguagePercentByUser(User findUser) {
         List<MajorLanguage> majorLanguages = findUser.getMajorLanguages();
         List<MajorLanguageDto> convertDtos = majorLanguages.stream().map(MajorLanguageDto::of)
-            .collect(Collectors.toList());
-
+            .toList();
         LanguageResponseConverter languageResponseConverter = LanguageResponseConverter.of(
             convertDtos);
         return languageResponseConverter.convert();
+    }
+
+    public void updateUserLanguage(List<MajorLanguage> oldLanguages,
+        List<MajorLanguage> updatedLanguages) {
+        MajorLanguageUpdater majorLanguageUpdater = MajorLanguageUpdater.of(oldLanguages,
+            updatedLanguages, majorLanguageRepository);
+        majorLanguageUpdater.updateLanguage();
     }
 }

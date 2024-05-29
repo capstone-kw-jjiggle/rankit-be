@@ -79,11 +79,41 @@ public class MockDataGenerator implements CommandLineRunner {
     }
     // Test를 위한 나(이승준)의 githubid와 동일한 nickname data
     createUserWithNickname("leesj000603");
+    createUserWithNickname2("khyojun");
     updateUsersRank();
     insertRegionSchoolTopContributorInfo();
     fetchSchoolScore();
     updateSchoolGrade();
     log.info("Mock data creation completed");
+  }
+
+  private void createUserWithNickname2(String username) {
+    School school = schoolRepository.findById(1L)
+        .orElse(null);
+    Region region = regionRepository.findById(1L)
+        .orElse(null);
+    OneDayCommit oneDayCommit = OneDayCommit.of(true);
+    oneDayCommitRepository.save(oneDayCommit);
+
+
+    User khyojun = User.builder()
+        .school(school)
+        .region(region)
+        .nickname(username)
+        .score(500L)
+        .profile_img("sdqsdqwefqwef")
+        .grade(Grade.PURPLE)
+        .build();
+
+    List<MajorLanguage> majorLanguages2 = createRandomMajorLanguagesForUser(khyojun);
+    majorLanguages2.forEach(majorLanguageRepository::save);
+
+    OneDayCommit oneDayCommit2 = OneDayCommit.of(false);
+    oneDayCommitRepository.save(oneDayCommit2);
+    khyojun.joinUpdateUser(school, region, oneDayCommit2, majorLanguages2,
+        khyojun.getNickname(), khyojun.getScore(), khyojun.getProfile_img(), Grade.YELLOW, 0);
+    userRepository.save(khyojun);
+
   }
 
   private void fetchSchoolScore() {
@@ -136,6 +166,8 @@ public class MockDataGenerator implements CommandLineRunner {
         .profile_img("sdqsdqwefqwef")
         .grade(Grade.PURPLE)
         .build();
+
+
 
     List<MajorLanguage> majorLanguages = createRandomMajorLanguagesForUser(leesj000603);
     majorLanguages.forEach(majorLanguageRepository::save);
