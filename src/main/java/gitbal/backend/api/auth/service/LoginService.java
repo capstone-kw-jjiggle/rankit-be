@@ -4,14 +4,11 @@ import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.security.jwt.JwtTokenProvider;
-import gitbal.backend.global.util.AuthenticationChecker;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.net.URI;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
@@ -28,9 +25,13 @@ public class LoginService {
         User user = findUser(username);
         log.info("username : {}", user.getNickname());
 
-        String redirectUrl = getRedirectUrl(username);
+        String redirectUrl = getRedirectUrl(username, isRegisterUser(user));
 
         return "redirect:" + redirectUrl;
+    }
+
+    private boolean isRegisterUser(User user) {
+        return (!Objects.isNull(user.getSchool()) && !Objects.isNull(user.getRegion()));
     }
 
     private User findUser(String username) {
@@ -38,9 +39,11 @@ public class LoginService {
             .orElseThrow(NotFoundUserException::new);
     }
 
-    private String getRedirectUrl(String username) {
+    private String getRedirectUrl(String username, boolean logined) {
         return UriComponentsBuilder.fromUri(URI.create(FE_URL))
-            .queryParam("accessToken", jwtTokenProvider.createAccessToken(username)).build()
+            .queryParam("accessToken", jwtTokenProvider.createAccessToken(username))
+            .queryParam("isJoinService", logined)
+            .build()
             .toString();
     }
 
