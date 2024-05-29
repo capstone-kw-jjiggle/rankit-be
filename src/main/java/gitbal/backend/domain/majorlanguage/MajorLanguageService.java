@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,7 @@ public class MajorLanguageService {
     public List<MajorLanguage> getUserTopLaunguages(String username) {
         return requestFindUserTopLanguage(username).entrySet().stream()
             .map(languageInfo -> MajorLanguageDto.of(languageInfo.getKey(), Long.valueOf(languageInfo.getValue())))
-            .map(MajorLanguageDto::toEntity).collect(Collectors.toList());
+            .map(MajorLanguageDto::toEntity).toList();
     }
 
     public Map<String, Integer> requestFindUserTopLanguage(String username) {
@@ -37,7 +38,8 @@ public class MajorLanguageService {
         // JSON 응답에서 사용 언어 추출
         JsonNode repositoriesNode = getRepositoriesNode(response);
         // 사용자의 모든 레포지토리에서 사용된 언어 추출
-        Map<String, Integer> languageCounts = extractLanguages(repositoriesNode);
+        Map<String, Integer> languageCounts = extractLanguages(
+            Objects.requireNonNull(repositoriesNode));
         // 상위 5개 언어 추출
         Map<String, Integer> topLanguages = new LinkedHashMap<>();
         languageCounts.entrySet().stream()
@@ -86,5 +88,10 @@ public class MajorLanguageService {
         return languageResponseConverter.convert();
     }
 
-   
+    public void updateUserLanguage(List<MajorLanguage> oldLanguages,
+        List<MajorLanguage> updatedLanguages) {
+        MajorLanguageUpdater majorLanguageUpdater = MajorLanguageUpdater.of(oldLanguages,
+            updatedLanguages, majorLanguageRepository);
+        majorLanguageUpdater.updateLanguage();
+    }
 }

@@ -10,10 +10,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Setter
 public class MajorLanguage extends BaseTimeEntity {
 
 
@@ -33,8 +35,20 @@ public class MajorLanguage extends BaseTimeEntity {
         this.languageCount = languageCount;
     }
 
-    // TODO: test 용도여서 나중에 실제로 값 넣으면 변경해야함.
 
 
 
+    public void updateMajorLanguage(MajorLanguage beforeLanguage, MajorLanguage updateLanguage){
+        beforeLanguage.setMajorLanguage(updateLanguage.majorLanguage);
+        beforeLanguage.setLanguageCount(updateLanguage.languageCount);
+    }
+
+
+    @Override
+    public String toString() {
+        return "MajorLanguage{" +
+            "majorLanguage='" + majorLanguage + '\'' +
+            ", languageCount=" + languageCount +
+            '}';
+    }
 }

@@ -1,7 +1,9 @@
 package gitbal.backend.schedule;
 
+import gitbal.backend.schedule.userupdate.majorLanguage.UserLanguagesUpdater;
 import gitbal.backend.schedule.userupdate.onedaycommit.UserOneDayCommitUpdater;
 import gitbal.backend.schedule.userupdate.score.UserScoreUpdater;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,20 +16,20 @@ public class SchedulingService {
 
     private final UserOneDayCommitUpdater userOneDayCommitUpdater;
     private final UserScoreUpdater userScoreUpdater;
+    private final UserLanguagesUpdater userLanguagesUpdater;
 
 
-    //TODO : 이후 스케줄링 시간 변경
-    @Scheduled(initialDelay = 10000, fixedRate = 30000)
+    @Scheduled(initialDelay = 2, fixedRate = 360, timeUnit = TimeUnit.MINUTES)
     public void updateUserScore(){
        userScoreUpdater.update();
     }
-
-    //TODO : 이후 스케줄링 시간 변경
-    @Scheduled(initialDelay = 10000, fixedRate = 30000)
+    @Scheduled(cron = "1 0 0 * * ?")
     public void updateUserCommit(){
         userOneDayCommitUpdater.update();
     }
 
+    @Scheduled(initialDelay = 2, fixedRate = 360, timeUnit = TimeUnit.MINUTES)
+    public void updateUserLanguages(){userLanguagesUpdater.update();}
 
 
 }
