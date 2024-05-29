@@ -39,10 +39,10 @@ public class LoginService {
             .orElseThrow(NotFoundUserException::new);
     }
 
-    private String getRedirectUrl(String username, boolean logined) {
+    private String getRedirectUrl(String username, boolean isRegistered) {
         return UriComponentsBuilder.fromUri(URI.create(FE_URL))
             .queryParam("accessToken", jwtTokenProvider.createAccessToken(username))
-            .queryParam("isJoinService", logined)
+            .queryParam("isRegistered", isRegistered)
             .build()
             .toString();
     }
