@@ -21,7 +21,7 @@ public class UserOneDayCommitUpdaterImpl extends UserSetup implements UserOneDay
     @Override
     public void update() {
         log.info("[schedulingUserCommit] method start");
-        List<String> allUserNames = getAllUsers(userService);
+        List<String> allUserNames = getAllUsernames(userService);
         updateUserCommitsAndRelatedData(allUserNames);
         log.info("[schedulingUserCommit] method finish");
     }

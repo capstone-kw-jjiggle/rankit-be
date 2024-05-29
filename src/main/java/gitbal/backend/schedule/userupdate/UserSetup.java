@@ -6,7 +6,7 @@ import java.util.List;
 
 public abstract class UserSetup {
 
-    protected List<String> getAllUsers(UserService userService){
+    protected List<String> getAllUsernames(UserService userService){
         //List<String> allUserNames = userService.findAllUserNames();
         // TODO : 임시로 진행하여 임의의 github id 로 등록 진행
         List<String> allUserNames = List.of(userService.findByUserName("khyojun").getNickname(),

@@ -11,6 +11,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +23,10 @@ public class UserScoreUpdaterImpl extends UserSetup implements UserScoreUpdater{
     private final SchoolService schoolService;
 
     @Override
+    @Transactional
     public void update() {
         log.info("[schedulingUserScore] method start");
-        List<String> allUserNames = super.getAllUsers(userService);
+        List<String> allUserNames = super.getAllUsernames(userService);
         updateUserScoresAndRelatedData(allUserNames);
         log.info("[schedulingUserScore] method finish");
     }
