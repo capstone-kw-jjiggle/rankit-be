@@ -37,11 +37,14 @@ public class GithubDataService implements UserInfoService, TopLanguageService {
         );
     }
 
+
     private String getTopLanguageQuery(String username) {
-        String query =
-            "{ \"query\": \"query getUserLanguages($username: String!) { user(login: $username) { repositories(first: 100) { nodes { languages(first: 10) { edges { size node { name } } } } } } }\", \"variables\": { \"username\": \""
-                + username + "\" } }";
-        return query;
+        return """
+        {
+          "query": "query userInfo($login: String!) { user(login: $login) { repositories(ownerAffiliations: OWNER, isFork: false, first: 100) { nodes { name languages(first: 10, orderBy: {field: SIZE, direction: DESC}) { edges { size node { name } } } } } } }",
+          "variables": { "login": "%s" }
+        }
+        """.formatted(username);
     }
 
 

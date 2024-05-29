@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.api.userPage.dto.UserRankMajorLanguageResponseDto;
-import gitbal.backend.domain.user.UserRepository;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -22,19 +21,19 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MajorLanguageService {
 
+    private final MajorLanguageRepository majorLanguageRepository;
 
     private final TopLanguageService topLanguageService;
 
     public List<MajorLanguage> getUserTopLaunguages(String username) {
-        return getUserTopLanguages(username).entrySet().stream()
+        return requestFindUserTopLanguage(username).entrySet().stream()
             .map(languageInfo -> MajorLanguageDto.of(languageInfo.getKey(), Long.valueOf(languageInfo.getValue())))
             .map(MajorLanguageDto::toEntity).collect(Collectors.toList());
     }
 
-
-    public Map<String, Integer> getUserTopLanguages(String username) {
-
+    public Map<String, Integer> requestFindUserTopLanguage(String username) {
         ResponseEntity<String> response = topLanguageService.requestTopLanguageQuery(username);
+        log.info("response is {}", response.getBody());
         // JSON 응답에서 사용 언어 추출
         JsonNode repositoriesNode = getRepositoriesNode(response);
         // 사용자의 모든 레포지토리에서 사용된 언어 추출
@@ -68,11 +67,13 @@ public class MajorLanguageService {
             JsonNode languagesNode = repositoryNode.get("languages").get("edges");
             for (JsonNode languageNode : languagesNode) {
                 String languageName = languageNode.get("node").get("name").asText();
-                languageCounts.put(languageName, languageCounts.getOrDefault(languageName, 0) + 1);
+                int size = languageNode.get("size").asInt();
+                languageCounts.put(languageName, languageCounts.getOrDefault(languageName, 0) + size);
             }
         }
         return languageCounts;
     }
+
 
 
     public List<UserRankMajorLanguageResponseDto> findLanguagePercentByUser(User findUser) {
@@ -84,4 +85,6 @@ public class MajorLanguageService {
             convertDtos);
         return languageResponseConverter.convert();
     }
+
+   
 }
