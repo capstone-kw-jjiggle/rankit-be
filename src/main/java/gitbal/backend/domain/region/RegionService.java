@@ -3,7 +3,6 @@ package gitbal.backend.domain.region;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.global.exception.NotFoundRegionException;
 import gitbal.backend.global.util.SurroundingRankStatus;
-import gitbal.backend.global.exception.JoinException;
 import gitbal.backend.domain.user.UserRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +59,7 @@ public class RegionService {
 
 
 
-  public void updateRegion(Region region, String username, Long oldScore, Long newScore) {
+  public void updateByUserScore(Region region, String username, Long oldScore, Long newScore) {
     region.updateScore(oldScore,newScore);
     region.updateContributerInfo(username, newScore);
   }

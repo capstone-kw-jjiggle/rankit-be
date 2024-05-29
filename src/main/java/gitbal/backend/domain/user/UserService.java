@@ -3,7 +3,7 @@ package gitbal.backend.domain.user;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gitbal.backend.api.auth.dto.GitbalApiDto;
+import gitbal.backend.domain.majorlanguage.MajorLanguage;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.global.exception.NotFoundRegionException;
@@ -28,35 +28,46 @@ public class UserService {
     private final int USER_AROUND_RANGE = 2;
 
 
-    public GitbalApiDto callUsersGithubApi(String nickname) {
+    public Long calculateUserScore(String nickname) {
         try {
             ResponseEntity<String> response = userInfoService.requestUserInfo(nickname);
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode root = objectMapper.readTree(response.getBody());
             JsonNode dataNode = root.get("data").get("user");
-
-            return GitbalApiDto.of(delegateToGitbalScore(dataNode), checkOneDayCommit(dataNode));
+            return delegateToGitbalScore(dataNode);
         } catch (JsonProcessingException e) {
             throw new NotFoundUserException();
             //throw new IllegalArgumentException(e.getMessage());
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new NotFoundUserException();
         }
     }
 
-    private Boolean checkOneDayCommit(JsonNode dataNode) {
+    public boolean checkUserRecentCommit(String username) {
+        try {
+            ResponseEntity<String> response = userInfoService.requestUserRecentCommit(username);
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode root = objectMapper.readTree(response.getBody());
+            JsonNode dataNode = root.get("data").get("user");
+            return checkOneDayCommit(dataNode);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e); // TODO : 추후 exception 처리하기
+        }
+    }
+
+
+    private boolean checkOneDayCommit(JsonNode dataNode) {
         return dataNode.get("yesterdayCommits").get("totalCommitContributions").asLong() > 0;
     }
 
     private Long delegateToGitbalScore(JsonNode dataNode) {
-        return userScoreCalculator.calculate(UserScoreInfoDto.of(
-            dataNode.get("pullRequests").get("totalCount").asLong(),
-            dataNode.get("contributionsCollection").get("totalCommitContributions").asLong(),
-            dataNode.get("issues").get("totalCount").asLong(),
-            dataNode.get("followers").get("totalCount").asLong(),
-            dataNode.get("repositories").get("totalCount").asLong()
-        ));
+        return userScoreCalculator.calculate(
+            UserScoreInfoDto.of(dataNode.get("pullRequests").get("totalCount").asLong(),
+                dataNode.get("contributionsCollection").get("totalCommitContributions").asLong(),
+                dataNode.get("issues").get("totalCount").asLong(),
+                dataNode.get("followers").get("totalCount").asLong(),
+                dataNode.get("repositories").get("totalCount").asLong()));
     }
 
     public String findUserImgByUsername(String username) {
@@ -115,9 +126,7 @@ public class UserService {
     }
 
     public List<String> findAllUserNames() {
-        return userRepository.findAll().stream()
-            .map(u -> u.getNickname())
-            .toList();
+        return userRepository.findAll().stream().map(u -> u.getNickname()).toList();
     }
 
     public void updateUserScore(User findUser, Long newScore) {
@@ -134,7 +143,10 @@ public class UserService {
         }
     }
 
-    public void updateCommit(User findUser, Boolean recentCommit) {
-        findUser.updateCommit(recentCommit);
+
+    public List<MajorLanguage> findMajorLanguagesByUsername(String username) {
+        User findUser = userRepository.findByNickname(username)
+            .orElseThrow(NotFoundUserException::new);
+        return findUser.getMajorLanguages();
     }
 }

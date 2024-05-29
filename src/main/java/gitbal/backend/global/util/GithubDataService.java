@@ -37,11 +37,14 @@ public class GithubDataService implements UserInfoService, TopLanguageService {
         );
     }
 
+
     private String getTopLanguageQuery(String username) {
-        String query =
-            "{ \"query\": \"query getUserLanguages($username: String!) { user(login: $username) { repositories(first: 100) { nodes { languages(first: 10) { edges { size node { name } } } } } } }\", \"variables\": { \"username\": \""
-                + username + "\" } }";
-        return query;
+        return """
+        {
+          "query": "query userInfo($login: String!) { user(login: $login) { repositories(ownerAffiliations: OWNER, isFork: false, first: 100) { nodes { name languages(first: 10, orderBy: {field: SIZE, direction: DESC}) { edges { size node { name } } } } } } }",
+          "variables": { "login": "%s" }
+        }
+        """.formatted(username);
     }
 
 
@@ -57,45 +60,55 @@ public class GithubDataService implements UserInfoService, TopLanguageService {
     // 작업 진행하기
     @Override
     public ResponseEntity<String> requestUserInfo(String username) {
-        LocalDate yesterday = LocalDate.now(ZoneId.of("UTC")).minusDays(1);
-        String from = yesterday.format(DateTimeFormatter.ISO_DATE) + "T00:00:00Z";
-
-        LocalDate now = LocalDate.now(ZoneId.of("UTC"));
-        String to = now.format(DateTimeFormatter.ISO_DATE) + "T00:00:00Z";
-
-        String query = getUserInfoQuery(username, from, to);
-
+        String query = getUserInfoQuery(username);
 
         return restTemplate.exchange(GITHUB_GRAPHQL_URL,
             HttpMethod.POST,
             createHttpEntity(query),
             String.class
         );
-
     }
 
-    private String getUserInfoQuery(String username, String from, String to) {
+
+    @Override
+    public ResponseEntity<String> requestUserRecentCommit(String username) {
+        LocalDate yesterday = LocalDate.now(ZoneId.of("UTC")).minusDays(1);
+        String from = yesterday.format(DateTimeFormatter.ISO_DATE) + "T00:00:00Z";
+
+        LocalDate now = LocalDate.now(ZoneId.of("UTC"));
+        String to = now.format(DateTimeFormatter.ISO_DATE) + "T00:00:00Z";
+
+        String query = getYesterdayCommitsQuery(username, from, to);
+
+        return restTemplate.exchange(GITHUB_GRAPHQL_URL,
+            HttpMethod.POST,
+            createHttpEntity(query),
+            String.class
+        );
+    }
+
+    private String getUserInfoQuery(String username) {
+        return """
+        {
+            "query": "query GetUserContributions($username: String!) { user(login: $username) { contributionsCollection { totalCommitContributions } repositories { totalCount } pullRequests { totalCount } issues { totalCount } followers { totalCount } } }",
+            "variables": {
+                "username": "%s"
+            }
+        }
+        """.formatted(username);
+    }
+
+
+
+
+
+
+    private String getYesterdayCommitsQuery(String username, String from, String to) {
         return "{" +
-            "\"query\": \"query GetUserContributions($username: String!, $from: DateTime!, $to: DateTime!) {"
-            +
+            "\"query\": \"query GetUserContributions($username: String!, $from: DateTime!, $to: DateTime!) {" +
             "  user(login: $username) {" +
-            "    contributionsCollection {" +
+            "    yesterdayCommits: contributionsCollection(from: $from, to: $to) {" +
             "      totalCommitContributions" +
-            "    }" +
-            "    yesterdayCommits: contributionsCollection(from: $from, to: $to) { " +
-            "      totalCommitContributions " +
-            "    } " +
-            "    repositories {" +
-            "      totalCount" +
-            "    }" +
-            "    pullRequests {" +
-            "      totalCount" +
-            "    }" +
-            "    issues {" +
-            "      totalCount" +
-            "    }" +
-            "    followers {" +
-            "      totalCount" +
             "    }" +
             "  }" +
             "}\"," +
@@ -106,4 +119,5 @@ public class GithubDataService implements UserInfoService, TopLanguageService {
             "}" +
             "}";
     }
+
 }

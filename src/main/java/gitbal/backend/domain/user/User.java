@@ -1,6 +1,7 @@
 package gitbal.backend.domain.user;
 
 
+import gitbal.backend.domain.BaseTimeEntity;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.global.constant.Grade;
 import gitbal.backend.domain.majorlanguage.MajorLanguage;
@@ -32,7 +33,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Getter
 @Table(name = "user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,8 +49,8 @@ public class User {
     @JoinColumn(name = "region_id")
     private Region region;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "commit_date_id")
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "commit_user_id")
     private OneDayCommit oneDayCommit;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
@@ -126,6 +127,5 @@ public class User {
     public static User of(String username, String avatarUrl) {
         return new User(null, null, null, null, username, 0L, avatarUrl, Grade.YELLOW, 0);
     }
-
 
 }
