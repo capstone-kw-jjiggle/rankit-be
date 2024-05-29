@@ -3,15 +3,14 @@ package gitbal.backend.domain.majorlanguage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gitbal.backend.domain.user.User;
 import gitbal.backend.api.userPage.dto.UserRankMajorLanguageResponseDto;
+import gitbal.backend.domain.user.User;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,7 @@ public class MajorLanguageService {
 
     public List<MajorLanguage> getUserTopLaunguages(String username) {
         return requestFindUserTopLanguage(username).entrySet().stream()
-            .map(languageInfo -> MajorLanguageDto.of(languageInfo.getKey(), Long.valueOf(languageInfo.getValue())))
+            .map(l -> MajorLanguageDto.of(l.getKey(), Long.valueOf(l.getValue())))
             .map(MajorLanguageDto::toEntity).toList();
     }
 
@@ -70,19 +69,18 @@ public class MajorLanguageService {
             for (JsonNode languageNode : languagesNode) {
                 String languageName = languageNode.get("node").get("name").asText();
                 int size = languageNode.get("size").asInt();
-                languageCounts.put(languageName, languageCounts.getOrDefault(languageName, 0) + size);
+                languageCounts.put(languageName,
+                    languageCounts.getOrDefault(languageName, 0) + size);
             }
         }
         return languageCounts;
     }
 
 
-
     public List<UserRankMajorLanguageResponseDto> findLanguagePercentByUser(User findUser) {
         List<MajorLanguage> majorLanguages = findUser.getMajorLanguages();
         List<MajorLanguageDto> convertDtos = majorLanguages.stream().map(MajorLanguageDto::of)
-            .collect(Collectors.toList());
-
+            .toList();
         LanguageResponseConverter languageResponseConverter = LanguageResponseConverter.of(
             convertDtos);
         return languageResponseConverter.convert();
