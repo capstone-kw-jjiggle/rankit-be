@@ -8,6 +8,7 @@ import java.net.URI;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -16,7 +17,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Slf4j
 public class LoginService {
 
-    private static final String FE_URL ="http://localhost:5173/auth/token";
+    @Value("${FE.URL}")
+    private String FE_URL;
+    //private static final String FE_URL ="http://localhost:5173/auth/token"; // 이후에 급히 수정
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -40,6 +43,7 @@ public class LoginService {
     }
 
     private String getRedirectUrl(String username, boolean isRegistered) {
+
         return UriComponentsBuilder.fromUri(URI.create(FE_URL))
             .queryParam("accessToken", jwtTokenProvider.createAccessToken(username))
             .queryParam("isRegistered", isRegistered)
