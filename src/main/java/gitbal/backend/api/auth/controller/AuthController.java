@@ -3,7 +3,7 @@ package gitbal.backend.api.auth.controller;
 import gitbal.backend.api.auth.dto.JoinRequestDto;
 import gitbal.backend.api.auth.service.AuthService;
 import gitbal.backend.api.auth.dto.UserInfoDto;
-import gitbal.backend.api.auth.service.UserInfoService;
+import gitbal.backend.api.auth.service.UserAuthInfoService;
 import gitbal.backend.global.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
-    private final UserInfoService userInfoService;
+    private final UserAuthInfoService userAuthInfoService;
 
     @PostMapping("/join")
     @Operation(summary = "회원가입 (구현 완료)", description = "회원가입을 위한 api입니다.")
@@ -48,15 +47,14 @@ public class AuthController {
 
 
 
-    //TODO : 리팩토링 과정에서 Authentication 으로 처리하도록 하기
-    @GetMapping("/userInfo/{username}")
+    @GetMapping("/userInfo")
     @Operation(summary = "유저 정보 조회 (구현 완료)", description = "유저 정보 조회를 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "유저 정보를 가져오는데 성공했습니다."),
         @ApiResponse(responseCode = "400", description = "유저 정보를 가져오는데 실패했습니다.")
     })
     public ResponseEntity<UserInfoDto> userInfo(Authentication authentication) {
-        return userInfoService.getUserInfoByUserName(authentication);
+        return userAuthInfoService.getUserInfoByUserName(authentication);
     }
 
 

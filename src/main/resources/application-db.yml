@@ -1,0 +1,30 @@
+spring:
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/gitbal
+    username: ${MYSQL_USERNAME} # db에 연결할 아이디
+    password: ${MYSQL_PASSWORD} # db에 연결할 비번
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+    hibernate:
+      ddl-auto: create
+    database-platform: org.hibernate.dialect.MySQLDialect
+    defer-datasource-initialization: true
+
+  #redis
+  data:
+    redis:
+      port: ${REDIS_PORT}
+      host: localhost
+      repositories:
+        enabled: false
+
+  #### data.sql 시작
+  sql:
+    init:
+      mode: always
