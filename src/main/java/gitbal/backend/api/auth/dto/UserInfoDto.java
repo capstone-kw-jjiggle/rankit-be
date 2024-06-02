@@ -2,7 +2,9 @@ package gitbal.backend.api.auth.dto;
 
 
 import gitbal.backend.domain.user.User;
+import lombok.Getter;
 
+@Getter
 public class UserInfoDto {
 
     private final String userName;

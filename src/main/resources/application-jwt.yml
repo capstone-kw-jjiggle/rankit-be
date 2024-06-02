@@ -1,0 +1,2 @@
+jwt:
+  key: ${JWT_KEY}

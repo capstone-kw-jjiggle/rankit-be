@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    environment:
+      - DATABASE_URL=${MYSQL_DATABASE_URL}
+      - USERNAME=${MYSQL_USERNAME}
+      - PASSWORD=${MYSQL_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - SECURITY_CLIENT_ID=${SECURITY_CLIENT_ID}
+      - SECURITY_SECRET_ID=${SECURITY_SECRET_ID}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - UNIV_API_KEY=${UNIV_API_KEY}
+      - JWT_KEY=${JWT_KEY}
+      - FE_URL=${FE_URL}
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "80:8080"
+    volumes:
+      - ./database/init/init.sql:/docker-entrypoint-initdb.d/init.sql # mockdataGenerator 에서 이미 생성되어있는 친구면 막아버리기 -> docker-compose에서는 검증하지 않음.
+
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_DATABASE=gitbal
+      - MYSQL_ROOT_USER=${MYSQL_USERNAME}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+
+  redis:
+    image: redis:6.2
+    ports:
+      - "6379:6379"
+

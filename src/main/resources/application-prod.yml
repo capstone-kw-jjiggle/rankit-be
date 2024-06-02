@@ -1,0 +1,44 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${USERNAME} # db에 연결할 아이디
+    password: ${PASSWORD} # db에 연결할 비번
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQLDialect
+    defer-datasource-initialization: true
+    open-in-view: true
+
+  #redis
+  data:
+    redis:
+      port: ${REDIS_PORT}
+      host: ${REDIS_HOST}
+      repositories:
+        enabled: false
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${SECURITY_CLIENT_ID}
+            client-secret: ${SECURITY_SECRET_ID}
+
+  #### data.sql 시작
+  sql:
+    init:
+      mode: always
+
+token: ${GITHUB_TOKEN}
+API-KEY: ${UNIV_API_KEY}
+
+jwt:
+  key: ${JWT_KEY}

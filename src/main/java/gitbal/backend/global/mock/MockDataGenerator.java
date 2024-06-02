@@ -18,7 +18,6 @@ import gitbal.backend.global.constant.SchoolGrade;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -53,6 +52,12 @@ public class MockDataGenerator implements CommandLineRunner {
     log.info("Start runner to create mock data");
 
     for (int i = 0; i < 1000; i++) {
+      String randomNickname = "User" + i; // Example nickname
+
+      if(userRepository.findByNickname(randomNickname).isPresent()) {
+        log.info("continue");
+        continue;
+      }
       // Fetch random school and region
       School randomSchool = schoolRepository.findById((long) (random.nextInt(TOTAL_SCHOOLS) + 1))
           .orElse(null);
@@ -60,7 +65,7 @@ public class MockDataGenerator implements CommandLineRunner {
           .orElse(null);
 
       // Create a random user
-      User newUser = createUser(randomSchool, randomRegion, i);
+      User newUser = createUser(randomNickname, randomSchool, randomRegion, i);
       calculateGradeByScore(newUser);
 
       // Create a list of MajorLanguage entities for this user
@@ -78,13 +83,21 @@ public class MockDataGenerator implements CommandLineRunner {
       scoring(saveUser);
     }
     // Test를 위한 나(이승준)의 githubid와 동일한 nickname data
-    createUserWithNickname("leesj000603");
-    createUserWithNickname2("khyojun");
+
+    String lee = "leesj000603";
+    String khyojun = "khyojun";
+    if(userRepository.findByNickname(lee).isPresent() || userRepository.findByNickname(khyojun).isPresent()){
+      log.info("duplicate");
+      return;
+    }
+
+    createUserWithNickname(lee);
+    createUserWithNickname2(khyojun);
     updateUsersRank();
     insertRegionSchoolTopContributorInfo();
     fetchSchoolScore();
     updateSchoolGrade();
-    log.info("Mock data creation completed");
+    log.info("Mock data creation completed!!!!!!");
   }
 
   private void createUserWithNickname2(String username) {
@@ -134,8 +147,8 @@ public class MockDataGenerator implements CommandLineRunner {
     }
   }
 
-  private User createUser(School school, Region region, int index) {
-    String randomNickname = "User" + index; // Example nickname
+  private User createUser(String randomNickname, School school, Region region, int index) {
+
     String randomProfileImg =
         "https://example.com/image" + random.nextInt(100); // Example profile image URL
     Long randomScore = (long) random.nextInt(1000, 100000); // Example userScore

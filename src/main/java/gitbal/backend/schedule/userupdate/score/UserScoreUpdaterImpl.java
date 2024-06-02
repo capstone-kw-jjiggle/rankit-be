@@ -8,6 +8,7 @@ import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.schedule.userupdate.UserSetup;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,7 @@ public class UserScoreUpdaterImpl extends UserSetup implements UserScoreUpdater{
             Long oldScore = findUser.getScore();
             School school = findUser.getSchool();
             Region region = findUser.getRegion();
+            if(Objects.isNull(school) || Objects.isNull(region)) continue;
             schoolService.updateByUserScore(school, username, oldScore, newScore);
             regionService.updateByUserScore(region, username, oldScore, newScore);
             userService.updateUserScore(findUser, newScore);

@@ -2,10 +2,12 @@ package gitbal.backend.global.security;
 
 import gitbal.backend.domain.refreshtoken.RefreshToken;
 import gitbal.backend.domain.refreshtoken.RefreshTokenRepository;
+import gitbal.backend.domain.user.UserService;
 import gitbal.backend.global.security.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -22,9 +24,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     // TODO : 프론트 url 받아서 보내줘야함!
     private final String REDIRECT_URL = "http://localhost:8080/api/v1/login/success";
-    private final String ACCESS_TOKEN_PREFIX = "accessToken";
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserService userService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -35,8 +37,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         // TODO: 여기 관련 부분 뒤로 넘길 수 없는지 관련하여 고민
 
-        if (isUserEmptyRefreshToken(githubOAuth2UserInfo)) {
-            log.info("[onAuthenticationSuccess] refreshtoken이 발견되지 않았기에 제작하고 있는것입니다.");
+        if (isUserEmptyRefreshToken(githubOAuth2UserInfo) || isUserInDatabase(githubOAuth2UserInfo)) {
+            log.info("[onAuthenticationSuccess] refreshtoken이 발견되지 않았거나 초기 MockData로 인한 임시의 refreshToken을 제작하고 있는것입니다.");
             String refreshToken = jwtTokenProvider.createRefreshToken(githubOAuth2UserInfo);
             refreshTokenRepository.save(RefreshToken.builder().userNickname(
                     githubOAuth2UserInfo.getNickname())
@@ -50,6 +52,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             .build().toUriString();
 
         response.sendRedirect(uriString);
+    }
+
+    private boolean isUserInDatabase(GithubOAuth2UserInfo githubOAuth2UserInfo) {
+        return !Objects.isNull(userService.findByUserName(githubOAuth2UserInfo.getNickname()));
     }
 
     private boolean isUserEmptyRefreshToken(GithubOAuth2UserInfo githubOAuth2UserInfo) {

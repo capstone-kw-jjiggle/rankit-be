@@ -1,8 +1,5 @@
 ### propertiesFile ###
-application-db.yml
-application-oauth.yml
-application-univ.yml
-application-token.yml
+.env
 
 
 HELP.md
