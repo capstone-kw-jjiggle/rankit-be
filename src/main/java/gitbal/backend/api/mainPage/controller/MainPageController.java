@@ -28,8 +28,8 @@ public class MainPageController {
         @ApiResponse(responseCode = "200", description = "유저들을 가져오는데 성공했습니다."),
         @ApiResponse(responseCode = "400", description = "유저들을 가져오는데 실패했습니다.")
     })
-    public ResponseEntity<MainPageUserResponseDto> users(@RequestParam int page) {
-        return ResponseEntity.ok(mainPageService.getUsers(page));
+    public ResponseEntity<MainPageUserResponseDto> users(@RequestParam(required = false, defaultValue = "1") int page,  @RequestParam(required = false) String searchedname) {
+        return ResponseEntity.ok(mainPageService.getUsers(page, searchedname));
     }
 
 
@@ -43,15 +43,6 @@ public class MainPageController {
         return ResponseEntity.ok(mainPageService.getMainPageFirstSchoolRegionRank());
     }
 
-    @GetMapping("/search")
-    @Operation(summary = "메인 페이지 검색한 유저를 나오게 하는 API입니다.(일부 구현 완료 -> 등급 기획 완성시 다시 개발 진행)", description = "메인 검색 유저 관련 api 12명씩 대소문자 구분없이 검색.")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "유저이름 검색에 성공했습니다."),
-        @ApiResponse(responseCode = "400", description = "유저이름 검색에 실패했습니다.")
-    })
-    public ResponseEntity<MainPageUserResponseDto> search(@RequestParam String searchedname, @RequestParam(required = false, defaultValue = "0") int page) {
-        return ResponseEntity.ok(mainPageService.getSearchedUserList(searchedname, page));
-    }
 
 
 }
