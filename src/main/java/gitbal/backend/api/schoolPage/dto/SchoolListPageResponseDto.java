@@ -1,5 +1,6 @@
 package gitbal.backend.api.schoolPage.dto;
 
+import java.util.Collections;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,13 @@ public class SchoolListPageResponseDto<E> {
     this.currentPage = page;
     int totalCount = total.intValue();
 
+    if(emptyPage(page)){
+        this.totalPages = 0;
+        this.start = 0;
+        this.end = 0;
+        return;
+    }
+
     int pageSize = 10;
     this.totalPages = (int) Math.ceil((double) totalCount / pageSize);
 
@@ -36,5 +44,17 @@ public class SchoolListPageResponseDto<E> {
       start = 0;
       end = 0;
     }
+  }
+
+  private static boolean emptyPage(int page) {
+    return page == 0;
+  }
+
+  public static SchoolListPageResponseDto<SchoolListDto> emptyList() {
+    return SchoolListPageResponseDto.<SchoolListDto>withALl()
+        .schoolList(Collections.emptyList())
+        .page(0)
+        .total(0L)
+        .build();
   }
 }

@@ -53,20 +53,9 @@ public class SchoolRankController {
         @ApiResponse(responseCode = "200", description = "학교 리스트 요청을 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "학교 리스트 요청을 실패했습니다.")
     })
-    public ResponseEntity<SchoolListPageResponseDto<SchoolListDto>> schoolList(@RequestParam int page) {
-        return schoolRankService.getSchoolList(page);
+    public ResponseEntity<SchoolListPageResponseDto<SchoolListDto>> schoolList(@RequestParam(defaultValue = "1", required = false) int page, @RequestParam(required = false) String searchedSchoolName) {
+        return ResponseEntity.ok(schoolRankService.getSchoolList(page, searchedSchoolName));
     }
 
-
-
-    @GetMapping("/search")
-    @Operation(summary = "학교 페이지에서 검색한 학교를 나오게 하는 API입니다.(일부 구현 완료 -> 등급 기획 완성시 다시 개발 진행)", description = "학교 검색시 api 10개씩 검색(영어는 대소문자 구분 안함).")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "학교이름 검색에 성공했습니다."),
-        @ApiResponse(responseCode = "400", description = "학교이름 검색에 실패했습니다.")
-    })
-    public ResponseEntity<SchoolListPageResponseDto<SchoolListDto>> searchSchoolList(@RequestParam String searchedSchoolName, @RequestParam(required = false, defaultValue = "0") int page){
-        return ResponseEntity.ok(schoolRankService.getSearchedSchoolList(searchedSchoolName, page));
-    }
 
 }
