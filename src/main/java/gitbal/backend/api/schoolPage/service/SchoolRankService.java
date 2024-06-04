@@ -4,18 +4,18 @@ package gitbal.backend.api.schoolPage.service;
 import gitbal.backend.api.schoolPage.dto.FirstRankSchoolDto;
 import gitbal.backend.api.schoolPage.dto.MySchoolInfoResponseDto;
 import gitbal.backend.api.schoolPage.dto.SchoolListDto;
-import gitbal.backend.domain.school.School;
-import gitbal.backend.domain.user.User;
 import gitbal.backend.api.schoolPage.dto.SchoolListPageResponseDto;
-import gitbal.backend.global.exception.NotFoundSchoolException;
+import gitbal.backend.domain.school.School;
+import gitbal.backend.domain.school.SchoolRepository;
+import gitbal.backend.domain.user.User;
+import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.exception.NotLoginedException;
 import gitbal.backend.global.exception.PageOutOfRangeException;
 import gitbal.backend.global.exception.WrongPageNumberException;
-import gitbal.backend.domain.school.SchoolRepository;
-import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.global.security.CustomUserDetails;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,8 +40,13 @@ public class SchoolRankService {
         this.userRepository = userRepository;
     }
 
-    public ResponseEntity<SchoolListPageResponseDto<SchoolListDto>> getSchoolList(Integer page) {
-        try{
+    @Transactional(readOnly = true)
+    public SchoolListPageResponseDto<SchoolListDto> getSchoolList(Integer page,
+        String searchedSchoolName) {
+        if (!Objects.isNull(searchedSchoolName)) {
+            return getSearchedSchoolList(searchedSchoolName, page);
+        }
+        try {
             Sort sort = Sort.by("score").descending();
             Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE, sort);
             Page<School> schoolPage = schoolRepository.findAll(pageable);
@@ -57,10 +62,10 @@ public class SchoolRankService {
                 .total(schoolPage.getTotalElements())
                 .build();
             // 페이지 범위 넘겼을때
-            if(schoolList.getTotalPages() < page ) {
+            if (schoolList.getTotalPages() < page) {
                 throw new PageOutOfRangeException();
             }
-            return ResponseEntity.ok(schoolList);
+            return schoolList;
 
             //페이지로 음수 또는 문자열을 받았을때
         } catch (IllegalArgumentException e) {
@@ -107,17 +112,20 @@ public class SchoolRankService {
     }
 
 
-    @Transactional(readOnly = true)
-    public SchoolListPageResponseDto<SchoolListDto> getSearchedSchoolList(String searchedSchoolName,
+    private SchoolListPageResponseDto<SchoolListDto> getSearchedSchoolList(
+        String searchedSchoolName,
         int page) {
-            if(page == 0){
-                page=1;
-            }try {
+        if (page == 0) {
+            page = 1;
+        }
+        try {
             Page<School> schoolPage = schoolRepository.findBySchoolNameContainingIgnoreCase(
                 searchedSchoolName,
                 PageRequest.of(page - 1, PAGE_SIZE, Sort.by("score").descending()));
-            validateSearchSchoolName(schoolPage);
-            validatePage(page,schoolPage.getTotalElements());
+            if (isSearchedSchoolHasNothing(schoolPage)) {
+                return SchoolListPageResponseDto.emptyList();
+            }
+            validatePage(page, schoolPage.getTotalElements());
             List<SchoolListDto> searchedSchoolList = schoolPage.stream()
                 .map(this::convertToDto)
                 .toList();
@@ -127,17 +135,15 @@ public class SchoolRankService {
                 .page(page)
                 .total(schoolPage.getTotalElements())
                 .build();
-            }catch (IllegalArgumentException e){
-                e.printStackTrace();
-                throw new WrongPageNumberException(page);
-            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            throw new WrongPageNumberException(page);
         }
+    }
 
 
-    private void validateSearchSchoolName(Page<School> searchUsersIgnoreCase) {
-        if(searchUsersIgnoreCase.getTotalElements()==0){
-            throw new NotFoundSchoolException();
-        }
+    private boolean isSearchedSchoolHasNothing(Page<School> searchUsersIgnoreCase) {
+        return searchUsersIgnoreCase.getTotalElements() == 0;
     }
 
 
@@ -158,9 +164,6 @@ public class SchoolRankService {
     private boolean checkRemainPage(int pageNumber, long totalNumber) {
         return (long) pageNumber * PAGE_SIZE - totalNumber < PAGE_SIZE;
     }
-
-
-
 
 
 }
