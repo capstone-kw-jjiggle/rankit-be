@@ -2,13 +2,15 @@ package gitbal.backend.api.univcert.controller;
 
 
 import gitbal.backend.api.univcert.dto.UnivCertCodeDto;
+import gitbal.backend.api.univcert.dto.UnivCertResponseDto;
 import gitbal.backend.api.univcert.dto.UnivCertStartDto;
 import gitbal.backend.api.univcert.service.UnivService;
+import gitbal.backend.global.exception.UnivCertCodeException;
+import gitbal.backend.global.exception.UnivCertStartException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.io.IOException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -33,9 +35,8 @@ public class UnivController {
       @ApiResponse(responseCode = "200", description = "대학 인증 요청을 성공했습니다."),
       @ApiResponse(responseCode = "400", description = "대학 인증 요청을 실패했습니다.")
   })
-  public ResponseEntity<Map<String, Object>> univRequestCertificate(@RequestBody UnivCertStartDto univCertStartDto)
-      throws IOException {
-    return ResponseEntity.ok(univSerivce.CertStart(univCertStartDto));
+  public ResponseEntity<UnivCertResponseDto> univRequestCertificate(@RequestBody UnivCertStartDto univCertStartDto) {
+    return ResponseEntity.ok(univSerivce.certStart(univCertStartDto));
   }
 
 
@@ -45,11 +46,9 @@ public class UnivController {
       @ApiResponse(responseCode = "200", description = "인증번호 검증을 성공했습니다."),
       @ApiResponse(responseCode = "400", description = "인증번호 검증을 실패했습니다.")
   })
-  public ResponseEntity<Map<String, Object>> univCertNumValidate(@RequestBody UnivCertCodeDto univCertCodeDto)
-      throws IOException {
-    return ResponseEntity.ok(univSerivce.CertCode(univCertCodeDto));
+  public ResponseEntity<UnivCertResponseDto> univCertNumValidate(@RequestBody UnivCertCodeDto univCertCodeDto) {
+    return ResponseEntity.ok(univSerivce.certCode(univCertCodeDto));
   }
-
 
 }
 

@@ -11,6 +11,8 @@ import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.exception.NotLoginedException;
 import gitbal.backend.global.exception.PageOutOfRangeException;
+import gitbal.backend.global.exception.UnivCertCodeException;
+import gitbal.backend.global.exception.UnivCertStartException;
 import gitbal.backend.global.exception.UserRankException;
 import gitbal.backend.global.exception.WrongPageNumberException;
 import org.springframework.http.ResponseEntity;
@@ -86,6 +88,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoTokenException.class)
     public  ResponseEntity<String> handleNoTokenException(NoTokenException e){
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(UnivCertStartException.class)
+    public ResponseEntity<String> handleUnivCertStartException(UnivCertStartException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(UnivCertCodeException.class)
+    public ResponseEntity<String> handleUnivCertCodeException(UnivCertCodeException e) {
         return ResponseEntity.status(400).body(e.getMessage());
     }
 
