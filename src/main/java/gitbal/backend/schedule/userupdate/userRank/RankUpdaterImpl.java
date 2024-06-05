@@ -1,48 +1,30 @@
 package gitbal.backend.schedule.userupdate.userRank;
 
 import gitbal.backend.domain.school.School;
+import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
+import gitbal.backend.domain.user.UserService;
+import gitbal.backend.schedule.userupdate.UserSetup;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class RankUpdaterImpl implements RankUpdater {
+public class RankUpdaterImpl extends UserSetup implements RankUpdater {
 
-  private UserRepository userRepository;
+  private final UserService userService;
+  private final SchoolService schoolService;
 
   @Override
+  @Transactional
   public void update() {
-    List<User> users = userRepository.findAll(Sort.by("score").descending());
-    int rank = 1;
-    int prevRank = 1;
-    for (int i = 0; i < users.size(); i++) {
-      User user = users.get(i);
-      if (i > 0 && users.get(i - 1).getScore() != user.getScore()) {
-        prevRank = rank;
-      }
-      user.setUserRank(prevRank);
-      userRepository.save(user);
-      rank = prevRank + 1;
-    }
-  }
-
-
-
-  private void scoreRankingCalculate(List< School > schools, int rank) {
-    int prevRank = rank;
-    for (int i = 0; i < schools.size(); i++) {
-      School school = schools.get(i);
-      if (i > 0 && schools.get(i - 1).getScore() != school.getScore()) {
-        prevRank = rank;
-      }
-      school.setSchoolRank(prevRank);
-      rank = prevRank + 1;
-    }
+    userService.updateUserRank();
+    schoolService.updateSchoolRank();
   }
 }
