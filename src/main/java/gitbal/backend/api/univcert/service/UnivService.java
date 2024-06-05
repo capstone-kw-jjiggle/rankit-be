@@ -23,7 +23,7 @@ public class UnivService {
       Map<String, Object> response = UnivCert.certify(apikey, univCertStartDto.getEmail(), univCertStartDto.getUnivName(), true);
       return responsetoDto(response, "인증번호 전송 완료");
     } catch (Exception e) {
-      throw new UnivCertStartException(e.getMessage());
+      throw new UnivCertStartException();
     }
   }
 
