@@ -26,6 +26,7 @@ public class UserService {
     private final UserInfoService userInfoService;
     private final UserRepository userRepository;
     private final int USER_AROUND_RANGE = 2;
+    private final int FIRST_RANK = 1;
 
 
     public Long calculateUserScore(String nickname) {
@@ -143,10 +144,24 @@ public class UserService {
         }
     }
 
-
     public List<MajorLanguage> findMajorLanguagesByUsername(String username) {
         User findUser = userRepository.findByNickname(username)
             .orElseThrow(NotFoundUserException::new);
         return findUser.getMajorLanguages();
+    }
+
+    public void updateUserRank() {
+        List<User> users = userRepository.findAll(Sort.by("score").descending());
+        int rank = FIRST_RANK;
+        int prevRank = FIRST_RANK;
+        for (int i = 0; i < users.size(); i++) {
+            User user = users.get(i);
+            if (i > 0 && users.get(i - 1).getScore() != user.getScore()) {
+                prevRank = rank;
+            }
+            user.setUserRank(prevRank);
+            userRepository.save(user);
+            rank = prevRank + 1;
+        }
     }
 }

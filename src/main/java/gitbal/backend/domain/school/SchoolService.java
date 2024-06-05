@@ -5,8 +5,10 @@ import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.util.SurroundingRankStatus;
 import gitbal.backend.domain.user.UserRepository;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,6 +20,7 @@ public class SchoolService {
   private final int SCHOOL_AROUND_RANGE = 3;
   private final SchoolRepository schoolRepository;
   private final UserRepository userRepository;
+  private final int FIRST_RANK = 1;
 
   public School findBySchoolName(String schoolName) {
     return schoolRepository.findBySchoolName(schoolName)
@@ -55,11 +58,25 @@ public class SchoolService {
         }
       }
     }
-
   }
 
   public void updateByUserScore(School school, String username, Long oldScore, Long newScore) {
     school.updateScore(oldScore,newScore);
     school.updateContributerInfo(username, newScore);
+  }
+
+  public void updateSchoolRank(){
+    List<School> schools = schoolRepository.findAll(Sort.by("score").descending());
+    int rank = FIRST_RANK;
+    int prevRank = FIRST_RANK;
+    for (int i = 0; i < schools.size(); i++) {
+      School school = schools.get(i);
+      if (i > 0 && !Objects.equals(schools.get(i - 1).getScore(), school.getScore())) {
+        prevRank = rank;
+      }
+      school.setSchoolRank(prevRank);
+      schoolRepository.save(school);
+      rank = prevRank + 1;
+    }
   }
 }
