@@ -21,7 +21,7 @@ services:
       - db
       - redis
     ports:
-      - "80:8080"
+      - "8080:8080"
     volumes:
       - ./database/init/init.sql:/docker-entrypoint-initdb.d/init.sql # mockdataGenerator 에서 이미 생성되어있는 친구면 막아버리기 -> docker-compose에서는 검증하지 않음.
 
