@@ -9,7 +9,9 @@ import gitbal.backend.domain.school.School;
 import gitbal.backend.global.exception.NotFoundRegionException;
 import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.exception.NotFoundUserException;
+import gitbal.backend.global.security.GithubOAuth2UserInfo;
 import gitbal.backend.global.util.SurroundingRankStatus;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -163,5 +165,16 @@ public class UserService {
             userRepository.save(user);
             rank = prevRank + 1;
         }
+    }
+
+    @Transactional
+    public void updateUser(GithubOAuth2UserInfo githubOAuth2UserInfo) {
+
+        User user = userRepository.findByNickname(githubOAuth2UserInfo.getNickname())
+            .orElseThrow(NotFoundUserException::new);
+
+        user.updateImage(githubOAuth2UserInfo);
+
+        userRepository.save(user);
     }
 }
