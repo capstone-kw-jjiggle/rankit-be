@@ -34,7 +34,4 @@ public interface SchoolRepository extends JpaRepository<School, Long> {
 
   Page<School> findBySchoolNameContainingIgnoreCase(String searchedSchoolName, Pageable pageable);
 
-
-  @Query(value = "SELECT RANK() OVER (ORDER BY score DESC) AS `rank` FROM school WHERE school_name = :schoolName", nativeQuery = true)
-  int getSchoolRanking(String schoolName);
 }
