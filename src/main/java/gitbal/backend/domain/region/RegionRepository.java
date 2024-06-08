@@ -12,7 +12,6 @@ public interface RegionRepository extends JpaRepository<Region, Long> {
 
     Optional<Region> findByRegionName(String regionName);
 
-
     @Query("SELECT count(r) FROM Region r WHERE r.score > :regionScore")
     int regionScoreRacedForward(@Param("regionScore") Long regionScore);
 
@@ -30,6 +29,4 @@ public interface RegionRepository extends JpaRepository<Region, Long> {
     @Query("SELECT r FROM Region r ORDER BY r.score DESC LIMIT 1")
     Region firstRankedRegion();
 
-    @Query(value = "SELECT RANK() OVER (ORDER BY score DESC) AS `rank` FROM region where region_name = :regionName", nativeQuery = true)
-    int getRegionRanking(String regionName);
 }

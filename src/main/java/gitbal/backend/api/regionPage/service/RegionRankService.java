@@ -3,16 +3,19 @@ package gitbal.backend.api.regionPage.service;
 
 import gitbal.backend.api.regionPage.dto.RegionListPageResponseDto;
 import gitbal.backend.domain.region.Region;
+import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.api.regionPage.dto.FirstRankRegionDto;
 import gitbal.backend.api.regionPage.dto.MyRegionInfoResponseDto;
 import gitbal.backend.api.regionPage.dto.RegionListDto;
+import gitbal.backend.global.exception.NotFoundRegionException;
 import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.exception.NotLoginedException;
 import gitbal.backend.domain.region.RegionRepository;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.global.security.CustomUserDetails;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -85,7 +88,17 @@ public class RegionRankService {
             NotFoundUserException::new
         );
         Region region = user.getRegion();
-        return MyRegionInfoResponseDto.of(regionRepository.getRegionRanking(region.getRegionName()),
-            region);
+
+        return MyRegionInfoResponseDto.of(findRegionRank(region.getRegionName()), region);
+    }
+
+    //TODO: 이후에 school, region 관련하여서 더 생각해보기
+    private int findRegionRank(String regionName){
+        List<Region> regions = regionRepository.findAll(Sort.by("score").descending());
+        for (int i = 0; i < regions.size(); i++) {
+            Region region = regions.get(i);
+            if(region.getRegionName().equals(regionName))  return i+1;
+        }
+        throw new NotFoundRegionException();
     }
 }
