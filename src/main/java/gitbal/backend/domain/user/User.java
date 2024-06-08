@@ -7,6 +7,7 @@ import gitbal.backend.global.constant.Grade;
 import gitbal.backend.domain.majorlanguage.MajorLanguage;
 import gitbal.backend.domain.onedaycommit.OneDayCommit;
 import gitbal.backend.domain.region.Region;
+import gitbal.backend.global.security.GithubOAuth2UserInfo;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -128,4 +129,8 @@ public class User extends BaseTimeEntity {
         return new User(null, null, null, null, username, 0L, avatarUrl, Grade.YELLOW, 0);
     }
 
+    public void updateImage(GithubOAuth2UserInfo githubOAuth2UserInfo) {
+        if(this.profile_img.equals(githubOAuth2UserInfo.getAvatarImgUrl()))  return;
+        this.profile_img=githubOAuth2UserInfo.getAvatarImgUrl();
+    }
 }

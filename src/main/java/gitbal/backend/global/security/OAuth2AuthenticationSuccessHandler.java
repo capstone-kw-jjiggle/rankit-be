@@ -39,12 +39,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         if (isUserEmptyRefreshToken(githubOAuth2UserInfo) || isUserInDatabase(githubOAuth2UserInfo)) {
             log.info("[onAuthenticationSuccess] refreshtoken이 발견되지 않았거나 초기 MockData로 인한 임시의 refreshToken을 제작하고 있는것입니다.");
-            String refreshToken = jwtTokenProvider.createRefreshToken(githubOAuth2UserInfo);
-            refreshTokenRepository.save(RefreshToken.builder().userNickname(
-                    githubOAuth2UserInfo.getNickname())
-                .refreshToken(refreshToken)
-                .build()
-            );
+            updateUser(githubOAuth2UserInfo);
+            tokenRefresh(githubOAuth2UserInfo);
         }
 
         String uriString = UriComponentsBuilder.fromUriString(REDIRECT_URL)
@@ -52,6 +48,20 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             .build().toUriString();
 
         response.sendRedirect(uriString);
+    }
+
+    private void tokenRefresh(GithubOAuth2UserInfo githubOAuth2UserInfo) {
+        String refreshToken = jwtTokenProvider.createRefreshToken(githubOAuth2UserInfo);
+        refreshTokenRepository.save(RefreshToken.builder().userNickname(
+                githubOAuth2UserInfo.getNickname())
+            .refreshToken(refreshToken)
+            .build()
+        );
+    }
+
+    private void updateUser(GithubOAuth2UserInfo githubOAuth2UserInfo) {
+        log.info("[updateUser] : 다시 로그인 하여 userLogin 관련 업데이트 작업 진행");
+        userService.updateUser(githubOAuth2UserInfo);
     }
 
     private boolean isUserInDatabase(GithubOAuth2UserInfo githubOAuth2UserInfo) {
