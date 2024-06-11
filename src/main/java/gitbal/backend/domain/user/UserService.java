@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gitbal.backend.domain.majorlanguage.MajorLanguage;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
+import gitbal.backend.global.constant.Grade;
 import gitbal.backend.global.exception.NotFoundRegionException;
 import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.exception.NotFoundUserException;
@@ -152,6 +153,7 @@ public class UserService {
         return findUser.getMajorLanguages();
     }
 
+    @Transactional
     public void updateUserRank() {
         List<User> users = userRepository.findAll(Sort.by("score").descending());
         int rank = FIRST_RANK;
@@ -168,6 +170,13 @@ public class UserService {
     }
 
     @Transactional
+    public void updateUserGrade() {
+        List<User> users = userRepository.findAll();
+        updateGrade(users);
+
+    }
+
+    @Transactional
     public void updateUser(GithubOAuth2UserInfo githubOAuth2UserInfo) {
 
         User user = userRepository.findByNickname(githubOAuth2UserInfo.getNickname())
@@ -176,5 +185,26 @@ public class UserService {
         user.updateImage(githubOAuth2UserInfo);
 
         userRepository.save(user);
+    }
+
+    private void updateGrade(List<User> users) {
+        for (User user : users) {
+            Long score = user.getScore();
+
+            if (score <= 60000) {
+                user.setGrade(Grade.YELLOW);
+            } else if (score <= 70000) {
+                user.setGrade(Grade.GREEN);
+            } else if (score <= 80000) {
+                user.setGrade(Grade.BLUE);
+            } else if (score <= 90000) {
+                user.setGrade(Grade.RED);
+            } else if (score <= 96000) {
+                user.setGrade(Grade.GREY);
+            } else {
+                user.setGrade(Grade.PURPLE);
+            }
+        }
+        userRepository.saveAll(users);
     }
 }
