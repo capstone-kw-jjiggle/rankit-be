@@ -1,6 +1,7 @@
 package gitbal.backend.api.regionPage.dto;
 
 import gitbal.backend.domain.region.Region;
+import java.util.Objects;
 import lombok.Getter;
 
 @Getter
@@ -24,6 +25,7 @@ public class MyRegionInfoResponseDto {
     }
 
     public static MyRegionInfoResponseDto of(int regionRank, Region region) {
+        if(Objects.isNull(region)) return new MyRegionInfoResponseDto(regionRank, null, 0, null, 0);
         return new MyRegionInfoResponseDto(regionRank, region.getRegionName(), region.getScore(),
             region.getTopContributor(), region.getContributorScore());
     }

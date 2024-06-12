@@ -3,6 +3,7 @@ package gitbal.backend.api.auth.dto;
 
 import gitbal.backend.domain.user.User;
 import gitbal.backend.global.constant.Grade;
+import gitbal.backend.domain.user.UserRegionSchoolNameDto;
 import lombok.Getter;
 
 @Getter
@@ -27,8 +28,9 @@ public class UserInfoDto {
         this.grade=grade;
     }
 
-    public static UserInfoDto of(User user) {
-        return new UserInfoDto(user.getNickname(), user.getSchool().getSchoolName(),
-            user.getRegion().getRegionName(), user.getProfile_img(), null, user.getUserRank(), user.getGrade());
+    public static UserInfoDto of(User user, UserRegionSchoolNameDto userRegionSchoolNameDto) {
+        return new UserInfoDto(user.getNickname(), userRegionSchoolNameDto.getSchoolName(),
+            userRegionSchoolNameDto.getRegionName(), user.getProfile_img(), null, user.getUserRank(), user.getGrade());
     }
+
 }
