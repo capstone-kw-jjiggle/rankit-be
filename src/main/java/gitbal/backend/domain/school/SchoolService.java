@@ -1,9 +1,11 @@
 package gitbal.backend.domain.school;
 
 import gitbal.backend.domain.user.User;
+import gitbal.backend.global.constant.SchoolGrade;
 import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.util.SurroundingRankStatus;
 import gitbal.backend.domain.user.UserRepository;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -65,18 +67,68 @@ public class SchoolService {
     school.updateContributerInfo(username, newScore);
   }
 
-  public void updateSchoolRank(){
+  @Transactional
+  public void updateSchoolRank() {
     List<School> schools = schoolRepository.findAll(Sort.by("score").descending());
+    updateRank(schools);
+  }
+
+  @Transactional
+  public void updateSchoolGrade() {
+    List<School> schools = schoolRepository.findAll(Sort.by("score").descending());
+    updateGrade(schools);
+  }
+
+  private void updateRank(List<School> schools){
     int rank = FIRST_RANK;
     int prevRank = FIRST_RANK;
+
     for (int i = 0; i < schools.size(); i++) {
       School school = schools.get(i);
       if (i > 0 && !Objects.equals(schools.get(i - 1).getScore(), school.getScore())) {
         prevRank = rank;
       }
       school.setSchoolRank(prevRank);
-      schoolRepository.save(school);
       rank = prevRank + 1;
+    }
+    schoolRepository.saveAll(schools);
+  }
+
+  private void updateGrade(List<School> schools) {
+    int totalSchools = schools.size();
+    int purpleCount = (int) Math.floor(totalSchools * 0.05);
+    int greyCount = (int) Math.floor(totalSchools * 0.1);
+    int redCount = (int) Math.floor(totalSchools * 0.15);
+    int blueCount = (int) Math.floor(totalSchools * 0.15);
+    int greenCount = (int) Math.floor(totalSchools * 0.2);
+
+    int currentCount = 0;
+    SchoolGrade currentGrade = SchoolGrade.PURPLE;
+
+    for (School school : schools) {
+      if (currentCount >= purpleCount && currentGrade == SchoolGrade.PURPLE) {
+        currentGrade = SchoolGrade.GREY;
+        currentCount = 0;
+      } else if (currentCount >= greyCount && currentGrade == SchoolGrade.GREY) {
+        currentGrade = SchoolGrade.RED;
+        currentCount = 0;
+      } else if (currentCount >= redCount && currentGrade == SchoolGrade.RED) {
+        currentGrade = SchoolGrade.BLUE;
+        currentCount = 0;
+      } else if (currentCount >= blueCount && currentGrade == SchoolGrade.BLUE) {
+        currentGrade = SchoolGrade.GREEN;
+        currentCount = 0;
+      } else if (currentCount >= greenCount && currentGrade == SchoolGrade.GREEN) {
+        currentGrade = SchoolGrade.YELLOW;
+        currentCount = 0;
+      } else if (school.getScore() == 0) {
+        school.setGrade(SchoolGrade.YELLOW);
+      }
+
+      school.setGrade(currentGrade);
+      currentCount++;
+
+      schoolRepository.save(school);
     }
   }
 }
