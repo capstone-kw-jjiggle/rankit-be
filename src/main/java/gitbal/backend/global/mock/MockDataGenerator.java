@@ -1,6 +1,7 @@
 package gitbal.backend.global.mock;
 
 
+import gitbal.backend.domain.user.UserService;
 import gitbal.backend.global.constant.Grade;
 import gitbal.backend.domain.majorlanguage.MajorLanguage;
 import gitbal.backend.domain.onedaycommit.OneDayCommit;
@@ -37,6 +38,7 @@ public class MockDataGenerator implements CommandLineRunner {
   private final MajorLanguageRepository majorLanguageRepository;
   private final OneDayCommitRepository oneDayCommitRepository;
   private final UserRepository userRepository;
+  private final UserService userService;
   private final SchoolService schoolService;
   private final RegionService regionService;
 
@@ -66,7 +68,6 @@ public class MockDataGenerator implements CommandLineRunner {
 
       // Create a random user
       User newUser = createUser(randomNickname, randomSchool, randomRegion, i);
-      calculateGradeByScore(newUser);
 
       // Create a list of MajorLanguage entities for this user
       List<MajorLanguage> majorLanguages = createRandomMajorLanguagesForUser(newUser);
@@ -93,10 +94,11 @@ public class MockDataGenerator implements CommandLineRunner {
 
     createUserWithNickname(lee);
     createUserWithNickname2(khyojun);
-    updateUsersRank();
+    userService.updateUserRank(); //user 순위 업데이트
+    userService.updateUserGrade(); // user 등급 업데이트
     insertRegionSchoolTopContributorInfo();
-    fetchSchoolScore();
-    updateSchoolGrade();
+    schoolService.updateSchoolRank(); // school 순위 업데이트
+    schoolService.updateSchoolGrade(); // school 등급 업데이트
     log.info("Mock data creation completed!!!!!!");
   }
 
@@ -127,24 +129,6 @@ public class MockDataGenerator implements CommandLineRunner {
         khyojun.getNickname(), khyojun.getScore(), khyojun.getProfile_img(), Grade.YELLOW, 0);
     userRepository.save(khyojun);
 
-  }
-
-  private void fetchSchoolScore() {
-    List<School> schools = schoolRepository.findAll(Sort.by("score").descending());
-    int rank = 1;
-    scoreRankingCalculate(schools, rank);
-  }
-
-  private void scoreRankingCalculate(List<School> schools, int rank) {
-    int prevRank = rank;
-    for (int i = 0; i < schools.size(); i++) {
-      School school = schools.get(i);
-      if (i > 0 && schools.get(i - 1).getScore() != school.getScore()) {
-        prevRank = rank;
-      }
-      school.setSchoolRank(prevRank);
-      rank = prevRank + 1;
-    }
   }
 
   private User createUser(String randomNickname, School school, Region region, int index) {
@@ -223,82 +207,6 @@ public class MockDataGenerator implements CommandLineRunner {
   private void insertRegionSchoolTopContributorInfo() {
     regionService.insertTopContributorInfo();
     schoolService.insertSchoolTopContributorInfo();
-  }
-
-  private void updateUsersRank() {
-    List<User> users = userRepository.findAll(Sort.by("score").descending());
-    int rank = 1;
-    int prevRank = 1;
-    for (int i = 0; i < users.size(); i++) {
-      User user = users.get(i);
-      if (i > 0 && users.get(i - 1).getScore() != user.getScore()) {
-        prevRank = rank;
-      }
-      user.setUserRank(prevRank);
-      userRepository.save(user);
-      rank = prevRank + 1;
-    }
-  }
-
-  private void updateSchoolGrade() {
-    List<School> schools = schoolRepository.findAll(Sort.by("score").descending());
-    int totalSchools = schools.size();
-    int purpleCount = (int) Math.floor(totalSchools * 0.05);
-    int greyCount = (int) Math.floor(totalSchools * 0.1);
-    int redCount = (int) Math.floor(totalSchools * 0.15);
-    int blueCount = (int) Math.floor(totalSchools * 0.15);
-    int greenCount = (int) Math.floor(totalSchools * 0.2);
-
-    int currentCount = 0;
-    SchoolGrade currentGrade = SchoolGrade.PURPLE;
-
-    for (School school : schools) {
-        if (currentCount >= purpleCount && currentGrade == SchoolGrade.PURPLE) {
-          currentGrade = SchoolGrade.GREY;
-          currentCount = 0;
-        }
-        else if (currentCount >= greyCount && currentGrade == SchoolGrade.GREY) {
-          currentGrade = SchoolGrade.RED;
-          currentCount = 0;
-        }
-        else if (currentCount >= redCount && currentGrade == SchoolGrade.RED) {
-          currentGrade = SchoolGrade.BLUE;
-          currentCount = 0;
-        }
-        else if (currentCount >= blueCount && currentGrade == SchoolGrade.BLUE) {
-          currentGrade = SchoolGrade.GREEN;
-          currentCount = 0;
-        }
-        else if (currentCount >= greenCount && currentGrade == SchoolGrade.GREEN) {
-          currentGrade = SchoolGrade.YELLOW;
-          currentCount = 0;
-        } else if (school.getScore() == 0) {
-        school.setGrade(SchoolGrade.YELLOW);
-        }
-
-        school.setGrade(currentGrade);
-        currentCount++;
-
-      schoolRepository.save(school);
-    }
-  }
-
-  private void calculateGradeByScore(User user) {
-    Long score = user.getScore();
-
-    if (score <= 60000) {
-      user.setGrade(Grade.YELLOW);
-    } else if (score <= 70000) {
-      user.setGrade(Grade.GREEN);
-    } else if (score <= 80000) {
-      user.setGrade(Grade.BLUE);
-    } else if (score <= 90000) {
-      user.setGrade(Grade.RED);
-    } else if (score <= 96000) {
-      user.setGrade(Grade.GREY);
-    } else {
-      user.setGrade(Grade.PURPLE);
-    }
   }
 
 
