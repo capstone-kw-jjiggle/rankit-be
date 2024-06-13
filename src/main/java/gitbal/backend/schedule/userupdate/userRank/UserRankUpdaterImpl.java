@@ -18,6 +18,8 @@ public class UserRankUpdaterImpl extends UserSetup implements UserRankUpdater {
   @Override
   @Transactional
   public void update() {
+    log.info("[schedulingUserRank] method start");
     userService.updateUserRank();
+    log.info("[schedulingUserRank] method finish");
   }
 }

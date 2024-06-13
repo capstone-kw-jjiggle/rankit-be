@@ -67,16 +67,27 @@ public class SchoolService {
     school.updateContributerInfo(username, newScore);
   }
 
-  @Transactional
   public void updateSchoolRank() {
     List<School> schools = schoolRepository.findAll(Sort.by("score").descending());
     updateRank(schools);
   }
 
-  @Transactional
   public void updateSchoolGrade() {
     List<School> schools = schoolRepository.findAll(Sort.by("score").descending());
     updateGrade(schools);
+  }
+
+  public void updatePrevDayScore(School school, Long newScore) {
+    school.updatePrevDayScore(newScore);
+  }
+
+  public void updateSchoolChangedScore(School school, Long newScore) {
+    school.updateChangedScore(newScore);
+  }
+
+  public List<School> getAllSchoolList() {
+    List<School> schools = schoolRepository.findAll();
+    return schools;
   }
 
   private void updateRank(List<School> schools){
