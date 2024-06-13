@@ -1,6 +1,7 @@
 package gitbal.backend.schedule;
 
 import gitbal.backend.schedule.schoolupdate.schoolGrade.SchoolGradeUpdater;
+import gitbal.backend.schedule.schoolupdate.schoolPrevDayScore.SchoolPrevDayScoreUpdater;
 import gitbal.backend.schedule.schoolupdate.schoolRank.SchoolRankUpdater;
 import gitbal.backend.schedule.userupdate.majorLanguage.UserLanguagesUpdater;
 import gitbal.backend.schedule.userupdate.onedaycommit.UserOneDayCommitUpdater;
@@ -25,6 +26,9 @@ public class SchedulingService {
     private final UserRankUpdater userRankUpdater;
     private final SchoolGradeUpdater schoolGradeUpdater;
     private final UserGradeUpdater userGradeUpdater;
+    private final SchoolPrevDayScoreUpdater schoolPrevDayScoreUpdater;
+
+
 
 
     @Scheduled(initialDelay = 3, fixedRate = 360, timeUnit = TimeUnit.MINUTES)
@@ -35,6 +39,11 @@ public class SchedulingService {
     @Scheduled(cron = "1 0 0 * * ?")
     public void updateUserCommit() {
         userOneDayCommitUpdater.update();
+    }
+
+    @Scheduled(cron = "1 0 0 * * ?")
+    public void updateSchoolPrevDayScore() {
+        schoolPrevDayScoreUpdater.update();
     }
 
     @Scheduled(initialDelay = 3, fixedRate = 360, timeUnit = TimeUnit.MINUTES)
@@ -61,4 +70,5 @@ public class SchedulingService {
     public void updateUserGrade() {
         userGradeUpdater.update();
     }
+
 }
