@@ -50,6 +50,10 @@ public class School extends BaseTimeEntity {
   @NotNull
   private Long contributorScore;
 
+  @Column(name = "prev_day_score")
+  @ColumnDefault(value = "0")
+  private Long prevDayScore;
+
   public School(String schoolName, Long score, String topContributor, Long contributorScore) {
     this.schoolName = schoolName;
     this.score = score;
@@ -97,5 +101,13 @@ public class School extends BaseTimeEntity {
 
   public void updateScore(Long oldScore, Long newScore) {
     this.score= this.score-oldScore+newScore;
+  }
+
+  public void updatePrevDayScore(Long newScore) {
+    this.prevDayScore = newScore;
+  }
+
+  public void updateChangedScore(Long newScore) {
+    this.changedScore = newScore - this.prevDayScore;
   }
 }
