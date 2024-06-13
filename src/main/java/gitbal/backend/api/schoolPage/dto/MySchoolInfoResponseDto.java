@@ -3,6 +3,7 @@ package gitbal.backend.api.schoolPage.dto;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.global.constant.SchoolGrade;
+import java.util.Objects;
 import lombok.Getter;
 
 @Getter
@@ -26,6 +27,7 @@ public class MySchoolInfoResponseDto {
     }
 
     public static MySchoolInfoResponseDto of(School school) {
+        if(Objects.isNull(school))  return new MySchoolInfoResponseDto(0, null, 0, null, 0, null);
         return new MySchoolInfoResponseDto(school.getSchoolRank(), school.getSchoolName(), school.getScore(),
             school.getTopContributor(), school.getContributorScore(), school.getGrade());
     }

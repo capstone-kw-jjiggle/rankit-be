@@ -3,7 +3,6 @@ package gitbal.backend.api.regionPage.service;
 
 import gitbal.backend.api.regionPage.dto.RegionListPageResponseDto;
 import gitbal.backend.domain.region.Region;
-import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.api.regionPage.dto.FirstRankRegionDto;
 import gitbal.backend.api.regionPage.dto.MyRegionInfoResponseDto;
@@ -88,7 +87,7 @@ public class RegionRankService {
             NotFoundUserException::new
         );
         Region region = user.getRegion();
-
+        if(Objects.isNull(region)) return MyRegionInfoResponseDto.of(0, null);
         return MyRegionInfoResponseDto.of(findRegionRank(region.getRegionName()), region);
     }
 

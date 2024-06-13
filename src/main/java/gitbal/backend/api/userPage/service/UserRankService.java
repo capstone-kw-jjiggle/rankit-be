@@ -17,6 +17,7 @@ import gitbal.backend.domain.school.SchoolRaceStatus;
 import gitbal.backend.domain.user.UserRaceStatus;
 
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,7 @@ public class UserRankService {
     @Transactional(readOnly = true)
     public SchoolRankRaceResponseDto makeUserRankSchoolStatusByUsername(String username) {
         School findUserScool = userService.findSchoolByUserName(username);
+        if(Objects.isNull(findUserScool)) return SchoolRankRaceResponseDto.of(null);
         SchoolRaceStatus schoolRaceStatus = schoolService.findSchoolScoreRaced(
             findUserScool.getScore());
         schoolRaceStatus.addEntity(findUserScool);
@@ -61,6 +63,7 @@ public class UserRankService {
     @Transactional(readOnly = true)
     public RegionRankRaceResponseDto makeUserRankRegionStatusByUsername(String username) {
         Region findRegion = userService.findRegionByUserName(username);
+        if(Objects.isNull(findRegion)) return RegionRankRaceResponseDto.of(null);
         RegionRaceStatus regionRaceStatus = regionService.findRegionScoreRaced(
             findRegion.getScore());
         regionRaceStatus.addEntity(findRegion);

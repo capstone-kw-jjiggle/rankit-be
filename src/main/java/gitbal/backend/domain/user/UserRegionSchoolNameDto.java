@@ -1,4 +1,4 @@
-package gitbal.backend.global.dto;
+package gitbal.backend.domain.user;
 
 import lombok.Getter;
 
