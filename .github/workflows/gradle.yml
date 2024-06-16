@@ -65,7 +65,8 @@ jobs:
         source:  |
             ./docker-compose.yml
             ./.env
-        target: "/home/${{ secrets.EC2_USER }}/docker-compose.yml"
+        target: "/home/${{ secrets.EC2_USER }}/"
+        debug: true
 
     - name: Deploy to EC2
       uses: appleboy/ssh-action@master
