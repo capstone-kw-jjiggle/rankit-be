@@ -83,7 +83,7 @@ jobs:
           tar -xzvf deploy-files.tar.gz
 
           # Stop and remove all running containers
-          sudo docker-compose down
+          sudo docker-compose down -v
 
           # Pull the latest image
           sudo docker-compose pull app
