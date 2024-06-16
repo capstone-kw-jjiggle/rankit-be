@@ -1,4 +1,4 @@
 FROM openjdk:17-slim
-COPY ./build/libs/*.jar /app.jar
+COPY --from=build /home/gradle/src/build/libs/*.jar /app.jar
 ENV TZ=Asia/Seoul
 ENTRYPOINT ["sh", "-c", "java -Dspring.profiles.active=prod -jar /app.jar"]
