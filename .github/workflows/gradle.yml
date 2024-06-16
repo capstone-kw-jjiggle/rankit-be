@@ -1,3 +1,4 @@
+
 name: Java CI with Gradle
 
 on:
@@ -29,21 +30,29 @@ jobs:
     - name: Build with Gradle Wrapper
       run: ./gradlew -x test bootJar
       
+    - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
 
     - name: Build and push Docker image
       run: |
+        docker build -t your-dockerhub-username/your-app:latest .
+        docker push your-dockerhub-username/your-app:latest
 
+    - name: Copy docker-compose.yml to EC2
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_KEY }}
+        source: "./docker-compose.yml"
+        target: "/home/${{ secrets.EC2_USER }}/docker-compose.yml"
 
     - name: Deploy to EC2
       uses: appleboy/ssh-action@master
@@ -52,9 +61,18 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
+          echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
           cd /home/${{ secrets.EC2_USER }}
 
+          # Stop and remove all running containers
+          sudo docker-compose down
+
+          # Pull the latest image
+          sudo docker-compose pull app
+
+          # Start the containers
+          sudo docker-compose up -d
 
   dependency-submission:
 
