@@ -53,8 +53,12 @@ jobs:
 
     - name: Verify docker-compose.yml exists
       run: |
-        ls -la docker-compose.yml 
-     
+        ls -la docker-compose.yml
+
+    - name: Compress files
+      run: |
+        tar -czvf deploy-files.tar.gz docker-compose.yml .env
+        ls -la deploy-files.tar.gz  # Ensure the tar file is created        
 
     - name: Copy files to EC2
       uses: appleboy/scp-action@master
@@ -62,11 +66,10 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_KEY }}
-        source:  |
-            ./docker-compose.yml
-            ./.env
+        source: deploy-files.tar.gz
         target: "/home/${{ secrets.EC2_USER }}/"
         debug: true
+
 
     - name: Deploy to EC2
       uses: appleboy/ssh-action@master
