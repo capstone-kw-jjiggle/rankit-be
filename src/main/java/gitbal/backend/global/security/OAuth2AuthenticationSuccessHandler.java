@@ -22,8 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 
-    // TODO : 프론트 url 받아서 보내줘야함!
-    private final String REDIRECT_URL = "http://localhost:8080/api/v1/login/success";
+    private final String REDIRECT_URL = "https://api.gitbal.xyz/api/v1/login/success";
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
