@@ -1,5 +1,6 @@
 ### propertiesFile ###
 .env
+.env.prod
 
 
 HELP.md
