@@ -14,6 +14,7 @@ import gitbal.backend.global.security.GithubOAuth2UserInfo;
 import gitbal.backend.global.util.SurroundingRankStatus;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
@@ -80,6 +81,10 @@ public class UserService {
     }
 
 
+
+
+
+
     public User findByUserName(String username) {
         return userRepository.findByNickname(username).orElseThrow(NotFoundUserException::new);
     }
@@ -118,6 +123,22 @@ public class UserService {
         user.setRegion(region);
         userRepository.save(user);
     }
+
+    public UserRegionSchoolNameDto createUserRegionSchoolNameDto(User user) {
+        if(isPresentSchool(user) && isPresentRegion(user)) return UserRegionSchoolNameDto.of(user.getRegion().getRegionName(), user.getSchool().getSchoolName());
+        if(isPresentSchool(user))  return UserRegionSchoolNameDto.of(null, user.getSchool().getSchoolName());
+        if(isPresentRegion(user))  return UserRegionSchoolNameDto.of(user.getRegion().getRegionName(), null);
+        return UserRegionSchoolNameDto.of(null, null);
+    }
+
+    private boolean isPresentSchool(User user){
+        return !Objects.isNull(user.getSchool());
+    }
+
+    private boolean isPresentRegion(User user){
+        return !Objects.isNull(user.getRegion());
+    }
+
 
     public void updateUserProfileImg(User user, String imgUrl) {
         user.setProfileImg(imgUrl);
