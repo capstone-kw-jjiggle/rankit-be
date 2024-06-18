@@ -1,9 +1,7 @@
 version: '3.8'
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: khyojun1104/gitbal-be:latest
     platform: linux/amd64
     environment:
       - DATABASE_URL=${MYSQL_DATABASE_URL}
@@ -17,13 +15,14 @@ services:
       - UNIV_API_KEY=${UNIV_API_KEY}
       - JWT_KEY=${JWT_KEY}
       - FE_URL=${FE_URL}
+      - LOGIN_SUCCESS_REDIRECT_URL=${LOGIN_SUCCESS_REDIRECT_URL}
+      - ACCESS_TOKEN_VALIDITY_SECONDS=${ACCESS_TOKEN_VALIDITY_SECONDS}
+      - REFRESH_TOKEN_VALIDITY_SECONDS=${REFRESH_TOKEN_VALIDITY_SECONDS}
     depends_on:
       - db
       - redis
     ports:
       - "8080:8080"
-    volumes:
-      - ./database/init/init.sql:/docker-entrypoint-initdb.d/init.sql # mockdataGenerator 에서 이미 생성되어있는 친구면 막아버리기 -> docker-compose에서는 검증하지 않음.
 
   db:
     image: mysql:8.0

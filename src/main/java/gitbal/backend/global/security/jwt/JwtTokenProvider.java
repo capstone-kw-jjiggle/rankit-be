@@ -24,13 +24,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    @Value("${jwt.key}")
-    private String key;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-    //TODO: 이후에 적절한 시간 정한후에 시간 조절진행!
-    private final Long ACCESS_EXPIRE_LENGTH = 1000L * 120; // 2분
-    private final Long REFRESH_EXPIRE_LENGTH = 1000L * 600; // 10분
+    @Value("${jwt.key}")
+    private String key;
+    @Value("${ACCESS_TOKEN_VALIDITY_SECONDS}")
+    private Long ACCESS_EXPIRE_LENGTH;
+    @Value("${REFRESH_TOKEN_VALIDITY_SECONDS}")
+    private Long REFRESH_EXPIRE_LENGTH;
 
 
     public String createAccessToken(String nickname) {
