@@ -38,7 +38,6 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
 
 
-    //TODO: 회원가입을 위한 -> 학교, 지역, 주언어, 커밋 날짜를 넣어야함!
     @Transactional
     public void join(JoinRequestDto joinRequestDto, CustomUserDetails user) {
 
@@ -55,6 +54,14 @@ public class AuthService {
         UserDto userDto = initUserDto(joinRequestDto, gitbalApiDto, nickname);
 
         joinUpdate(findUser, userDto);
+        updateRanking();
+    }
+
+    private void updateRanking() {
+        userService.updateUserRank();
+        schoolService.updateSchoolRank();
+        schoolService.updateSchoolGrade();
+        userService.updateUserGrade();
     }
 
     private UserDto initUserDto(JoinRequestDto joinRequestDto, GitbalApiDto gitbalApiDto,
@@ -95,6 +102,7 @@ public class AuthService {
         );
         schoolService.joinNewUserScore(findUser);
         regionService.joinNewUserScore(findUser);
+
     }
 
 
