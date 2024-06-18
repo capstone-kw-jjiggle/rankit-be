@@ -33,6 +33,7 @@ public class SchoolService {
     Long score = findUser.getScore();
     School school = findUser.getSchool();
     school.addScore(score);
+    updateContributor(school, findUser.getNickname(), findUser.getScore());
   }
 
 
@@ -64,6 +65,10 @@ public class SchoolService {
 
   public void updateByUserScore(School school, String username, Long oldScore, Long newScore) {
     school.updateScore(oldScore,newScore);
+    school.updateContributerInfo(username, newScore);
+  }
+
+  public void updateContributor(School school, String username, Long newScore) {
     school.updateContributerInfo(username, newScore);
   }
 
