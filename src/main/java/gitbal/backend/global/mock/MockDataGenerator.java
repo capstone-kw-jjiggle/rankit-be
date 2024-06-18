@@ -86,14 +86,12 @@ public class MockDataGenerator implements CommandLineRunner {
     // Test를 위한 나(이승준)의 githubid와 동일한 nickname data
 
     String lee = "leesj000603";
-    String khyojun = "khyojun";
-    if(userRepository.findByNickname(lee).isPresent() || userRepository.findByNickname(khyojun).isPresent()){
+    if(userRepository.findByNickname(lee).isPresent()){
       log.info("duplicate");
       return;
     }
 
     createUserWithNickname(lee);
-    createUserWithNickname2(khyojun);
     userService.updateUserRank(); //user 순위 업데이트
     userService.updateUserGrade(); // user 등급 업데이트
     insertRegionSchoolTopContributorInfo();
@@ -102,34 +100,6 @@ public class MockDataGenerator implements CommandLineRunner {
     log.info("Mock data creation completed!!!!!!");
   }
 
-  private void createUserWithNickname2(String username) {
-    School school = schoolRepository.findById(1L)
-        .orElse(null);
-    Region region = regionRepository.findById(1L)
-        .orElse(null);
-    OneDayCommit oneDayCommit = OneDayCommit.of(true);
-    oneDayCommitRepository.save(oneDayCommit);
-
-
-    User khyojun = User.builder()
-        .school(school)
-        .region(region)
-        .nickname(username)
-        .score(500L)
-        .profile_img("sdqsdqwefqwef")
-        .grade(Grade.PURPLE)
-        .build();
-
-    List<MajorLanguage> majorLanguages2 = createRandomMajorLanguagesForUser(khyojun);
-    majorLanguages2.forEach(majorLanguageRepository::save);
-
-    OneDayCommit oneDayCommit2 = OneDayCommit.of(false);
-    oneDayCommitRepository.save(oneDayCommit2);
-    khyojun.joinUpdateUser(school, region, oneDayCommit2, majorLanguages2,
-        khyojun.getNickname(), khyojun.getScore(), khyojun.getProfile_img(), Grade.YELLOW, 0);
-    userRepository.save(khyojun);
-
-  }
 
   private User createUser(String randomNickname, School school, Region region, int index) {
 
