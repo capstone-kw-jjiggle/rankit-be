@@ -50,8 +50,10 @@ public class UnivService {
     else log.error("[clearResponse] clear fail");
   }
 
+  //TODO : 이거 오류 뱉을 수 있게 하기
   private UnivCertResponseDto responsetoDto(Map<String, Object> univCertResponse, String successMessage) {
     boolean success = Boolean.TRUE.equals(univCertResponse.get("success"));
+    if(!success)  throw new UnivCertCodeException();
     int status = success ? 200 : (Integer) univCertResponse.get("code");
     String message = success ? successMessage : (String) univCertResponse.get("message");
 
