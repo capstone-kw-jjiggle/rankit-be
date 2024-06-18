@@ -74,11 +74,11 @@ public class User extends BaseTimeEntity {
 
     @Column(name = "user_rank")
     @ColumnDefault("0")
-    private Integer userRank;
+    private int userRank;
 
     public void setGrade(Grade grade) { this.grade = grade; }
 
-    public void setUserRank(Integer userRank) {this.userRank = userRank;}
+    public void setUserRank(int userRank) {this.userRank = userRank;}
 
     public void setSchool(School school) {
         this.school = school;
@@ -95,7 +95,7 @@ public class User extends BaseTimeEntity {
     @Builder
     public User(School school, Region region, OneDayCommit oneDayCommit,
         List<MajorLanguage> majorLanguages,
-        String nickname, Long score, String profile_img, Grade grade,Integer userRank) {
+        String nickname, Long score, String profile_img, Grade grade,int userRank) {
         this.school = school;
         this.region = region;
         this.oneDayCommit = oneDayCommit;
@@ -110,7 +110,7 @@ public class User extends BaseTimeEntity {
 
     public void joinUpdateUser(School school, Region region, OneDayCommit oneDayCommit,
         List<MajorLanguage> majorLanguages,
-        String nickname, Long score, String profile_img, Grade grade, Integer userRank) {
+        String nickname, Long score, String profile_img, int userRank) {
         this.school = school;
         this.region = region;
         this.oneDayCommit = oneDayCommit;

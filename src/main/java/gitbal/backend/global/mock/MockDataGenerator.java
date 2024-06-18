@@ -79,7 +79,7 @@ public class MockDataGenerator implements CommandLineRunner {
 
       // Update user with the new relations
       newUser.joinUpdateUser(randomSchool, randomRegion, oneDayCommit, majorLanguages,
-          newUser.getNickname(), newUser.getScore(), newUser.getProfile_img(), newUser.getGrade(), 0);
+          newUser.getNickname(), newUser.getScore(), newUser.getProfile_img(), 0);
       User saveUser = userRepository.save(newUser);
       scoring(saveUser);
     }
@@ -142,7 +142,7 @@ public class MockDataGenerator implements CommandLineRunner {
     OneDayCommit oneDayCommit1 = OneDayCommit.of(true);
     oneDayCommitRepository.save(oneDayCommit1);
     leesj000603.joinUpdateUser(school, region, oneDayCommit, majorLanguages,
-        leesj000603.getNickname(), leesj000603.getScore(), leesj000603.getProfile_img(), Grade.YELLOW, 0);
+        leesj000603.getNickname(), leesj000603.getScore(), leesj000603.getProfile_img(), 0);
     userRepository.save(leesj000603);
 
   }
