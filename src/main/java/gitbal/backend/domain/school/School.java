@@ -43,7 +43,6 @@ public class School extends BaseTimeEntity {
 
   @Enumerated(value = EnumType.STRING)
   private SchoolGrade grade;
-
   @NotNull
   private String topContributor;
 
