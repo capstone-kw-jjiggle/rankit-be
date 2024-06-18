@@ -33,7 +33,7 @@ public class SchedulingService {
 
 
 
-    @Scheduled(initialDelay = 2, fixedRate = 360, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(initialDelay = 3, fixedRate = 360, timeUnit = TimeUnit.MINUTES)
     public void updateUserScore() {
         userScoreUpdater.update();
     }
@@ -43,7 +43,7 @@ public class SchedulingService {
         userOneDayCommitUpdater.update();
     }
 
-    @Scheduled(initialDelay = 1, fixedRate = 360, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(cron = "1 0 0 * * ?")
     public void updateRegionPrevDayScore() {
         regionPrevDayScoreUpdater.update();
     }
