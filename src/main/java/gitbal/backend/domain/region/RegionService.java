@@ -56,11 +56,21 @@ public class RegionService {
     }
   }
 
-
-
-
   public void updateByUserScore(Region region, String username, Long oldScore, Long newScore) {
     region.updateScore(oldScore,newScore);
     region.updateContributerInfo(username, newScore);
+  }
+
+  public List<Region> getAllRegionList() {
+    List<Region> regions = regionRepository.findAll();
+    return regions;
+  }
+
+  public void updateRegionChangedScore(Region region, Long newScore) {
+    region.updateChangedScore(newScore);
+  }
+
+  public void updatePrevDayScore(Region region, Long newScore) {
+    region.updatePrevDayScore(newScore);
   }
 }

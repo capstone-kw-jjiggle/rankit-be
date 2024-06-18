@@ -33,6 +33,12 @@ public class Region extends BaseTimeEntity {
   @ColumnDefault(value = "0")
   private Long score;
 
+  @ColumnDefault(value = "0")
+  private Long prevDayScore;
+
+  @ColumnDefault(value= "0")
+  private Long changedScore;
+
   @NotNull
   private String topContributor;
 
@@ -64,6 +70,13 @@ public class Region extends BaseTimeEntity {
     }
   }
 
+  public void updateChangedScore(Long newScore) {
+    this.changedScore = newScore - this.prevDayScore;
+  }
+
+  public void updatePrevDayScore(Long newScore) {
+    this.prevDayScore = newScore;
+  }
 
   public void updateScore(Long oldScore, Long newScore) {
     this.score=this.score-oldScore+newScore;

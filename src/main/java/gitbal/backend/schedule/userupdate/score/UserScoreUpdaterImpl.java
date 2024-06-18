@@ -52,5 +52,13 @@ public class UserScoreUpdaterImpl extends UserSetup implements UserScoreUpdater{
                 schoolService.updateSchoolChangedScore(school, score);
             }
         }
+        List<Region> regions = regionService.getAllRegionList();
+        for (Region region : regions) {
+            Long score = region.getScore();
+            Long prevDayScore = region.getPrevDayScore();
+            if (!Objects.equals(score, prevDayScore)) {
+                regionService.updateRegionChangedScore(region, score);
+            }
+        }
     }
 }
