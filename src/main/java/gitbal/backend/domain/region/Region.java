@@ -37,6 +37,7 @@ public class Region extends BaseTimeEntity {
   private String topContributor;
 
   @NotNull
+  @ColumnDefault(value = "0")
   private Long contributorScore;
 
 
