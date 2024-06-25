@@ -58,6 +58,8 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
     ports:
       - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
 
   redis:
     image: redis:6.2
