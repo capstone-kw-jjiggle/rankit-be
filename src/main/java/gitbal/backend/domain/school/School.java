@@ -48,6 +48,7 @@ public class School extends BaseTimeEntity {
   private String topContributor;
 
   @NotNull
+  @ColumnDefault(value = "0")
   private Long contributorScore;
 
   @Column(name = "prev_day_score")
