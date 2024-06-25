@@ -28,6 +28,7 @@ public class RegionService {
     Long score = findUser.getScore();
     Region region = findUser.getRegion();
     region.addScore(score);
+    updateContributor(region, findUser.getNickname(), findUser.getScore());
   }
 
   public RegionRaceStatus findRegionScoreRaced(Long score) {
@@ -61,6 +62,10 @@ public class RegionService {
 
   public void updateByUserScore(Region region, String username, Long oldScore, Long newScore) {
     region.updateScore(oldScore,newScore);
+    updateContributor(region, username, newScore);
+  }
+
+  public void updateContributor(Region region, String username, Long newScore) {
     region.updateContributerInfo(username, newScore);
   }
 }

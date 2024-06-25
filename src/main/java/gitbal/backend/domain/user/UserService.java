@@ -12,7 +12,6 @@ import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.security.GithubOAuth2UserInfo;
 import gitbal.backend.global.util.SurroundingRankStatus;
-import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +30,7 @@ public class UserService {
     private final UserInfoService userInfoService;
     private final UserRepository userRepository;
     private final int USER_AROUND_RANGE = 2;
-    private final int FIRST_RANK = 1;
+
 
 
     public Long calculateUserScore(String nickname) {
@@ -42,7 +42,6 @@ public class UserService {
             return delegateToGitbalScore(dataNode);
         } catch (JsonProcessingException e) {
             throw new NotFoundUserException();
-            //throw new IllegalArgumentException(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             throw new NotFoundUserException();
@@ -177,16 +176,9 @@ public class UserService {
     @Transactional
     public void updateUserRank() {
         List<User> users = userRepository.findAll(Sort.by("score").descending());
-        int rank = FIRST_RANK;
-        int prevRank = FIRST_RANK;
-        for (int i = 0; i < users.size(); i++) {
-            User user = users.get(i);
-            if (i > 0 && users.get(i - 1).getScore() != user.getScore()) {
-                prevRank = rank;
-            }
-            user.setUserRank(prevRank);
-            userRepository.save(user);
-            rank = prevRank + 1;
+        int rank = 1;
+        for (User user : users) {
+            user.setUserRank(rank++);
         }
     }
 
@@ -226,6 +218,5 @@ public class UserService {
                 user.setGrade(Grade.PURPLE);
             }
         }
-        userRepository.saveAll(users);
     }
 }

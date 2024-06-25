@@ -38,7 +38,6 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
 
 
-    //TODO: 회원가입을 위한 -> 학교, 지역, 주언어, 커밋 날짜를 넣어야함!
     @Transactional
     public void join(JoinRequestDto joinRequestDto, CustomUserDetails user) {
 
@@ -55,7 +54,9 @@ public class AuthService {
         UserDto userDto = initUserDto(joinRequestDto, gitbalApiDto, nickname);
 
         joinUpdate(findUser, userDto);
+        updateRank();
     }
+
 
     private UserDto initUserDto(JoinRequestDto joinRequestDto, GitbalApiDto gitbalApiDto,
         String nickname) {
@@ -90,7 +91,6 @@ public class AuthService {
             userDto.nickname(),
             userDto.score(),
             userDto.profile_img(),
-            Grade.YELLOW, //TODO : 일단 들어올 때 최하 등급으로 측정하기로 함! -> 이후에 기획 확정된 이후에 등급 계산 로직 넣고 수정해야함!
             0
         );
         schoolService.joinNewUserScore(findUser);
@@ -114,5 +114,12 @@ public class AuthService {
             e.printStackTrace();
             throw new LogoutException("로그아웃 실패");
         }
+    }
+
+    private void updateRank() {
+        userService.updateUserRank();
+        userService.updateUserGrade();
+        schoolService.updateSchoolGrade();
+        schoolService.updateSchoolRank();
     }
 }
