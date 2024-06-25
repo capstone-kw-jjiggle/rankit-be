@@ -1,6 +1,7 @@
 version: '3.8'
 services:
-  app:
+  blue:
+    container_name: blue
     image: khyojun1104/gitbal-be:latest
     platform: linux/amd64
     environment:
@@ -23,6 +24,30 @@ services:
       - redis
     ports:
       - "8080:8080"
+  green:
+    container_name: green
+    image: khyojun1104/gitbal-be:latest
+    platform: linux/amd64
+    environment:
+      - DATABASE_URL=${MYSQL_DATABASE_URL}
+      - USERNAME=${MYSQL_USERNAME}
+      - PASSWORD=${MYSQL_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - SECURITY_CLIENT_ID=${SECURITY_CLIENT_ID}
+      - SECURITY_SECRET_ID=${SECURITY_SECRET_ID}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - UNIV_API_KEY=${UNIV_API_KEY}
+      - JWT_KEY=${JWT_KEY}
+      - FE_URL=${FE_URL}
+      - LOGIN_SUCCESS_REDIRECT_URL=${LOGIN_SUCCESS_REDIRECT_URL}
+      - ACCESS_TOKEN_VALIDITY_SECONDS=${ACCESS_TOKEN_VALIDITY_SECONDS}
+      - REFRESH_TOKEN_VALIDITY_SECONDS=${REFRESH_TOKEN_VALIDITY_SECONDS}
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "8081:8080"
 
   db:
     image: mysql:8.0
@@ -33,6 +58,8 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
     ports:
       - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
 
   redis:
     image: redis:6.2
