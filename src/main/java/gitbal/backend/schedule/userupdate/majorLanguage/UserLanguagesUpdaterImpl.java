@@ -1,10 +1,12 @@
 package gitbal.backend.schedule.userupdate.majorLanguage;
 
 import gitbal.backend.domain.majorlanguage.MajorLanguage;
-import gitbal.backend.domain.majorlanguage.MajorLanguageService;
+import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
+import gitbal.backend.domain.majorlanguage.application.MajorLanguageService;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.schedule.userupdate.UserSetup;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,9 +27,9 @@ public class UserLanguagesUpdaterImpl extends UserSetup implements UserLanguages
         List<String> allUsers = super.getAllUsernames(userService);
         for (String username : allUsers) {
             List<MajorLanguage> oldLanguages = userService.findMajorLanguagesByUsername(
-                username);
+                username).stream().map(MajorLanguageJpaEntity::toDomain).collect(Collectors.toList());
             List<MajorLanguage> updatedLanguages = majorLanguageService.getUserTopLaunguages(
-                username);
+                username).stream().map(MajorLanguageJpaEntity::toDomain).collect(Collectors.toList());
 
             log.info(oldLanguages.toString());
             log.info(updatedLanguages.toString());

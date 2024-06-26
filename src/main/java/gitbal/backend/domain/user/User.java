@@ -1,10 +1,10 @@
 package gitbal.backend.domain.user;
 
 
-import gitbal.backend.domain.BaseTimeEntity;
+import gitbal.backend.global.BaseTimeEntity;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.global.constant.Grade;
-import gitbal.backend.domain.majorlanguage.MajorLanguage;
+import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
 import gitbal.backend.domain.onedaycommit.OneDayCommit;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.global.security.GithubOAuth2UserInfo;
@@ -56,7 +56,7 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinColumn(name = "major_user_id")
-    private List<MajorLanguage> majorLanguages = new ArrayList<>();
+    private List<MajorLanguageJpaEntity> majorLanguages = new ArrayList<>();
 
 
     @ColumnDefault(value = "'nothing'")
@@ -94,7 +94,7 @@ public class User extends BaseTimeEntity {
 
     @Builder
     public User(School school, Region region, OneDayCommit oneDayCommit,
-        List<MajorLanguage> majorLanguages,
+        List<MajorLanguageJpaEntity> majorLanguages,
         String nickname, Long score, String profile_img, Grade grade,int userRank) {
         this.school = school;
         this.region = region;
@@ -109,7 +109,7 @@ public class User extends BaseTimeEntity {
 
 
     public void joinUpdateUser(School school, Region region, OneDayCommit oneDayCommit,
-        List<MajorLanguage> majorLanguages,
+        List<MajorLanguageJpaEntity> majorLanguages,
         String nickname, Long score, String profile_img, int userRank) {
         this.school = school;
         this.region = region;

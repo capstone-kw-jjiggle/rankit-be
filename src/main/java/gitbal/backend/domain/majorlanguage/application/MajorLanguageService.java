@@ -1,9 +1,13 @@
-package gitbal.backend.domain.majorlanguage;
+package gitbal.backend.domain.majorlanguage.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gitbal.backend.api.userPage.dto.UserRankMajorLanguageResponseDto;
+import gitbal.backend.domain.majorlanguage.MajorLanguage;
+import gitbal.backend.domain.majorlanguage.MajorLanguageDto;
+import gitbal.backend.domain.majorlanguage.application.repository.MajorLanguageRepository;
+import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
 import gitbal.backend.domain.user.User;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -25,7 +29,7 @@ public class MajorLanguageService {
 
     private final TopLanguageService topLanguageService;
 
-    public List<MajorLanguage> getUserTopLaunguages(String username) {
+    public List<MajorLanguageJpaEntity> getUserTopLaunguages(String username) {
         return requestFindUserTopLanguage(username).entrySet().stream()
             .map(l -> MajorLanguageDto.of(l.getKey(), Long.valueOf(l.getValue())))
             .map(MajorLanguageDto::toEntity).toList();
@@ -78,7 +82,7 @@ public class MajorLanguageService {
 
 
     public List<UserRankMajorLanguageResponseDto> findLanguagePercentByUser(User findUser) {
-        List<MajorLanguage> majorLanguages = findUser.getMajorLanguages();
+        List<MajorLanguageJpaEntity> majorLanguages = findUser.getMajorLanguages();
         List<MajorLanguageDto> convertDtos = majorLanguages.stream().map(MajorLanguageDto::of)
             .toList();
         LanguageResponseConverter languageResponseConverter = LanguageResponseConverter.of(

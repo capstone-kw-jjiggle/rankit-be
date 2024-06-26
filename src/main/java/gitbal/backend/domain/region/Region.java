@@ -1,6 +1,6 @@
 package gitbal.backend.domain.region;
 
-import gitbal.backend.domain.BaseTimeEntity;
+import gitbal.backend.global.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

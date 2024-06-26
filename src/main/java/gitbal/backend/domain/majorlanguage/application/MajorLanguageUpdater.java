@@ -1,5 +1,8 @@
-package gitbal.backend.domain.majorlanguage;
+package gitbal.backend.domain.majorlanguage.application;
 
+import gitbal.backend.domain.majorlanguage.MajorLanguage;
+import gitbal.backend.domain.majorlanguage.application.repository.MajorLanguageRepository;
+import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
 import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,11 +16,13 @@ public class MajorLanguageUpdater {
     private final List<MajorLanguage> oldLanguages;
     private final List<MajorLanguage> updatedLanguages;
     private final MajorLanguageRepository majorLanguageRepository;
+
+
     public static MajorLanguageUpdater of(List<MajorLanguage> oldLanguages,
         List<MajorLanguage> updatedLanguages,
         MajorLanguageRepository majorLanguageRepository
-        ){
-        return new MajorLanguageUpdater(oldLanguages, updatedLanguages,majorLanguageRepository);
+    ) {
+        return new MajorLanguageUpdater(oldLanguages, updatedLanguages, majorLanguageRepository);
     }
 
 
@@ -25,11 +30,11 @@ public class MajorLanguageUpdater {
         int oldSize = oldLanguages.size();
         int updatedSize = updatedLanguages.size();
         log.info("[updateLanguage] oldSize {}, updatedSize {}", oldSize, updatedSize);
-        if(oldSize < updatedSize) {
+        if (oldSize < updatedSize) {
             updateWhenUpdatedSizeGreaterThanOldSize(oldSize, updatedSize);
             return;
         }
-        if(oldSize > updatedSize) {
+        if (oldSize > updatedSize) {
             updateWhenUpdatedSizeLessThanOldSize(oldSize, updatedSize);
             return;
         }
@@ -37,7 +42,7 @@ public class MajorLanguageUpdater {
     }
 
     private void updateWhenSameSize(int oldSize) {
-        for(int i=0; i<oldSize; i++){
+        for (int i = 0; i < oldSize; i++) {
             MajorLanguage majorLanguage = oldLanguages.get(i);
             MajorLanguage updatedMajorLanguage = updatedLanguages.get(i);
             majorLanguage.updateMajorLanguage(majorLanguage, updatedMajorLanguage);
@@ -50,8 +55,8 @@ public class MajorLanguageUpdater {
             MajorLanguage updatedMajorLanguage = updatedLanguages.get(i);
             majorLanguage.updateMajorLanguage(majorLanguage, updatedMajorLanguage);
         }
-        for(int i=updatedSize; i<oldSize; i++){
-            majorLanguageRepository.delete(oldLanguages.get(updatedSize));
+        for (int i = updatedSize; i < oldSize; i++) {
+            majorLanguageRepository.delete(MajorLanguageJpaEntity.from(oldLanguages.get(updatedSize)));
             oldLanguages.remove(updatedSize);
         }
 
@@ -63,9 +68,9 @@ public class MajorLanguageUpdater {
             MajorLanguage updatedMajorLanguage = updatedLanguages.get(i);
             majorLanguage.updateMajorLanguage(majorLanguage, updatedMajorLanguage);
         }
-        for(int i= oldSize; i< updatedSize; i++){
+        for (int i = oldSize; i < updatedSize; i++) {
             oldLanguages.add(updatedLanguages.get(i));
-            majorLanguageRepository.save(updatedLanguages.get(i));
+            majorLanguageRepository.save(MajorLanguageJpaEntity.from(updatedLanguages.get(i)));
         }
     }
 }

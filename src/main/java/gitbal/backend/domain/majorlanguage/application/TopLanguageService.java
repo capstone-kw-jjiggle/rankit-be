@@ -1,4 +1,4 @@
-package gitbal.backend.domain.majorlanguage;
+package gitbal.backend.domain.majorlanguage.application;
 
 import org.springframework.http.ResponseEntity;
 

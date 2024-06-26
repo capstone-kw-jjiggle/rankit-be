@@ -1,7 +1,8 @@
-package gitbal.backend.domain.majorlanguage;
+package gitbal.backend.domain.majorlanguage.application;
 
 
 import gitbal.backend.api.userPage.dto.UserRankMajorLanguageResponseDto;
+import gitbal.backend.domain.majorlanguage.MajorLanguageDto;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
