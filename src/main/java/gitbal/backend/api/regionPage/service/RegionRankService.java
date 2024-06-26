@@ -59,7 +59,7 @@ public class RegionRankService {
         FirstRankRegionDto firstRankInfo = FirstRankRegionDto.builder()
             .regionName(firstRegion.getRegionName())
             .regionScore(firstRegion.getScore())
-            .regionChangeScore(0L) // TODO : 이후에 점수 바뀌는 로직 적용해야함.
+            .regionChangeScore(firstRegion.getChangedScore()) // TODO : 이후에 점수 바뀌는 로직 적용해야함.
             .mvpName(firstRegion.getTopContributor())
             .build();
 
@@ -70,7 +70,7 @@ public class RegionRankService {
         return new RegionListDto(
             region.getRegionName(),
             region.getScore(),
-            0L, // TODO : 이후에 점수 바뀌는 로직 적용해야함.
+            region.getChangedScore(), // TODO : 이후에 점수 바뀌는 로직 적용해야함.
             region.getTopContributor()
         );
 
