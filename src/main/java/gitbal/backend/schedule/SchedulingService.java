@@ -46,7 +46,7 @@ public class SchedulingService {
         schoolPrevDayScoreUpdater.update();
     }
 
-    @Scheduled(initialDelay = 3, fixedRate = 360, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(initialDelay = 1, fixedRate = 360, timeUnit = TimeUnit.MINUTES)
     public void updateUserLanguages() {
         userLanguagesUpdater.update();
     }

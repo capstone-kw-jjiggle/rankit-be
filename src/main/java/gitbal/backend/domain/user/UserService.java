@@ -3,6 +3,7 @@ package gitbal.backend.domain.user;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gitbal.backend.domain.majorlanguage.MajorLanguage;
 import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
@@ -219,4 +220,6 @@ public class UserService {
             }
         }
     }
+
+
 }

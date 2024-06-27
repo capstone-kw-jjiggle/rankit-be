@@ -54,8 +54,7 @@ public class User extends BaseTimeEntity {
     @JoinColumn(name = "commit_user_id")
     private OneDayCommit oneDayCommit;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @JoinColumn(name = "major_user_id")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<MajorLanguageJpaEntity> majorLanguages = new ArrayList<>();
 
 

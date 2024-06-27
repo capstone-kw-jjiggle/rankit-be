@@ -1,5 +1,7 @@
 package gitbal.backend.domain.majorlanguage.infra;
 
+import gitbal.backend.domain.majorlanguage.MajorLanguageDto;
+import gitbal.backend.domain.user.User;
 import gitbal.backend.global.BaseTimeEntity;
 import gitbal.backend.domain.majorlanguage.MajorLanguage;
 import jakarta.persistence.Column;
@@ -7,6 +9,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -31,21 +35,26 @@ public class MajorLanguageJpaEntity extends BaseTimeEntity {
 
     private Long languageCount;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 
     @Builder
-    public MajorLanguageJpaEntity(Long id, String majorLanguage, Long languageCount) {
+    public MajorLanguageJpaEntity(Long id, String majorLanguage, Long languageCount, User user) {
         this.id = id;
         this.majorLanguage = majorLanguage;
         this.languageCount = languageCount;
+        this.user=user;
     }
 
 
 
 
     public void updateMajorLanguage(
-        MajorLanguageJpaEntity beforeLanguage, MajorLanguageJpaEntity updateLanguage){
-        beforeLanguage.setMajorLanguage(updateLanguage.majorLanguage);
-        beforeLanguage.setLanguageCount(updateLanguage.languageCount);
+        MajorLanguageDto updateLanguage){
+        this.setMajorLanguage(updateLanguage.getLanguageName());
+        this.setLanguageCount(updateLanguage.getLanguageUsageCount());
     }
 
 

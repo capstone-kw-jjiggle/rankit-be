@@ -27,14 +27,18 @@ public class UserLanguagesUpdaterImpl extends UserSetup implements UserLanguages
         List<String> allUsers = super.getAllUsernames(userService);
         for (String username : allUsers) {
             List<MajorLanguage> oldLanguages = userService.findMajorLanguagesByUsername(
-                username).stream().map(MajorLanguageJpaEntity::toDomain).collect(Collectors.toList());
-            List<MajorLanguage> updatedLanguages = majorLanguageService.getUserTopLaunguages(
-                username).stream().map(MajorLanguageJpaEntity::toDomain).collect(Collectors.toList());
+                    username).stream().map(MajorLanguageJpaEntity::toDomain)
+                .collect(Collectors.toList());
+
+            List<MajorLanguage> updateLanguages = majorLanguageService.getUserTopLaunguages(username)
+                .stream()
+                .map(MajorLanguageJpaEntity::toDomain)
+                .collect(Collectors.toList());
 
             log.info(oldLanguages.toString());
-            log.info(updatedLanguages.toString());
+            log.info(updateLanguages.toString());
 
-            majorLanguageService.updateUserLanguage(oldLanguages, updatedLanguages);
+            majorLanguageService.updateUserLanguage(oldLanguages,updateLanguages);
         }
         log.info("[languageupdate] method finish");
     }

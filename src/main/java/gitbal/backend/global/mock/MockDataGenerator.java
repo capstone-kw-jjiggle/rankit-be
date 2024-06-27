@@ -158,6 +158,7 @@ public class MockDataGenerator implements CommandLineRunner {
       MajorLanguageJpaEntity majorLanguage = MajorLanguageJpaEntity.builder()
           .majorLanguage(randomLanguage)
           .languageCount(randomLanguageCount)
+          .user(user)
           .build();
       majorLanguages.add(majorLanguage);
     }

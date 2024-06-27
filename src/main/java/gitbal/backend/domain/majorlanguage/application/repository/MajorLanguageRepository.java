@@ -1,18 +1,22 @@
 package gitbal.backend.domain.majorlanguage.application.repository;
 
+import gitbal.backend.domain.majorlanguage.MajorLanguage;
+import gitbal.backend.domain.majorlanguage.MajorLanguageDto;
 import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
+import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 public interface MajorLanguageRepository{
 
     void save(MajorLanguageJpaEntity majorLanguage);
 
-    Optional<MajorLanguageJpaEntity> findById(Long id);
+    MajorLanguageJpaEntity findById(Long id);
 
     List<MajorLanguageJpaEntity> findAll();
 
+    void deleteById(Long from);
+
     void delete(MajorLanguageJpaEntity majorLanguage);
 
-
+    void updateMajorLanguage(Long id, MajorLanguageDto updateLanguage);
 }
