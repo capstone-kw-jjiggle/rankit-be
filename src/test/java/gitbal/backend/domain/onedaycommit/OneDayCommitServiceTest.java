@@ -2,8 +2,7 @@ package gitbal.backend.domain.onedaycommit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -29,12 +28,15 @@ class OneDayCommitServiceTest {
     void calculateRecentCommit() {
         // given
         boolean hasYesterdayCommit = true;
+        OneDayCommit testCommit = OneDayCommit.of(hasYesterdayCommit);
 
         // when
-        oneDayCommitService.calculateRecentCommit(hasYesterdayCommit);
+        when(oneDayCommitRepository.save(any(OneDayCommit.class))).thenReturn(testCommit);
+        OneDayCommit oneDayCommit = oneDayCommitService.calculateRecentCommit(hasYesterdayCommit);
 
         // then
-        verify(oneDayCommitRepository, times(1)).save(any(OneDayCommit.class));
+        Assertions.assertThat(oneDayCommit.getSteadyCount()).isGreaterThan(0L);
+
     }
 
     @Test
@@ -42,12 +44,14 @@ class OneDayCommitServiceTest {
     void recentCommitNone() {
         // given
         boolean hasYesterdayCommit = false;
+        OneDayCommit testCommit = OneDayCommit.of(hasYesterdayCommit);
 
         // when
-        OneDayCommit result = oneDayCommitService.calculateRecentCommit(hasYesterdayCommit);
+        when(oneDayCommitRepository.save(any(OneDayCommit.class))).thenReturn(testCommit);
+        OneDayCommit oneDayCommit = oneDayCommitService.calculateRecentCommit(hasYesterdayCommit);
 
         // then
-        assertEquals(0L, result.getSteadyCount());
+        assertEquals(0L, oneDayCommit.getSteadyCount());
     }
 
 
