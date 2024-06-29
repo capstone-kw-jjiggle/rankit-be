@@ -33,7 +33,7 @@ public class SchoolService {
     Long score = findUser.getScore();
     School school = findUser.getSchool();
     school.addScore(score);
-    updateContributor(school, findUser.getNickname(), findUser.getScore());
+    updateContributor(school, findUser.getNickname(), findUser.getScore()); // 이 친구 관련 다시 생각해보기 -> region에도 존재함.
   }
 
 
