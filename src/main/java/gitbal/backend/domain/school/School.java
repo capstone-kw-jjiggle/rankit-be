@@ -13,12 +13,14 @@ import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import gitbal.backend.global.constant.SchoolGrade;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Setter
 public class School extends BaseTimeEntity {
 
   @Id
@@ -65,6 +67,11 @@ public class School extends BaseTimeEntity {
   public static School of() {
     return new School("광운대학교", 0L, "khyojun", 0L);
   }
+
+  public static School of(String schoolName, Long score, String topContributor, Long contributorScore) {
+    return new School(schoolName, score, topContributor, contributorScore);
+  }
+
 
   public void addScore(Long score) {
     this.score += score;
