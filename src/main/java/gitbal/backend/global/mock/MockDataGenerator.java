@@ -3,26 +3,24 @@ package gitbal.backend.global.mock;
 
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.global.constant.Grade;
-import gitbal.backend.domain.majorlanguage.MajorLanguage;
+import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
 import gitbal.backend.domain.onedaycommit.OneDayCommit;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.user.User;
-import gitbal.backend.domain.majorlanguage.MajorLanguageRepository;
+import gitbal.backend.domain.majorlanguage.application.repository.MajorLanguageRepository;
 import gitbal.backend.domain.onedaycommit.OneDayCommitRepository;
 import gitbal.backend.domain.region.RegionRepository;
 import gitbal.backend.domain.school.SchoolRepository;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.domain.region.RegionService;
 import gitbal.backend.domain.school.SchoolService;
-import gitbal.backend.global.constant.SchoolGrade;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,7 +68,7 @@ public class MockDataGenerator implements CommandLineRunner {
       User newUser = createUser(randomNickname, randomSchool, randomRegion, i);
 
       // Create a list of MajorLanguage entities for this user
-      List<MajorLanguage> majorLanguages = createRandomMajorLanguagesForUser(newUser);
+      List<MajorLanguageJpaEntity> majorLanguages = createRandomMajorLanguagesForUser(newUser);
       majorLanguages.forEach(majorLanguageRepository::save);
 
       // Create and save OneDayCommit entity
@@ -136,7 +134,7 @@ public class MockDataGenerator implements CommandLineRunner {
 
 
 
-    List<MajorLanguage> majorLanguages = createRandomMajorLanguagesForUser(leesj000603);
+    List<MajorLanguageJpaEntity> majorLanguages = createRandomMajorLanguagesForUser(leesj000603);
     majorLanguages.forEach(majorLanguageRepository::save);
 
     OneDayCommit oneDayCommit1 = OneDayCommit.of(true);
@@ -147,8 +145,8 @@ public class MockDataGenerator implements CommandLineRunner {
 
   }
 
-  private List<MajorLanguage> createRandomMajorLanguagesForUser(User user) {
-    List<MajorLanguage> majorLanguages = new ArrayList<>();
+  private List<MajorLanguageJpaEntity> createRandomMajorLanguagesForUser(User user) {
+    List<MajorLanguageJpaEntity> majorLanguages = new ArrayList<>();
     // Generate a random number of languages for each user
     int languagesCount = 5; // Random number of languages between 1 and 5
 
@@ -157,9 +155,10 @@ public class MockDataGenerator implements CommandLineRunner {
             String randomLanguage = languages[i];
             Long randomLanguageCount = (long) random.nextInt(100); // Example count
 
-      MajorLanguage majorLanguage = MajorLanguage.builder()
+      MajorLanguageJpaEntity majorLanguage = MajorLanguageJpaEntity.builder()
           .majorLanguage(randomLanguage)
           .languageCount(randomLanguageCount)
+          .user(user)
           .build();
       majorLanguages.add(majorLanguage);
     }

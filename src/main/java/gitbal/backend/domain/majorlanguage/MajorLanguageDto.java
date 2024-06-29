@@ -1,7 +1,16 @@
 package gitbal.backend.domain.majorlanguage;
 
 
-public record MajorLanguageDto(String languageName, Long languageUsageCount) {
+import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
+public class MajorLanguageDto {
+
+    private final String languageName;
+    private final Long languageUsageCount;
 
     public static MajorLanguageDto of(String languageName, Long languageUsageCount) {
         return new MajorLanguageDto(languageName, languageUsageCount);
@@ -13,10 +22,12 @@ public record MajorLanguageDto(String languageName, Long languageUsageCount) {
             majorLanguage.getLanguageCount());
     }
 
-    public static MajorLanguage toEntity(MajorLanguageDto majorLanguageDto) {
-        return MajorLanguage.builder()
-            .majorLanguage(majorLanguageDto.languageName())
-            .languageCount(majorLanguageDto.languageUsageCount())
+
+
+    public static MajorLanguageJpaEntity toEntity(MajorLanguageDto majorLanguageDto) {
+        return MajorLanguageJpaEntity.builder()
+            .majorLanguage(majorLanguageDto.getLanguageName())
+            .languageCount(majorLanguageDto.getLanguageUsageCount())
             .build();
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gitbal.backend.domain.majorlanguage.MajorLanguage;
+import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.global.constant.Grade;
@@ -167,7 +168,7 @@ public class UserService {
         }
     }
 
-    public List<MajorLanguage> findMajorLanguagesByUsername(String username) {
+    public List<MajorLanguageJpaEntity> findMajorLanguagesByUsername(String username) {
         User findUser = userRepository.findByNickname(username)
             .orElseThrow(NotFoundUserException::new);
         return findUser.getMajorLanguages();
@@ -219,4 +220,6 @@ public class UserService {
             }
         }
     }
+
+
 }

@@ -1,6 +1,6 @@
 package gitbal.backend.global.util;
 
-import gitbal.backend.domain.majorlanguage.TopLanguageService;
+import gitbal.backend.domain.majorlanguage.application.TopLanguageService;
 import gitbal.backend.domain.user.UserInfoService;
 import java.time.LocalDate;
 import java.time.ZoneId;

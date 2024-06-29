@@ -1,7 +1,7 @@
 package gitbal.backend.api.auth.dto;
 
 
-import gitbal.backend.domain.majorlanguage.MajorLanguage;
+import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
 import gitbal.backend.domain.onedaycommit.OneDayCommit;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
@@ -12,13 +12,13 @@ public record UserDto(
     School school,
     Region region,
     OneDayCommit oneDayCommit,
-    List<MajorLanguage> majorLanguages,
+    List<MajorLanguageJpaEntity> majorLanguages,
     String nickname,
     Long score,
     String profile_img) {
 
     public static UserDto of(School school, Region region, OneDayCommit oneDayCommit,
-        List<MajorLanguage> majorLanguages, String nickname, Long score,
+        List<MajorLanguageJpaEntity> majorLanguages, String nickname, Long score,
         String profile_img) {
         return new UserDto(school, region, oneDayCommit, majorLanguages, nickname, score, profile_img);
     }

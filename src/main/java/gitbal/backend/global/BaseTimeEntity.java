@@ -1,4 +1,4 @@
-package gitbal.backend.domain;
+package gitbal.backend.global;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

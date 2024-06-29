@@ -1,46 +1,35 @@
 package gitbal.backend.domain.majorlanguage;
 
-import gitbal.backend.domain.BaseTimeEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AccessLevel;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+
+@Builder
 @Getter
 @Setter
-public class MajorLanguage extends BaseTimeEntity {
+public class MajorLanguage{
 
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "major_language_id")
     private Long id;
-
     private String majorLanguage;
-
     private Long languageCount;
 
-
-    @Builder
-    public MajorLanguage(String majorLanguage, Long languageCount) {
-        this.majorLanguage = majorLanguage;
-        this.languageCount = languageCount;
+    public static  Map<String, Integer>extractFiveLanguages(Map<String, Integer> languageCounts) {
+        Map<String, Integer> topLanguages = new LinkedHashMap<>();
+        languageCounts.entrySet().stream()
+            .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+            .limit(5)
+            .forEach(entry -> topLanguages.put(entry.getKey(), entry.getValue()));
+        return topLanguages;
     }
 
 
-
-
-    public void updateMajorLanguage(MajorLanguage beforeLanguage, MajorLanguage updateLanguage){
-        beforeLanguage.setMajorLanguage(updateLanguage.majorLanguage);
-        beforeLanguage.setLanguageCount(updateLanguage.languageCount);
+    public void updateMajorLanguage(MajorLanguage updateLanguage){
+        this.majorLanguage=updateLanguage.majorLanguage;
+        this.languageCount=updateLanguage.languageCount;
     }
 
 

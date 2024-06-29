@@ -1,7 +1,8 @@
-package gitbal.backend.domain.majorlanguage;
+package gitbal.backend.domain.majorlanguage.application;
 
 
 import gitbal.backend.api.userPage.dto.UserRankMajorLanguageResponseDto;
+import gitbal.backend.domain.majorlanguage.MajorLanguageDto;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,12 +23,12 @@ public class LanguageResponseConverter {
 
 
     public List<UserRankMajorLanguageResponseDto> convert() {
-        long sum = majorLanguageDtos.stream().mapToLong(MajorLanguageDto::languageUsageCount).sum();
+        long sum = majorLanguageDtos.stream().mapToLong(MajorLanguageDto::getLanguageUsageCount).sum();
 
         return majorLanguageDtos.stream()
             .map(majorLanguageDto -> UserRankMajorLanguageResponseDto.of(
-                majorLanguageDto.languageName(),
-                Math.round((double) majorLanguageDto.languageUsageCount() / sum *100)/ 100.0
+                majorLanguageDto.getLanguageName(),
+                Math.round((double) majorLanguageDto.getLanguageUsageCount() / sum *100)/ 100.0
             ))
             .sorted(Comparator.comparingDouble(UserRankMajorLanguageResponseDto::getLangPercent).reversed())
             .collect(Collectors.toList());
