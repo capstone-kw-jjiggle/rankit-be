@@ -6,7 +6,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import gitbal.backend.domain.user.User;
-import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.global.constant.Grade;
 import gitbal.backend.global.util.SurroundingRankStatus;
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ class SchoolServiceTest {
 
 
     private final int SCHOOL_AROUND_RANGE = 3;
-
 
     @Mock
     private SchoolRepository schoolRepository;
