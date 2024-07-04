@@ -7,6 +7,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import gitbal.backend.domain.refreshtoken.application.RefreshTokenService;
+import gitbal.backend.domain.refreshtoken.application.repository.RefreshTokenRepository;
 import gitbal.backend.global.exception.NotFoundRefreshTokenException;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;

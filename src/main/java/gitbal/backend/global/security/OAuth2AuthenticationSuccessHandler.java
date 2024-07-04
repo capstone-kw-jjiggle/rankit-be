@@ -1,7 +1,8 @@
 package gitbal.backend.global.security;
 
 import gitbal.backend.domain.refreshtoken.RefreshToken;
-import gitbal.backend.domain.refreshtoken.RefreshTokenRepository;
+import gitbal.backend.domain.refreshtoken.application.repository.RefreshTokenRepository;
+import gitbal.backend.domain.refreshtoken.infra.RefreshTokenJpaRepository;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.global.security.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;

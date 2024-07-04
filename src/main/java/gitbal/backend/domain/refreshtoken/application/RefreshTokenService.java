@@ -1,5 +1,7 @@
-package gitbal.backend.domain.refreshtoken;
+package gitbal.backend.domain.refreshtoken.application;
 
+import gitbal.backend.domain.refreshtoken.RefreshToken;
+import gitbal.backend.domain.refreshtoken.application.repository.RefreshTokenRepository;
 import gitbal.backend.global.exception.NotFoundRefreshTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
