@@ -4,12 +4,12 @@ package gitbal.backend.global.mock;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.global.constant.Grade;
 import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
-import gitbal.backend.domain.onedaycommit.OneDayCommit;
+import gitbal.backend.domain.onedaycommit.infra.OneDayCommitJpaEntity;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.majorlanguage.application.repository.MajorLanguageRepository;
-import gitbal.backend.domain.onedaycommit.OneDayCommitRepository;
+import gitbal.backend.domain.onedaycommit.infra.OneDayCommitJpaRepository;
 import gitbal.backend.domain.region.RegionRepository;
 import gitbal.backend.domain.school.SchoolRepository;
 import gitbal.backend.domain.user.UserRepository;
@@ -34,7 +34,7 @@ public class MockDataGenerator implements CommandLineRunner {
   private final SchoolRepository schoolRepository;
   private final RegionRepository regionRepository;
   private final MajorLanguageRepository majorLanguageRepository;
-  private final OneDayCommitRepository oneDayCommitRepository;
+  private final OneDayCommitJpaRepository oneDayCommitRepository;
   private final UserRepository userRepository;
   private final UserService userService;
   private final SchoolService schoolService;
@@ -72,11 +72,11 @@ public class MockDataGenerator implements CommandLineRunner {
       majorLanguages.forEach(majorLanguageRepository::save);
 
       // Create and save OneDayCommit entity
-      OneDayCommit oneDayCommit = OneDayCommit.of(random.nextBoolean());
-      oneDayCommitRepository.save(oneDayCommit);
+      OneDayCommitJpaEntity oneDayCommitJpaEntity = OneDayCommitJpaEntity.of(random.nextBoolean());
+      oneDayCommitRepository.save(oneDayCommitJpaEntity);
 
       // Update user with the new relations
-      newUser.joinUpdateUser(randomSchool, randomRegion, oneDayCommit, majorLanguages,
+      newUser.joinUpdateUser(randomSchool, randomRegion, oneDayCommitJpaEntity, majorLanguages,
           newUser.getNickname(), newUser.getScore(), newUser.getProfile_img(), 0);
       User saveUser = userRepository.save(newUser);
       scoring(saveUser);
@@ -120,8 +120,8 @@ public class MockDataGenerator implements CommandLineRunner {
         .orElse(null);
     Region region = regionRepository.findById(1L)
         .orElse(null);
-    OneDayCommit oneDayCommit = OneDayCommit.of(true);
-    oneDayCommitRepository.save(oneDayCommit);
+    OneDayCommitJpaEntity oneDayCommitJpaEntity = OneDayCommitJpaEntity.of(true);
+    oneDayCommitRepository.save(oneDayCommitJpaEntity);
 
     User leesj000603 = User.builder()
         .school(school)
@@ -137,9 +137,9 @@ public class MockDataGenerator implements CommandLineRunner {
     List<MajorLanguageJpaEntity> majorLanguages = createRandomMajorLanguagesForUser(leesj000603);
     majorLanguages.forEach(majorLanguageRepository::save);
 
-    OneDayCommit oneDayCommit1 = OneDayCommit.of(true);
-    oneDayCommitRepository.save(oneDayCommit1);
-    leesj000603.joinUpdateUser(school, region, oneDayCommit, majorLanguages,
+    OneDayCommitJpaEntity oneDayCommitJpaEntity1 = OneDayCommitJpaEntity.of(true);
+    oneDayCommitRepository.save(oneDayCommitJpaEntity1);
+    leesj000603.joinUpdateUser(school, region, oneDayCommitJpaEntity, majorLanguages,
         leesj000603.getNickname(), leesj000603.getScore(), leesj000603.getProfile_img(), 0);
     userRepository.save(leesj000603);
 

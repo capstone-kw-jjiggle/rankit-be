@@ -85,7 +85,7 @@ public class AuthService {
     private void joinUpdate(User findUser, UserDto userDto) {
         findUser.joinUpdateUser(userDto.school(),
             userDto.region(),
-            userDto.oneDayCommit(),
+            userDto.oneDayCommitJpaEntity(),
             userDto.majorLanguages(),
             userDto.nickname(),
             userDto.score(),

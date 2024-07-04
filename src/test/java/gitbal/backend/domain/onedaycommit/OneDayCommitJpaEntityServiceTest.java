@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import gitbal.backend.domain.onedaycommit.application.OneDayCommit;
+import gitbal.backend.domain.onedaycommit.application.repository.OneDayCommitRepository;
+import gitbal.backend.domain.onedaycommit.infra.OneDayCommitJpaEntity;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class OneDayCommitServiceTest {
+class OneDayCommitJpaEntityServiceTest {
 
     @Mock
     private OneDayCommitRepository oneDayCommitRepository;
@@ -28,14 +31,14 @@ class OneDayCommitServiceTest {
     void calculateRecentCommit() {
         // given
         boolean hasYesterdayCommit = true;
-        OneDayCommit testCommit = OneDayCommit.of(hasYesterdayCommit);
+        OneDayCommitJpaEntity testCommit = OneDayCommitJpaEntity.of(hasYesterdayCommit);
 
         // when
         when(oneDayCommitRepository.save(any(OneDayCommit.class))).thenReturn(testCommit);
-        OneDayCommit oneDayCommit = oneDayCommitService.calculateRecentCommit(hasYesterdayCommit);
+        OneDayCommitJpaEntity oneDayCommitJpaEntity = oneDayCommitService.calculateRecentCommit(hasYesterdayCommit);
 
         // then
-        Assertions.assertThat(oneDayCommit.getSteadyCount()).isGreaterThan(0L);
+        Assertions.assertThat(oneDayCommitJpaEntity.getSteadyCount()).isGreaterThan(0L);
 
     }
 
@@ -44,14 +47,14 @@ class OneDayCommitServiceTest {
     void recentCommitNone() {
         // given
         boolean hasYesterdayCommit = false;
-        OneDayCommit testCommit = OneDayCommit.of(hasYesterdayCommit);
+        OneDayCommitJpaEntity testCommit = OneDayCommitJpaEntity.of(hasYesterdayCommit);
 
         // when
         when(oneDayCommitRepository.save(any(OneDayCommit.class))).thenReturn(testCommit);
-        OneDayCommit oneDayCommit = oneDayCommitService.calculateRecentCommit(hasYesterdayCommit);
+        OneDayCommitJpaEntity oneDayCommitJpaEntity = oneDayCommitService.calculateRecentCommit(hasYesterdayCommit);
 
         // then
-        assertEquals(0L, oneDayCommit.getSteadyCount());
+        assertEquals(0L, oneDayCommitJpaEntity.getSteadyCount());
     }
 
 
@@ -59,30 +62,30 @@ class OneDayCommitServiceTest {
     @DisplayName("어제 커밋이 있을때 업데이트 하는 경우")
     void updateHasRecentCommit() {
 
-        OneDayCommit oneDayCommit = OneDayCommit.of(true);
+        OneDayCommitJpaEntity oneDayCommitJpaEntity = OneDayCommitJpaEntity.of(true);
         // given
         boolean hasYesterdayCommit = true;
 
         // when
-        oneDayCommitService.updateCommit(oneDayCommit, hasYesterdayCommit);
+        oneDayCommitService.updateCommit(oneDayCommitJpaEntity, hasYesterdayCommit);
 
         // then
-        Assertions.assertThat(oneDayCommit.getSteadyCount()).isGreaterThan(0L);
+        Assertions.assertThat(oneDayCommitJpaEntity.getSteadyCount()).isGreaterThan(0L);
     }
 
     @Test
     @DisplayName("어제 커밋이 있을때 업데이트 하는 경우")
     void updateNoRecentCommit() {
 
-        OneDayCommit oneDayCommit = OneDayCommit.of(true);
+        OneDayCommitJpaEntity oneDayCommitJpaEntity = OneDayCommitJpaEntity.of(true);
         // given
         boolean hasYesterdayCommit = false;
 
         // when
-        oneDayCommitService.updateCommit(oneDayCommit, hasYesterdayCommit);
+        oneDayCommitService.updateCommit(oneDayCommitJpaEntity, hasYesterdayCommit);
 
         // then
-        Assertions.assertThat(oneDayCommit.getSteadyCount()).isEqualTo(0L);
+        Assertions.assertThat(oneDayCommitJpaEntity.getSteadyCount()).isEqualTo(0L);
     }
 
 }
