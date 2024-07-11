@@ -1,6 +1,7 @@
 package gitbal.backend.global.mock;
 
 
+import gitbal.backend.domain.region.application.repository.RegionRepository;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.global.constant.Grade;
 import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
@@ -10,10 +11,9 @@ import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.majorlanguage.application.repository.MajorLanguageRepository;
 import gitbal.backend.domain.onedaycommit.infra.OneDayCommitJpaRepository;
-import gitbal.backend.domain.region.RegionRepository;
 import gitbal.backend.domain.school.SchoolRepository;
 import gitbal.backend.domain.user.UserRepository;
-import gitbal.backend.domain.region.RegionService;
+import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.school.SchoolService;
 import java.util.ArrayList;
 import java.util.List;

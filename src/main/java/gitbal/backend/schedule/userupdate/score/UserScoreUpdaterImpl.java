@@ -1,7 +1,7 @@
 package gitbal.backend.schedule.userupdate.score;
 
 import gitbal.backend.domain.region.Region;
-import gitbal.backend.domain.region.RegionService;
+import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.domain.user.User;

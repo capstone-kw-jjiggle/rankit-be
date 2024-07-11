@@ -1,8 +1,9 @@
-package gitbal.backend.domain.region;
+package gitbal.backend.domain.region.application;
 
 
 import gitbal.backend.api.userPage.dto.RegionRankDto;
 import gitbal.backend.api.userPage.dto.RegionRankRaceResponseDto;
+import gitbal.backend.domain.region.Region;
 import gitbal.backend.global.util.RaceStatus;
 import java.util.ArrayList;
 import java.util.Comparator;

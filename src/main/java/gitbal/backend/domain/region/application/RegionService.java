@@ -1,5 +1,7 @@
-package gitbal.backend.domain.region;
+package gitbal.backend.domain.region.application;
 
+import gitbal.backend.domain.region.Region;
+import gitbal.backend.domain.region.application.repository.RegionRepository;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.global.exception.NotFoundRegionException;
 import gitbal.backend.global.util.SurroundingRankStatus;

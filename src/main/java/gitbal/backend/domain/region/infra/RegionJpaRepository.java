@@ -1,4 +1,4 @@
-package gitbal.backend.domain.region;
+package gitbal.backend.domain.region.infra;
 
 
 import gitbal.backend.domain.region.Region;
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface RegionRepository extends JpaRepository<Region, Long> {
+public interface RegionJpaRepository extends JpaRepository<Region, Long> {
 
     Optional<Region> findByRegionName(String regionName);
 

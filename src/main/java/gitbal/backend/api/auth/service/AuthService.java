@@ -7,7 +7,7 @@ import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.domain.majorlanguage.application.MajorLanguageService;
 import gitbal.backend.domain.onedaycommit.OneDayCommitService;
-import gitbal.backend.domain.region.RegionService;
+import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.global.exception.JoinException;

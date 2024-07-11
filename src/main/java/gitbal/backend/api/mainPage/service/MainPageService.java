@@ -4,7 +4,7 @@ import gitbal.backend.api.mainPage.dto.MainPageFirstRankResponseDto;
 import gitbal.backend.api.mainPage.dto.MainPageUserDto;
 import gitbal.backend.api.mainPage.dto.MainPageUserResponseDto;
 import gitbal.backend.domain.region.Region;
-import gitbal.backend.domain.region.RegionRepository;
+import gitbal.backend.domain.region.application.repository.RegionRepository;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.school.SchoolRepository;
 import gitbal.backend.domain.user.User;
