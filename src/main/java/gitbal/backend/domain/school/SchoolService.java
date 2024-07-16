@@ -3,6 +3,8 @@ package gitbal.backend.domain.school;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.global.constant.SchoolGrade;
 import gitbal.backend.global.exception.NotFoundSchoolException;
+import gitbal.backend.global.util.JoinUpdater;
+import gitbal.backend.global.util.ScheduleUpdater;
 import gitbal.backend.global.util.SurroundingRankStatus;
 import gitbal.backend.domain.user.UserRepository;
 import jakarta.transaction.Transactional;
@@ -20,9 +22,11 @@ public class SchoolService {
 
 
   private final int SCHOOL_AROUND_RANGE = 3;
+  private final int FIRST_RANK = 1;
+  private final ScheduleUpdater<School> schoolScheduleUpdater;
   private final SchoolRepository schoolRepository;
   private final UserRepository userRepository;
-  private final int FIRST_RANK = 1;
+
 
   public School findBySchoolName(String schoolName) {
     return schoolRepository.findBySchoolName(schoolName)
@@ -30,10 +34,8 @@ public class SchoolService {
   }
 
   public void joinNewUserScore(User findUser) {
-    Long score = findUser.getScore();
-    School school = findUser.getSchool();
-    school.addScore(score);
-    updateContributor(school, findUser.getNickname(), findUser.getScore()); // 이 친구 관련 다시 생각해보기 -> region에도 존재함.
+    JoinUpdater schoolJoinUpdater = new SchoolJoinUpdater();
+    schoolJoinUpdater.process(findUser);
   }
 
 
@@ -64,20 +66,17 @@ public class SchoolService {
   }
 
   public void updateByUserScore(School school, String username, Long oldScore, Long newScore) {
-    school.updateScore(oldScore,newScore);
-    school.updateContributerInfo(username, newScore);
+    schoolScheduleUpdater.update(school, username, oldScore, newScore);
   }
 
-  public void updateContributor(School school, String username, Long newScore) {
-    school.updateContributerInfo(username, newScore);
-  }
+
 
   public void updateSchoolRank() {
     List<School> schools = schoolRepository.findAll(Sort.by("score").descending());
     updateRank(schools);
   }
 
-  public void updateSchoolGrade() {
+  public void updateSchoolGrade() { // 주기적으로 라는 말 메서드명에 붙이기
     List<School> schools = schoolRepository.findAll(Sort.by("score").descending());
     updateGrade(schools);
   }
