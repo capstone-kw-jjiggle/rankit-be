@@ -11,7 +11,6 @@ import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.majorlanguage.application.MajorLanguageService;
 import gitbal.backend.domain.region.application.RegionService;
-import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.domain.user.UserService;
 
 import java.util.Objects;
@@ -26,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserRankService {
 
     private final UserService userService;
-    private final SchoolService schoolService;
     private final RegionService regionService;
     private final MajorLanguageService majorLanguageService;
 

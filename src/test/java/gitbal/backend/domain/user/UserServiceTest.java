@@ -3,16 +3,12 @@ package gitbal.backend.domain.user;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gitbal.backend.global.exception.NotFoundUserException;
-import gitbal.backend.global.util.SurroundingRankStatus;
-import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-    private final int USER_AROUND_RANGE = 2;
 
     private final Long COMMIT_WEIGHT = 1L;
     private final Long COMMITS_MEDIAN = 250L;

@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 
 import gitbal.backend.domain.user.User;
 import gitbal.backend.global.constant.Grade;
-import gitbal.backend.global.util.SurroundingRankStatus;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
