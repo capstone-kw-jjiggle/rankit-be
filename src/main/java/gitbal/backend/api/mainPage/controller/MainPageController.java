@@ -32,7 +32,7 @@ public class MainPageController {
         return ResponseEntity.ok(mainPageService.getUsers(page, searchedname));
     }
 
-
+    // 이 친구 삭제해야함
     @GetMapping("/firstRank")
     @Operation(summary = "메인 페이지에 나타나는 1등 학교, 지역을 나타내는 API입니다.(구현 완료)", description = "메인에 있는 1등을 나타내기 위한 API")
     @ApiResponses(value = {

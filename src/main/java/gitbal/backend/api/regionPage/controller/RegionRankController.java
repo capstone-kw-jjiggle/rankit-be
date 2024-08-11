@@ -24,6 +24,9 @@ public class RegionRankController {
 
     private final RegionRankService regionRankService;
 
+
+
+    // 애매
     @GetMapping("/myRegion")
     @Operation(summary = "일부 구현 완료 -> 이후 fe 개발자 api 테스트 이후 케이스 따라 추가 수정 진행", description = "내 지역 정보를 나타내는 api입니다.")
     @ApiResponses(value = {
@@ -34,6 +37,8 @@ public class RegionRankController {
         return ResponseEntity.ok(regionRankService.getMyRegionInfo(authentication));
     }
 
+
+    // 삭제
     @GetMapping("/firstregion")
     @Operation(summary = "1등 지역 정보 (구현 완료)", description = "1등 지역 정보 탭 관련 api 요청입니다.")
     @ApiResponses(value = {

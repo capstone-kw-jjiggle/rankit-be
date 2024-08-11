@@ -36,7 +36,7 @@ public class SchoolRankController {
         return ResponseEntity.ok(schoolRankService.getMySchoolInfo(authentication));
     }
 
-
+    //TODO : 삭제
     @GetMapping("/firstSchool")
     @Operation(summary = "1등 학교 정보 (구현 완료)", description = "1등 학교 정보 탭 관련 api 요청입니다.")
     @ApiResponses(value = {
