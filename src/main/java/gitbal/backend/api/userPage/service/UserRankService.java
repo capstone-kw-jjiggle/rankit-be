@@ -3,8 +3,8 @@ package gitbal.backend.api.userPage.service;
 import gitbal.backend.api.userPage.dto.RegionRankRaceResponseDto;
 import gitbal.backend.api.userPage.dto.SchoolRankRaceResponseDto;
 import gitbal.backend.api.userPage.dto.UserRankMajorLanguageResponseDto;
-import gitbal.backend.api.userPage.dto.UserRankRaceResponseDto;
 import gitbal.backend.api.userPage.dto.UserRankScoreResponseDto;
+import gitbal.backend.api.userPage.dto.UserRankingResponseDto;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.user.User;
@@ -14,7 +14,6 @@ import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.domain.region.application.RegionRaceStatus;
 import gitbal.backend.domain.school.SchoolRaceStatus;
-import gitbal.backend.domain.user.UserRaceStatus;
 
 import java.util.List;
 import java.util.Objects;
@@ -34,9 +33,9 @@ public class UserRankService {
     private final MajorLanguageService majorLanguageService;
 
     @Transactional(readOnly = true)
-    public UserRankScoreResponseDto makeUserRankResponse(String username) {
+    public UserRankingResponseDto makeUserRankResponse(String username) {
         User findUser = userService.findByUserName(username);
-        return UserRankScoreResponseDto.of(findUser.getScore());
+        return UserRankingResponseDto.of(findUser.getUserRank());
     }
 
 

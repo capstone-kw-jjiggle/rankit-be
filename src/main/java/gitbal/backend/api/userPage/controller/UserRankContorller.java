@@ -6,6 +6,7 @@ import gitbal.backend.api.userPage.dto.RegionRankRaceResponseDto;
 import gitbal.backend.api.userPage.dto.SchoolRankRaceResponseDto;
 import gitbal.backend.api.userPage.dto.UserRankMajorLanguageResponseDto;
 import gitbal.backend.api.userPage.dto.UserRankScoreResponseDto;
+import gitbal.backend.api.userPage.dto.UserRankingResponseDto;
 import gitbal.backend.api.userPage.service.UserRankService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -37,13 +38,13 @@ public class UserRankContorller {
 
 
     //TODO : 수정작업 : 본인 유저 순위만 나올 수 있게
-    @GetMapping("/userscore")
-    @Operation(summary = "유저의 현재 점수(개발 완료)", description = "유저의 현재 점수를 가져오는 api 입니다.")
+    @GetMapping("/userRanking")
+    @Operation(summary = "유저의 현재 점수(8.11 수정-개발 완료)", description = "유저의 현재 점수를 가져오는 api 입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "유저 현재 점수 요청을 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저 현재 점수 요청을 실패했습니다.")
     })
-    public ResponseEntity<UserRankScoreResponseDto> userscore(@RequestParam String username){
+    public ResponseEntity<UserRankingResponseDto> userRanking(@RequestParam String username){
         return ResponseEntity.ok(userRankService.makeUserRankResponse(username));
     }
 
