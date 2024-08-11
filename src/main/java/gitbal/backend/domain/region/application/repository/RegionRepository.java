@@ -15,12 +15,8 @@ public interface RegionRepository {
 
     int regionScoreRacedBackward(Long regionScore);
 
-
     List<Region> regionScoreRaced(Long regionScore,
          int fowrardCount,  int backwardCount);
-
-
-    Region firstRankedRegion();
 
     List<Region> findAll();
 

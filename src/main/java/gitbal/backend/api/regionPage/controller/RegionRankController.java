@@ -2,7 +2,6 @@ package gitbal.backend.api.regionPage.controller;
 
 import gitbal.backend.api.regionPage.dto.RegionListPageResponseDto;
 import gitbal.backend.api.regionPage.dto.RegionListDto;
-import gitbal.backend.api.regionPage.dto.FirstRankRegionDto;
 import gitbal.backend.api.regionPage.dto.MyRegionInfoResponseDto;
 import gitbal.backend.api.regionPage.service.RegionRankService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,18 +34,6 @@ public class RegionRankController {
     })
     public ResponseEntity<MyRegionInfoResponseDto> myRegion(Authentication authentication) {
         return ResponseEntity.ok(regionRankService.getMyRegionInfo(authentication));
-    }
-
-
-    // 삭제
-    @GetMapping("/firstregion")
-    @Operation(summary = "1등 지역 정보 (구현 완료)", description = "1등 지역 정보 탭 관련 api 요청입니다.")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "1등 지역 정보 요청을 성공했습니다."),
-        @ApiResponse(responseCode = "5xx", description = "1등 지역 정보 요청을 실패했습니다.")
-    })
-    public ResponseEntity<FirstRankRegionDto> firstRankRegionInfo() {
-        return regionRankService.getFirstRankRegionnfo();
     }
 
 
