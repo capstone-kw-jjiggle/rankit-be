@@ -173,32 +173,6 @@ class UserServiceTest {
     }
 
 
-    @Test
-    @DisplayName("유저 점수랑 근처에 있는 사람 찾는 기능 관련 테스트")
-    void findUsersScoreRaced(){
-        Long score = 100L;
-        int forwardCount = 10;
-        int backwardCount = 5;
-        when(userRepository.usersScoreRacedForward(score)).thenReturn(forwardCount);
-        when(userRepository.userScoreRacedBackward(score)).thenReturn(backwardCount);
-
-        SurroundingRankStatus surroundingRankStatus = SurroundingRankStatus.calculateSchoolRegionForwardBackward(
-            forwardCount, backwardCount, USER_AROUND_RANGE);
-
-        List<User> mockUsers = mock(List.class);
-        when(userRepository.usersScoreRaced(score, surroundingRankStatus.getForwardCount(),
-            surroundingRankStatus.getBackwardCount())).thenReturn(mockUsers);
-
-        UserRaceStatus mockUserRaced = UserRaceStatus.of(mockUsers);
-
-        UserRaceStatus userRaceStatus = userService.findUsersScoreRaced(score);
-
-        Assertions.assertThat(userRaceStatus.getAroundUsers()).isEqualTo(mockUserRaced.getAroundUsers());
-        verify(userRepository, times(1)).usersScoreRacedForward(score);
-        verify(userRepository, times(1)).userScoreRacedBackward(score);
-        verify(userRepository, times(1)).usersScoreRaced(score, surroundingRankStatus.getForwardCount(),
-            surroundingRankStatus.getBackwardCount());
-    }
 
     private String getInvalidJsonResponse(){
         return """

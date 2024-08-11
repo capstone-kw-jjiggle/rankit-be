@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 
+
+//삭제
 @Getter
 @AllArgsConstructor
 public class UserRaceStatus implements RaceStatus<User> {
