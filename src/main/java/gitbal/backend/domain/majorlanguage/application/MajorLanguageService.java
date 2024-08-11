@@ -6,6 +6,7 @@ import gitbal.backend.domain.majorlanguage.MajorLanguageDto;
 import gitbal.backend.domain.majorlanguage.application.repository.MajorLanguageRepository;
 import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
 import gitbal.backend.domain.user.User;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -43,16 +44,16 @@ public class MajorLanguageService {
     }
 
 
-    public List<UserRankMajorLanguageResponseDto> findLanguagePercentByUser(User findUser) {
+    public UserRankMajorLanguageResponseDto findMostUsageLanguageByUsername(User findUser) {
+        // TODO : 수정 사항 -> majorLanguage 관련하여서 진행하였을 때 이제는 2개정도밖에 들어가지 않아 논의하여 진행할 수 있도록 진행!
         List<MajorLanguageDto> majorLanguages = findUser.getMajorLanguages().stream()
             .map(MajorLanguageJpaEntity::toDomain)
             .map(MajorLanguageDto::of)
+            .sorted(Comparator.comparing(MajorLanguageDto::getLanguageUsageCount).reversed())
             .toList();
 
-        LanguageResponseConverter languageResponseConverter = LanguageResponseConverter.
-            of(majorLanguages);
 
-        return languageResponseConverter.convert();
+        return UserRankMajorLanguageResponseDto.of(majorLanguages.get(0).getLanguageName());
     }
 
 

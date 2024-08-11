@@ -14,7 +14,6 @@ import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.domain.user.UserService;
 
-import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,8 +54,8 @@ public class UserRankService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserRankMajorLanguageResponseDto> makeUserRankLanguageResponseByUsername(String username) {
+    public UserRankMajorLanguageResponseDto makeUserRankLanguageResponseByUsername(String username) {
         User findUser = userService.findByUserName(username);
-        return majorLanguageService.findLanguagePercentByUser(findUser);
+        return majorLanguageService.findMostUsageLanguageByUsername(findUser);
     }
 }

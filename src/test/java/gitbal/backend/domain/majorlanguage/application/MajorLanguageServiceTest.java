@@ -3,18 +3,15 @@ package gitbal.backend.domain.majorlanguage.application;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import gitbal.backend.api.userPage.dto.UserRankMajorLanguageResponseDto;
 import gitbal.backend.domain.majorlanguage.MajorLanguage;
 import gitbal.backend.domain.majorlanguage.MajorLanguageDto;
 import gitbal.backend.domain.majorlanguage.application.repository.MajorLanguageRepository;
 import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
-import gitbal.backend.domain.user.User;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -57,25 +54,7 @@ class MajorLanguageServiceTest {
 
     }
 
-    @Test
-    @DisplayName("유저의 유저가 사용한 언어의 퍼센트를 측정한다.")
-    void findLanguagePercentByUser() {
-        // given
-        User testUser = mock(User.class);
-        List<MajorLanguageJpaEntity> majorLanguages = List.of(
-            MajorLanguageJpaEntity.builder().majorLanguage("Java").languageCount(100L).build(),
-            MajorLanguageJpaEntity.builder().majorLanguage("Python").languageCount(50L).build()
-        );
 
-        // when
-        when(testUser.getMajorLanguages()).thenReturn(majorLanguages);
-        List<UserRankMajorLanguageResponseDto> languagePercentByUser = majorLanguageService.findLanguagePercentByUser(
-            testUser);
-
-        // then
-        assertEquals(2, languagePercentByUser.size());
-
-    }
 
     @Test
     @DisplayName("유저의 언어를 업데이트한다. 두 리스트가 동일한 경우")

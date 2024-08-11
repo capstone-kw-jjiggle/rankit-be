@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -71,12 +70,12 @@ public class UserRankContorller {
 
     //TODO : 수정작업 진행 : 자신이 제인 많이 사용한 언어에 대해서만 가져오기
     @GetMapping("/lang")
-    @Operation(summary = "유저랭크 사용 언어 탭 부분(개발 완료)", description = "유저 랭크 페이지의 사용 언어 탭의 정보를 위한 api")
+    @Operation(summary = "유저랭크 사용 언어 탭 부분(8.11 수정-개발 완료)", description = "유저 랭크 페이지의 사용 언어 탭의 정보를 위한 api")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "유저 사용 언어 탭 정보 요청을 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저 사용 언어 탭 정보 요청을 실패했습니다.")
     })
-    public ResponseEntity<List<UserRankMajorLanguageResponseDto>> majorLanguageTab(@RequestParam String username){
+    public ResponseEntity<UserRankMajorLanguageResponseDto> majorLanguageTab(@RequestParam String username){
         return ResponseEntity.ok(userRankService.makeUserRankLanguageResponseByUsername(username));
     }
 
