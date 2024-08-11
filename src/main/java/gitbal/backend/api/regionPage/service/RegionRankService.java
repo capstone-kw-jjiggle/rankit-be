@@ -3,6 +3,7 @@ package gitbal.backend.api.regionPage.service;
 
 import gitbal.backend.api.regionPage.dto.RegionListPageResponseDto;
 import gitbal.backend.domain.region.Region;
+import gitbal.backend.domain.region.application.repository.RegionRepository;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.api.regionPage.dto.FirstRankRegionDto;
 import gitbal.backend.api.regionPage.dto.MyRegionInfoResponseDto;
@@ -10,7 +11,6 @@ import gitbal.backend.api.regionPage.dto.RegionListDto;
 import gitbal.backend.global.exception.NotFoundRegionException;
 import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.exception.NotLoginedException;
-import gitbal.backend.domain.region.RegionRepository;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.global.security.CustomUserDetails;
 import java.util.List;

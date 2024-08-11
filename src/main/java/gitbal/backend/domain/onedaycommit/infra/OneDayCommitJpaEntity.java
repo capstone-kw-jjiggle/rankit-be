@@ -1,5 +1,6 @@
-package gitbal.backend.domain.onedaycommit;
+package gitbal.backend.domain.onedaycommit.infra;
 
+import gitbal.backend.domain.onedaycommit.application.OneDayCommit;
 import gitbal.backend.global.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +18,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Getter
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OneDayCommit extends BaseTimeEntity {
+public class OneDayCommitJpaEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,16 +30,37 @@ public class OneDayCommit extends BaseTimeEntity {
     private Long steadyCount;
 
 
-    public OneDayCommit(Long steadyCount) {
+    @Builder
+    public OneDayCommitJpaEntity(Long steadyCount) {
         this.steadyCount = steadyCount;
     }
 
+
+    @Builder
+    public OneDayCommitJpaEntity(Long id,Long steadyCount) {
+        this.id=id;
+        this.steadyCount = steadyCount;
+    }
+
+    public static OneDayCommitJpaEntity from(OneDayCommit oneDayCommit){
+        return OneDayCommitJpaEntity.builder()
+            .steadyCount(oneDayCommit.getSteadyCount())
+            .build();
+    }
+
+    public OneDayCommit toDomain(){
+        return OneDayCommit.builder()
+            .steadyCount(this.steadyCount)
+            .build();
+    }
+
+
     // 초기 가입할 때 넣기위한 값
-    public static OneDayCommit of(boolean hasRecent) {
+    public static OneDayCommitJpaEntity of(boolean hasRecent) {
         if (hasRecent) {
-            return new OneDayCommit(1L);
+            return new OneDayCommitJpaEntity(1L);
         }
-        return new OneDayCommit(0L);
+        return new OneDayCommitJpaEntity(0L);
     }
 
 

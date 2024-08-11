@@ -1,20 +1,13 @@
 package gitbal.backend.api.userPage.service;
 
-import gitbal.backend.domain.region.Region;
-import gitbal.backend.domain.region.RegionService;
-import gitbal.backend.domain.school.School;
+import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.domain.user.UserService;
-import gitbal.backend.global.exception.NotFoundRegionException;
-import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.exception.NotLoginedException;
-import gitbal.backend.domain.region.RegionRepository;
 import gitbal.backend.global.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

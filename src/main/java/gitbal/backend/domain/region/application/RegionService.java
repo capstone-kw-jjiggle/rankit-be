@@ -1,7 +1,11 @@
-package gitbal.backend.domain.region;
+package gitbal.backend.domain.region.application;
 
+import gitbal.backend.domain.region.Region;
+import gitbal.backend.domain.region.application.repository.RegionRepository;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.global.exception.NotFoundRegionException;
+import gitbal.backend.global.util.JoinUpdater;
+import gitbal.backend.global.util.ScheduleUpdater;
 import gitbal.backend.global.util.SurroundingRankStatus;
 import gitbal.backend.domain.user.UserRepository;
 import java.util.List;
@@ -12,10 +16,11 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class RegionService {
+public class RegionService{
 
   private final RegionRepository regionRepository;
   private final UserRepository userRepository;
+  private final ScheduleUpdater<Region> regionScheduleUpdater;
   private final int REGION_AROUND_RANGE = 3;
 
 
@@ -25,10 +30,8 @@ public class RegionService {
   }
 
   public void joinNewUserScore(User findUser) {
-    Long score = findUser.getScore();
-    Region region = findUser.getRegion();
-    region.addScore(score);
-    updateContributor(region, findUser.getNickname(), findUser.getScore());
+    JoinUpdater regionJoinUpdater = new RegionJoinUpdater();
+    regionJoinUpdater.process(findUser);
   }
 
   public RegionRaceStatus findRegionScoreRaced(Long score) {
@@ -61,11 +64,8 @@ public class RegionService {
 
 
   public void updateByUserScore(Region region, String username, Long oldScore, Long newScore) {
-    region.updateScore(oldScore,newScore);
-    updateContributor(region, username, newScore);
+    regionScheduleUpdater.update(region, username, oldScore, newScore);
   }
 
-  public void updateContributor(Region region, String username, Long newScore) {
-    region.updateContributerInfo(username, newScore);
-  }
+
 }

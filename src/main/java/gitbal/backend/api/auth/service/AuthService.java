@@ -2,12 +2,12 @@ package gitbal.backend.api.auth.service;
 
 import gitbal.backend.api.auth.dto.JoinRequestDto;
 import gitbal.backend.api.auth.dto.UserDto;
-import gitbal.backend.domain.refreshtoken.RefreshTokenService;
+import gitbal.backend.domain.refreshtoken.application.RefreshTokenService;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.domain.majorlanguage.application.MajorLanguageService;
 import gitbal.backend.domain.onedaycommit.OneDayCommitService;
-import gitbal.backend.domain.region.RegionService;
+import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.global.exception.JoinException;
@@ -85,7 +85,7 @@ public class AuthService {
     private void joinUpdate(User findUser, UserDto userDto) {
         findUser.joinUpdateUser(userDto.school(),
             userDto.region(),
-            userDto.oneDayCommit(),
+            userDto.oneDayCommitJpaEntity(),
             userDto.majorLanguages(),
             userDto.nickname(),
             userDto.score(),

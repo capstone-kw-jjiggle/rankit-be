@@ -1,7 +1,7 @@
 package gitbal.backend.schedule.userupdate.onedaycommit;
 
 
-import gitbal.backend.domain.onedaycommit.OneDayCommit;
+import gitbal.backend.domain.onedaycommit.infra.OneDayCommitJpaEntity;
 import gitbal.backend.domain.onedaycommit.OneDayCommitService;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserService;
@@ -32,9 +32,9 @@ public class UserOneDayCommitUpdaterImpl extends UserSetup implements UserOneDay
         for (String username : allUserNames) {
             Boolean isOneDayCommit = userService.checkUserRecentCommit(username);
             User findUser = userService.findByUserName(username);
-            OneDayCommit userOneDayCommit = findUser.getOneDayCommit();
-            if(Objects.isNull(userOneDayCommit)) continue;
-            oneDayCommitService.updateCommit(userOneDayCommit, isOneDayCommit);
+            OneDayCommitJpaEntity userOneDayCommitJpaEntity = findUser.getOneDayCommitJpaEntity();
+            if(Objects.isNull(userOneDayCommitJpaEntity)) continue;
+            oneDayCommitService.updateCommit(userOneDayCommitJpaEntity, isOneDayCommit);
         }
     }
 }

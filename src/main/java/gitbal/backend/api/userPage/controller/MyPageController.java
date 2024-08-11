@@ -26,7 +26,7 @@ public class MyPageController {
 
     private final MyPageService myPageService;
 
-
+    //TODO : 삭제
     @GetMapping("/title/list")
     @Operation(summary = "현재 가지고 있는 칭호 (칭호 기획 이후 구현 예정)", description = "현재 가지고 있는 칭호를 긁어오는 api 입니다.")
     @ApiResponses(value = {

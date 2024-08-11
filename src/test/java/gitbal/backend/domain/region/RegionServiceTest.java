@@ -5,8 +5,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import gitbal.backend.domain.region.application.RegionRaceStatus;
+import gitbal.backend.domain.region.application.RegionService;
+import gitbal.backend.domain.region.application.repository.RegionRepository;
 import gitbal.backend.domain.user.User;
-import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.global.util.SurroundingRankStatus;
 import java.util.List;
 import java.util.Optional;

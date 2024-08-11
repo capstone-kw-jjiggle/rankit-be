@@ -1,7 +1,7 @@
 package gitbal.backend.api.info.service;
 
 import gitbal.backend.domain.region.Region;
-import gitbal.backend.domain.region.RegionRepository;
+import gitbal.backend.domain.region.application.repository.RegionRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
