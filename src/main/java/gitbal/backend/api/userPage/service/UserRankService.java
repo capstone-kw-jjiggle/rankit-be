@@ -39,14 +39,6 @@ public class UserRankService {
         return UserRankScoreResponseDto.of(findUser.getScore());
     }
 
-    @Transactional(readOnly = true)
-    public List<UserRankRaceResponseDto> makeUserRankRaceStatusByUsername(String username) {
-        User findUser = userService.findByUserName(username);
-        UserRaceStatus userRaceStatus = userService.findUsersScoreRaced(findUser.getScore());
-        userRaceStatus.addEntity(findUser);
-        userRaceStatus.sortAroundEntitys();
-        return userRaceStatus.toResponseDto(userRaceStatus.getAroundUsers());
-    }
 
 
     @Transactional(readOnly = true)

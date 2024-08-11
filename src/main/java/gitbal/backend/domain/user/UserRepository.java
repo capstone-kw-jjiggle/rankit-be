@@ -1,7 +1,6 @@
 package gitbal.backend.domain.user;
 
 
-import gitbal.backend.domain.user.User;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -21,11 +20,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findByNicknameContainingIgnoreCase(String searchedname, Pageable pageable);
 
 
-    @Query("SELECT count(u) FROM User u WHERE u.score > :userScore")
-    int usersScoreRacedForward(@Param("userScore") Long userScore);
-
-    @Query("SELECT count(u) FROM User u WHERE u.score < :userScore")
-    int userScoreRacedBackward(@Param("userScore") Long userScore);
 
 
     @Query(value = "(SELECT * FROM user WHERE score < :userScore ORDER BY score DESC LIMIT :behind)" +
