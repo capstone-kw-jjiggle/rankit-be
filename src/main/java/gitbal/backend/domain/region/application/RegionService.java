@@ -6,11 +6,11 @@ import gitbal.backend.domain.user.User;
 import gitbal.backend.global.exception.NotFoundRegionException;
 import gitbal.backend.global.util.JoinUpdater;
 import gitbal.backend.global.util.ScheduleUpdater;
-import gitbal.backend.global.util.SurroundingRankStatus;
 import gitbal.backend.domain.user.UserRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,7 +21,6 @@ public class RegionService{
   private final RegionRepository regionRepository;
   private final UserRepository userRepository;
   private final ScheduleUpdater<Region> regionScheduleUpdater;
-  private final int REGION_AROUND_RANGE = 3;
 
 
   public Region findByRegionName(String regionName) {
@@ -32,20 +31,6 @@ public class RegionService{
   public void joinNewUserScore(User findUser) {
     JoinUpdater regionJoinUpdater = new RegionJoinUpdater();
     regionJoinUpdater.process(findUser);
-  }
-
-  public RegionRaceStatus findRegionScoreRaced(Long score) {
-    int forwardCount = regionRepository.regionScoreRacedForward(score);
-    int backwardCount = regionRepository.regionScoreRacedBackward(score);
-    log.info("forwardCount = {} backwardCount = {}", forwardCount, backwardCount);
-
-    SurroundingRankStatus surroundingRankStatus = SurroundingRankStatus.calculateSchoolRegionForwardBackward(
-        forwardCount, backwardCount, REGION_AROUND_RANGE);
-
-    log.info("after forwardCount = {} backwardCount = {}", forwardCount, backwardCount);
-    return RegionRaceStatus.of(
-        regionRepository.regionScoreRaced(score, surroundingRankStatus.getForwardCount(),
-            surroundingRankStatus.getBackwardCount()));
   }
 
   public void insertTopContributorInfo() {
@@ -68,4 +53,13 @@ public class RegionService{
   }
 
 
+  public int findRegionRanking(String regionName) {
+    List<Region> regionList = regionRepository.findAll(
+        Sort.sort(Region.class).by(Region::getScore).descending());
+    for (int i = 0; i < regionList.size(); i++) {
+        if(regionList.get(i).getRegionName().equals(regionName))
+            return i+1;
+    }
+    throw new NotFoundRegionException();
+  }
 }

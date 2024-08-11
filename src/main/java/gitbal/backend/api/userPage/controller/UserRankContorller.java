@@ -2,7 +2,7 @@ package gitbal.backend.api.userPage.controller;
 
 
 
-import gitbal.backend.api.userPage.dto.RegionRankRaceResponseDto;
+import gitbal.backend.api.userPage.dto.RegionRankResponseDto;
 import gitbal.backend.api.userPage.dto.SchoolRankResponseDto;
 import gitbal.backend.api.userPage.dto.UserRankMajorLanguageResponseDto;
 import gitbal.backend.api.userPage.dto.UserRankingResponseDto;
@@ -60,12 +60,12 @@ public class UserRankContorller {
 
     //TODO : 수정작업 진행 자신의 지역 몇등이고 어느 지역인지만 나오게
     @GetMapping("/region")
-    @Operation(summary = "유저랭크 지역 탭 부분(개발 완료)", description = "유저 랭크 페이지의 지역 탭의 정보를 위한 api")
+    @Operation(summary = "유저랭크 지역 탭 부분(8.11 수정-개발 완료)", description = "유저 랭크 페이지의 지역 탭의 정보를 위한 api")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "유저 지역 탭 정보 요청을 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저 지역 탭 정보 요청을 실패했습니다.")
     })
-    public ResponseEntity<RegionRankRaceResponseDto> regionTab(@RequestParam String username){
+    public ResponseEntity<RegionRankResponseDto> regionTab(@RequestParam String username){
         return ResponseEntity.ok(userRankService.makeUserRankRegionStatusByUsername(username));
     }
 
