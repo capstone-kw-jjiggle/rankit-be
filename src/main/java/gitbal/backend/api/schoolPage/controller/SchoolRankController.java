@@ -1,7 +1,6 @@
 package gitbal.backend.api.schoolPage.controller;
 
 
-import gitbal.backend.api.schoolPage.dto.FirstRankSchoolDto;
 import gitbal.backend.api.schoolPage.dto.SchoolListPageResponseDto;
 import gitbal.backend.api.schoolPage.dto.SchoolListDto;
 import gitbal.backend.api.schoolPage.dto.MySchoolInfoResponseDto;
@@ -34,17 +33,6 @@ public class SchoolRankController {
     })
     public ResponseEntity<MySchoolInfoResponseDto> mySchoolInfo(Authentication authentication) {
         return ResponseEntity.ok(schoolRankService.getMySchoolInfo(authentication));
-    }
-
-    //TODO : 삭제
-    @GetMapping("/firstSchool")
-    @Operation(summary = "1등 학교 정보 (구현 완료)", description = "1등 학교 정보 탭 관련 api 요청입니다.")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "1등 학교 정보 요청을 성공했습니다."),
-        @ApiResponse(responseCode = "5xx", description = "1등 학교 정보 요청을 실패했습니다.")
-    })
-    public ResponseEntity<FirstRankSchoolDto> firstRankSchoolInfo() {
-        return schoolRankService.getFirstRankSchoolInfo();
     }
 
     @GetMapping("/schoolList")

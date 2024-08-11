@@ -1,7 +1,6 @@
 package gitbal.backend.api.schoolPage.service;
 
 
-import gitbal.backend.api.schoolPage.dto.FirstRankSchoolDto;
 import gitbal.backend.api.schoolPage.dto.MySchoolInfoResponseDto;
 import gitbal.backend.api.schoolPage.dto.SchoolListDto;
 import gitbal.backend.api.schoolPage.dto.SchoolListPageResponseDto;
@@ -22,7 +21,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,17 +71,6 @@ public class  SchoolRankService {
         }
 
 
-    }
-
-    public ResponseEntity<FirstRankSchoolDto> getFirstRankSchoolInfo() {
-        School firstSchool = schoolRepository.firstRankedSchool(); // TODO: 우선 가장 높은 점수의 학교를 가져오는 쿼리로 가져옴. (나중엔 미리 점수별로 정렬해둘 것이므로 수정)
-        FirstRankSchoolDto FirstRankInfo = FirstRankSchoolDto.builder()
-            .schoolName(firstSchool.getSchoolName())
-            .schoolScore(firstSchool.getScore())
-            .schoolChangeScore(firstSchool.getChangedScore())
-            .mvpName(firstSchool.getTopContributor())
-            .build();
-        return ResponseEntity.ok(FirstRankInfo);
     }
 
     private SchoolListDto convertToDto(School school) {

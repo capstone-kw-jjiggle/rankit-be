@@ -2,7 +2,6 @@ package gitbal.backend.global.handler;
 
 import gitbal.backend.global.exception.JoinException;
 import gitbal.backend.global.exception.LogoutException;
-import gitbal.backend.global.exception.MainPageFirstRankException;
 import gitbal.backend.global.exception.NoTokenException;
 import gitbal.backend.global.exception.NotDrawUserException;
 import gitbal.backend.global.exception.NotFoundRefreshTokenException;
@@ -45,12 +44,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotLoginedException.class)
     public ResponseEntity<String> handleNotLoginedException(WrongPageNumberException e){
         return ResponseEntity.status(401).body(e.getMessage());
-    }
-
-
-    @ExceptionHandler(MainPageFirstRankException.class)
-    public ResponseEntity<String> handleMainPageFirstRankException(MainPageFirstRankException e){
-        return ResponseEntity.status(500).body(e.getMessage());
     }
 
     @ExceptionHandler(NotFoundSchoolException.class)

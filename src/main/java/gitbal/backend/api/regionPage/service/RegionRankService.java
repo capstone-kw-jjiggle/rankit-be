@@ -5,7 +5,6 @@ import gitbal.backend.api.regionPage.dto.RegionListPageResponseDto;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.region.application.repository.RegionRepository;
 import gitbal.backend.domain.user.User;
-import gitbal.backend.api.regionPage.dto.FirstRankRegionDto;
 import gitbal.backend.api.regionPage.dto.MyRegionInfoResponseDto;
 import gitbal.backend.api.regionPage.dto.RegionListDto;
 import gitbal.backend.global.exception.NotFoundRegionException;
@@ -52,18 +51,6 @@ public class RegionRankService {
             .build();
 
         return ResponseEntity.ok(RegionList);
-    }
-
-    public ResponseEntity<FirstRankRegionDto> getFirstRankRegionnfo() {
-        Region firstRegion = regionRepository.firstRankedRegion(); // TODO: 우선 가장 높은 점수의 학교를 가져오는 쿼리로 가져옴. (나중엔 미리 점수별로 정렬해둘 것이므로 수정)
-        FirstRankRegionDto firstRankInfo = FirstRankRegionDto.builder()
-            .regionName(firstRegion.getRegionName())
-            .regionScore(firstRegion.getScore())
-            .regionChangeScore(0L) // TODO : 이후에 점수 바뀌는 로직 적용해야함.
-            .mvpName(firstRegion.getTopContributor())
-            .build();
-
-        return ResponseEntity.ok(firstRankInfo);
     }
 
     private RegionListDto convertToDto(Region region) {
