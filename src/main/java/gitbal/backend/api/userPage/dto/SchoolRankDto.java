@@ -9,13 +9,10 @@ import lombok.Getter;
 public class SchoolRankDto {
 
     private String schoolName;
-    private Long schoolScore;
     private int schoolRank;
-    private Boolean isUserSchool;
 
 
-    public static SchoolRankDto of(School userSchool, School school) {
-        return new SchoolRankDto(school.getSchoolName(), school.getScore(), school.getSchoolRank(),
-            userSchool.getSchoolName().equals(school.getSchoolName()));
+    public static SchoolRankDto of(School userSchool) {
+        return new SchoolRankDto(userSchool.getSchoolName(), userSchool.getSchoolRank());
     }
 }
