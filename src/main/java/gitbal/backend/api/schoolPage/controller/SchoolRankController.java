@@ -26,7 +26,7 @@ public class SchoolRankController {
 
     private final SchoolRankService schoolRankService;
 
-    @GetMapping("/mySchool")
+    @GetMapping("/mySchool") // 삭제????
     @Operation(summary = "내 학교 정보 (구현만 완료 -> fe 와 api 통신해서 인증 확인 진행)", description = "내 학교 정보 탭 관련 api 요청입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "내 학교 정보 요청을 성공했습니다."),
@@ -35,19 +35,7 @@ public class SchoolRankController {
     public ResponseEntity<MySchoolInfoResponseDto> mySchoolInfo(Authentication authentication) {
         return ResponseEntity.ok(schoolRankService.getMySchoolInfo(authentication));
     }
-
-    //TODO : 삭제
-    @GetMapping("/firstSchool")
-    @Operation(summary = "1등 학교 정보 (구현 완료)", description = "1등 학교 정보 탭 관련 api 요청입니다.")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "1등 학교 정보 요청을 성공했습니다."),
-        @ApiResponse(responseCode = "5xx", description = "1등 학교 정보 요청을 실패했습니다.")
-    })
-    public ResponseEntity<FirstRankSchoolDto> firstRankSchoolInfo() {
-        return schoolRankService.getFirstRankSchoolInfo();
-    }
-
-    @GetMapping("/schoolList")
+    @GetMapping("/schoolList") // 등수, 점수, 학교명만
     @Operation(summary = "학교 리스트 (구현 완료)", description = "학교 리스트 탭 관련 api 요청입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "학교 리스트 요청을 성공했습니다."),
