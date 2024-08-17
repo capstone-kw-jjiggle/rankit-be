@@ -38,7 +38,7 @@ public class RegionRankController {
 
 
     @GetMapping("/regionList")
-    @Operation(summary = "지역 리스트 (구현 완료)", description = "지역 리스트를 나타내는 api입니다.")
+    @Operation(summary = "지역 리스트 (8.17 수정-개발완료)", description = "지역 리스트를 나타내는 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "지역 리스트 요청을 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "지역 리스트 요청을 실패했습니다.")
