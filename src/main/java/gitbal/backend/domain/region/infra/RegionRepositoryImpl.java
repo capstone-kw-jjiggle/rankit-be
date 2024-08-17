@@ -37,11 +37,6 @@ public class RegionRepositoryImpl implements RegionRepository {
     }
 
     @Override
-    public Region firstRankedRegion() {
-        return regionJpaRepository.firstRankedRegion();
-    }
-
-    @Override
     public List<Region> findAll() {
         return regionJpaRepository.findAll();
     }

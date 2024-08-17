@@ -1,7 +1,6 @@
 package gitbal.backend.api.schoolPage.controller;
 
 
-import gitbal.backend.api.schoolPage.dto.FirstRankSchoolDto;
 import gitbal.backend.api.schoolPage.dto.SchoolListPageResponseDto;
 import gitbal.backend.api.schoolPage.dto.SchoolListDto;
 import gitbal.backend.api.schoolPage.dto.MySchoolInfoResponseDto;

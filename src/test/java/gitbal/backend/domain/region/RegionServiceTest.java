@@ -5,12 +5,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import gitbal.backend.domain.region.application.RegionRaceStatus;
 import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.region.application.repository.RegionRepository;
 import gitbal.backend.domain.user.User;
-import gitbal.backend.global.util.SurroundingRankStatus;
-import java.util.List;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +22,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class RegionServiceTest {
 
 
-    private final int REGION_AROUND_RANGE = 3;
 
     @Mock
     private RegionRepository regionRepository;
@@ -114,32 +110,7 @@ class RegionServiceTest {
     }
 
 
-    @Test
-    @DisplayName("지역 점수 경쟁 상태 조회 로직")
-    void findRegionScoreRaced(){
-        Long score = 100L;
-        int forwardCount = 10;
-        int backwardCount = 5;
-        when(regionRepository.regionScoreRacedForward(score)).thenReturn(10);
-        when(regionRepository.regionScoreRacedBackward(score)).thenReturn(5);
 
-        SurroundingRankStatus surroundingRankStatus = SurroundingRankStatus.calculateSchoolRegionForwardBackward(
-            forwardCount, backwardCount, REGION_AROUND_RANGE);
-
-        List<Region> mockRegion = mock(List.class);
-        when(regionRepository.regionScoreRaced(score, surroundingRankStatus.getForwardCount(),
-            surroundingRankStatus.getBackwardCount())).thenReturn(mockRegion);
-
-        RegionRaceStatus regionRaceStatus = RegionRaceStatus.of(mockRegion);
-
-        RegionRaceStatus regionScoreRaced = regionService.findRegionScoreRaced(score);
-
-        Assertions.assertThat(regionScoreRaced.getAroundUsers()).isEqualTo(regionRaceStatus.getAroundUsers());
-        verify(regionRepository, times(1)).regionScoreRacedForward(score);
-        verify(regionRepository, times(1)).regionScoreRacedBackward(score);
-        verify(regionRepository, times(1)).regionScoreRaced(score, surroundingRankStatus.getForwardCount(),
-            surroundingRankStatus.getBackwardCount());
-    }
 
 
 

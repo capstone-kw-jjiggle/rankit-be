@@ -3,7 +3,6 @@ package gitbal.backend.domain.user;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gitbal.backend.domain.majorlanguage.MajorLanguage;
 import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
@@ -12,7 +11,6 @@ import gitbal.backend.global.exception.NotFoundRegionException;
 import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.security.GithubOAuth2UserInfo;
-import gitbal.backend.global.util.SurroundingRankStatus;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -89,18 +87,7 @@ public class UserService {
         return userRepository.findByNickname(username).orElseThrow(NotFoundUserException::new);
     }
 
-    public UserRaceStatus findUsersScoreRaced(Long score) {
-        int forwardCount = userRepository.usersScoreRacedForward(score);
-        int backwardCount = userRepository.userScoreRacedBackward(score);
-        log.info("forwardCount = {} backwardCount = {}", forwardCount, backwardCount);
-        SurroundingRankStatus surroundingRankStatus = SurroundingRankStatus.calculateUserForwardBackward(
-            forwardCount, backwardCount, USER_AROUND_RANGE);
-        log.info("after forwardCount = {} backwardCount = {}",
-            surroundingRankStatus.getForwardCount(), surroundingRankStatus.getBackwardCount());
-        return UserRaceStatus.of(
-            userRepository.usersScoreRaced(score, surroundingRankStatus.getForwardCount(),
-                surroundingRankStatus.getBackwardCount()));
-    }
+
 
     public School findSchoolByUserName(String username) {
         User findUser = userRepository.findByNickname(username)

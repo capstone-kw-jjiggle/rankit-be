@@ -1,16 +1,12 @@
 package gitbal.backend.api.mainPage.service;
 
-import gitbal.backend.api.mainPage.dto.MainPageFirstRankResponseDto;
 import gitbal.backend.api.mainPage.dto.MainPageUserDto;
 import gitbal.backend.api.mainPage.dto.MainPageUserResponseDto;
-import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.region.application.repository.RegionRepository;
-import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.school.SchoolRepository;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.global.dto.PageInfoDto;
-import gitbal.backend.global.exception.MainPageFirstRankException;
 import gitbal.backend.global.exception.WrongPageNumberException;
 import gitbal.backend.global.util.PageCalculator;
 import java.util.List;
@@ -95,18 +91,5 @@ public class MainPageService {
 
     private boolean checkRemainPage(int pageNumber, long totalNumber) {
         return (long) pageNumber * PAGE_SIZE - totalNumber < PAGE_SIZE;
-    }
-
-
-    @Transactional(readOnly = true)
-    public MainPageFirstRankResponseDto getMainPageFirstSchoolRegionRank() {
-        try {
-            Region region = regionRepository.firstRankedRegion();
-            School school = schoolRepository.firstRankedSchool();
-            return MainPageFirstRankResponseDto.of(school, region);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new MainPageFirstRankException();
-        }
     }
 }

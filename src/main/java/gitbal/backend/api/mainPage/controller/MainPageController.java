@@ -1,6 +1,5 @@
 package gitbal.backend.api.mainPage.controller;
 
-import gitbal.backend.api.mainPage.dto.MainPageFirstRankResponseDto;
 import gitbal.backend.api.mainPage.dto.MainPageUserResponseDto;
 import gitbal.backend.api.mainPage.service.MainPageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,18 +30,4 @@ public class MainPageController {
     public ResponseEntity<MainPageUserResponseDto> users(@RequestParam(required = false, defaultValue = "1") int page,  @RequestParam(required = false) String searchedname) {
         return ResponseEntity.ok(mainPageService.getUsers(page, searchedname));
     }
-
-    // 이 친구 삭제해야함
-    @GetMapping("/firstRank")
-    @Operation(summary = "메인 페이지에 나타나는 1등 학교, 지역을 나타내는 API입니다.(구현 완료)", description = "메인에 있는 1등을 나타내기 위한 API")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "메인 페이지 1등 표시 지역, 학교 표시에 성공했습니다."),
-        @ApiResponse(responseCode = "500", description = "메인 페이지 1등 표시 지역, 학교 표시에 실패했습니다.")
-    })
-    public ResponseEntity<MainPageFirstRankResponseDto> firstRank() {
-        return ResponseEntity.ok(mainPageService.getMainPageFirstSchoolRegionRank());
-    }
-
-
-
 }

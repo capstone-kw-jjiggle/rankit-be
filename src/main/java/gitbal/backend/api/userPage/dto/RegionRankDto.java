@@ -9,9 +9,9 @@ public class RegionRankDto {
 
 
     private String regionName;
-    private Long regionScore;
+    private int regionRank;
 
-    public static RegionRankDto of(String regionName, Long regionScore) {
-        return new RegionRankDto(regionName, regionScore);
+    public static RegionRankDto of(String regionName, int regionRank) {
+        return new RegionRankDto(regionName, regionRank);
     }
 }

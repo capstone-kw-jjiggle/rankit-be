@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 
 import gitbal.backend.domain.user.User;
 import gitbal.backend.global.constant.Grade;
-import gitbal.backend.global.util.SurroundingRankStatus;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -111,35 +110,6 @@ class SchoolServiceTest {
         Assertions.assertThat(school.getScore()).isEqualTo(500L);
         Assertions.assertThat(school.getTopContributor()).isEqualTo("originalUser");
     }
-
-
-    @Test
-    @DisplayName("지역 점수 경쟁 상태 조회 로직")
-    void findRegionScoreRaced(){
-        Long score = 100L;
-        int forwardCount = 10;
-        int backwardCount = 5;
-        when(schoolRepository.schoolScoreRacedForward(score)).thenReturn(forwardCount);
-        when(schoolRepository.schoolScoreRacedBackward(score)).thenReturn(backwardCount);
-
-        SurroundingRankStatus surroundingRankStatus = SurroundingRankStatus.calculateSchoolRegionForwardBackward(
-            forwardCount, backwardCount, SCHOOL_AROUND_RANGE);
-
-        List<School> mockSchool = mock(List.class);
-        when(schoolRepository.schoolScoreRaced(score, surroundingRankStatus.getForwardCount(),
-            surroundingRankStatus.getBackwardCount())).thenReturn(mockSchool);
-
-        SchoolRaceStatus mockSchoolRaced = SchoolRaceStatus.of(mockSchool);
-
-        SchoolRaceStatus schoolScoreRaced = schoolService.findSchoolScoreRaced(score);
-
-        Assertions.assertThat(schoolScoreRaced.getAroundUsers()).isEqualTo(mockSchoolRaced.getAroundUsers());
-        verify(schoolRepository, times(1)).schoolScoreRacedForward(score);
-        verify(schoolRepository, times(1)).schoolScoreRacedBackward(score);
-        verify(schoolRepository, times(1)).schoolScoreRaced(score, surroundingRankStatus.getForwardCount(),
-            surroundingRankStatus.getBackwardCount());
-    }
-
 
     @Test
     @DisplayName("학교 랭킹 업데이트 로직")
