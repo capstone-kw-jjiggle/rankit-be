@@ -11,6 +11,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +22,9 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
+@Builder
 @Table(name = "guest_book")
+@AllArgsConstructor
 public class GuestBook extends BaseTimeEntity {
 
     @Id
@@ -31,8 +35,6 @@ public class GuestBook extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    private String profileImg;
 
     @Column(length = 300) // 길이 제한 이후 몇 자인지 확정 나고 나서 수정할 예정
     private String boardContent;
