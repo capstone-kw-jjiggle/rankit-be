@@ -16,8 +16,8 @@ public class GuestBookServiceImpl implements GuestBookService {
 
     private final GuestBookRepository guestBookRepository;
 
+    @Override
     public List<GuestBookResponseDto> getGuestBooks() {
-
         return guestBookRepository.findGuestBookTop30().stream()
             .map(g ->
                 new GuestBookResponseDto(g.getUser().getId(), g.getUser().getProfile_img(),
