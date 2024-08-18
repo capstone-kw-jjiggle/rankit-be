@@ -47,4 +47,15 @@ public class MyPageController {
         myPageService.modifyRegionName(authentication, modifyRegionName);
         return ResponseEntity.ok("지역 수정에 성공했습니다.");
     }
+
+    @GetMapping("/suggest/freind")
+    @Operation(summary = "친구 추천 (8.18 개발 완료 - 코드 리팩토링 해야 할 여지 있음)", description = "친구 추천을 위한 api입니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "친구 추천 리스트를 가져오기 성공했습니다."),
+        @ApiResponse(responseCode = "5xx", description = "친구 추천 리스트를 가져오기 실패했습니다.")
+    })
+    public ResponseEntity<?> suggestFreinds(Authentication authentication){
+        return ResponseEntity.ok(myPageService.getFriendSuggestionList(authentication));
+    }
+
 }
