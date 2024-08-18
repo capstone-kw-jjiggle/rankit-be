@@ -1,6 +1,7 @@
 package gitbal.backend.domain.user;
 
 
+import gitbal.backend.domain.guestbook.GuestBook;
 import gitbal.backend.global.BaseTimeEntity;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.global.constant.Grade;
@@ -56,6 +57,9 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<MajorLanguageJpaEntity> majorLanguages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<GuestBook> guestBooks = new ArrayList<>();
 
 
     @ColumnDefault(value = "'nothing'")
