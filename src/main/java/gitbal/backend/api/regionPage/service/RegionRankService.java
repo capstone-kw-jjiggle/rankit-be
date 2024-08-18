@@ -56,11 +56,8 @@ public class RegionRankService {
     private RegionListDto convertToDto(Region region) {
         return new RegionListDto(
             region.getRegionName(),
-            region.getScore(),
-            0L, // TODO : 이후에 점수 바뀌는 로직 적용해야함.
-            region.getTopContributor()
+            region.getScore()
         );
-
     }
 
     @Transactional(readOnly = true)

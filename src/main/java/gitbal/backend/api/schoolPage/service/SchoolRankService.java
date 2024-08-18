@@ -77,10 +77,7 @@ public class  SchoolRankService {
         return new SchoolListDto(
             school.getSchoolName(),
             school.getScore(),
-            school.getChangedScore(),
-            school.getSchoolRank(),
-            school.getTopContributor(),
-            school.getGrade()
+            school.getSchoolRank()
         );
     }
 
