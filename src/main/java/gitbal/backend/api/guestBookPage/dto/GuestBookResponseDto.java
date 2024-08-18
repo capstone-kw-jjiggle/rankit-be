@@ -1,4 +1,4 @@
-package gitbal.backend.api.dashboardPage.dto;
+package gitbal.backend.api.guestBookPage.dto;
 
 
 

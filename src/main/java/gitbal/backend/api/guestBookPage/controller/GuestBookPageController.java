@@ -1,8 +1,8 @@
-package gitbal.backend.api.dashboardPage.controller;
+package gitbal.backend.api.guestBookPage.controller;
 
-import gitbal.backend.api.dashboardPage.dto.GuestBookResponseDto;
-import gitbal.backend.api.dashboardPage.dto.GuestBookWriteRequestDto;
-import gitbal.backend.api.dashboardPage.facade.GuestBookPageFacade;
+import gitbal.backend.api.guestBookPage.dto.GuestBookResponseDto;
+import gitbal.backend.api.guestBookPage.dto.GuestBookWriteRequestDto;
+import gitbal.backend.api.guestBookPage.facade.GuestBookPageFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
