@@ -148,21 +148,18 @@ public class MockDataGenerator implements CommandLineRunner {
   private List<MajorLanguageJpaEntity> createRandomMajorLanguagesForUser(User user) {
     List<MajorLanguageJpaEntity> majorLanguages = new ArrayList<>();
     // Generate a random number of languages for each user
-    int languagesCount = 5; // Random number of languages between 1 and 5
+    int languagesCount = 1; // Random number of languages between 1 and 5
+    int i = random.nextInt(5);
+    String[] languages = {"Java", "C#", "JavaScript", "Python", "C"};
+    String randomLanguage = languages[i];
+    Long randomLanguageCount = (long) random.nextInt(100); // Example count
 
-    for (int i = 0; i < languagesCount; i++) {
-            String[] languages = {"Java", "C#", "JavaScript", "Python", "C"};
-            String randomLanguage = languages[i];
-            Long randomLanguageCount = (long) random.nextInt(100); // Example count
-
-      MajorLanguageJpaEntity majorLanguage = MajorLanguageJpaEntity.builder()
-          .majorLanguage(randomLanguage)
-          .languageCount(randomLanguageCount)
-          .user(user)
-          .build();
-      majorLanguages.add(majorLanguage);
-    }
-
+    MajorLanguageJpaEntity majorLanguage = MajorLanguageJpaEntity.builder()
+        .majorLanguage(randomLanguage)
+        .languageCount(randomLanguageCount)
+        .user(user)
+        .build();
+    majorLanguages.add(majorLanguage);
     return majorLanguages;
   }
 
