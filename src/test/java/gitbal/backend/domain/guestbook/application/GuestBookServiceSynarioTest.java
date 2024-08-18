@@ -3,14 +3,13 @@ package gitbal.backend.domain.guestbook.application;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import gitbal.backend.api.dashboardPage.dto.GuestBookResponseDto;
-import gitbal.backend.api.dashboardPage.dto.GuestBookWriteRequestDto;
+import gitbal.backend.api.guestBookPage.dto.GuestBookResponseDto;
+import gitbal.backend.api.guestBookPage.dto.GuestBookWriteRequestDto;
 import gitbal.backend.domain.guestbook.GuestBook;
 import gitbal.backend.domain.guestbook.infra.repository.GuestBookRepository;
 import gitbal.backend.domain.user.User;

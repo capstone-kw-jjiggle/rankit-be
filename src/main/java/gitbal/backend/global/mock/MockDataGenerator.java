@@ -1,9 +1,8 @@
 package gitbal.backend.global.mock;
 
 
-import gitbal.backend.api.dashboardPage.dto.GuestBookWriteRequestDto;
-import gitbal.backend.api.dashboardPage.facade.GuestBookPageFacade;
-import gitbal.backend.domain.guestbook.infra.repository.GuestBookRepository;
+import gitbal.backend.api.guestBookPage.dto.GuestBookWriteRequestDto;
+import gitbal.backend.api.guestBookPage.facade.GuestBookPageFacade;
 import gitbal.backend.domain.region.application.repository.RegionRepository;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.global.constant.Grade;
