@@ -12,15 +12,15 @@ public record UserDto(
     School school,
     Region region,
     OneDayCommitJpaEntity oneDayCommitJpaEntity,
-    List<MajorLanguageJpaEntity> majorLanguages,
+    MajorLanguageJpaEntity majorLanguage,
     String nickname,
     Long score,
     String profile_img) {
 
     public static UserDto of(School school, Region region, OneDayCommitJpaEntity oneDayCommitJpaEntity,
-        List<MajorLanguageJpaEntity> majorLanguages, String nickname, Long score,
+        MajorLanguageJpaEntity majorLanguage, String nickname, Long score,
         String profile_img) {
-        return new UserDto(school, region, oneDayCommitJpaEntity, majorLanguages, nickname, score, profile_img);
+        return new UserDto(school, region, oneDayCommitJpaEntity, majorLanguage, nickname, score, profile_img);
     }
 
     public static User toEntity(UserDto userDto) {
@@ -28,7 +28,7 @@ public record UserDto(
             .school(userDto.school())
             .region(userDto.region())
             .oneDayCommitJpaEntity(userDto.oneDayCommitJpaEntity())
-            .majorLanguages(userDto.majorLanguages())
+            .majorLanguage(userDto.majorLanguage)
             .nickname(userDto.nickname())
             .score(userDto.score())
             .profile_img(userDto.profile_img())
