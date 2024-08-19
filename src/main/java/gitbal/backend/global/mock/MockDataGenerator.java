@@ -68,15 +68,15 @@ public class MockDataGenerator implements CommandLineRunner {
       User newUser = createUser(randomNickname, randomSchool, randomRegion, i);
 
       // Create a list of MajorLanguage entities for this user
-      List<MajorLanguageJpaEntity> majorLanguages = createRandomMajorLanguagesForUser(newUser);
-      majorLanguages.forEach(majorLanguageRepository::save);
+      MajorLanguageJpaEntity majorLanguage = createRandomMajorLanguagesForUser(newUser);
+      majorLanguageRepository.save(majorLanguage);
 
       // Create and save OneDayCommit entity
       OneDayCommitJpaEntity oneDayCommitJpaEntity = OneDayCommitJpaEntity.of(random.nextBoolean());
       oneDayCommitRepository.save(oneDayCommitJpaEntity);
 
       // Update user with the new relations
-      newUser.joinUpdateUser(randomSchool, randomRegion, oneDayCommitJpaEntity, majorLanguages,
+      newUser.joinUpdateUser(randomSchool, randomRegion, oneDayCommitJpaEntity, majorLanguage,
           newUser.getNickname(), newUser.getScore(), newUser.getProfile_img(), 0);
       User saveUser = userRepository.save(newUser);
       scoring(saveUser);
@@ -134,19 +134,18 @@ public class MockDataGenerator implements CommandLineRunner {
 
 
 
-    List<MajorLanguageJpaEntity> majorLanguages = createRandomMajorLanguagesForUser(leesj000603);
-    majorLanguages.forEach(majorLanguageRepository::save);
+    MajorLanguageJpaEntity majorLanguage = createRandomMajorLanguagesForUser(leesj000603);
+    majorLanguageRepository.save(majorLanguage);
 
     OneDayCommitJpaEntity oneDayCommitJpaEntity1 = OneDayCommitJpaEntity.of(true);
     oneDayCommitRepository.save(oneDayCommitJpaEntity1);
-    leesj000603.joinUpdateUser(school, region, oneDayCommitJpaEntity, majorLanguages,
+    leesj000603.joinUpdateUser(school, region, oneDayCommitJpaEntity, majorLanguage,
         leesj000603.getNickname(), leesj000603.getScore(), leesj000603.getProfile_img(), 0);
     userRepository.save(leesj000603);
 
   }
 
-  private List<MajorLanguageJpaEntity> createRandomMajorLanguagesForUser(User user) {
-    List<MajorLanguageJpaEntity> majorLanguages = new ArrayList<>();
+  private MajorLanguageJpaEntity createRandomMajorLanguagesForUser(User user) {
     // Generate a random number of languages for each user
     int languagesCount = 1; // Random number of languages between 1 and 5
     int i = random.nextInt(5);
@@ -154,13 +153,11 @@ public class MockDataGenerator implements CommandLineRunner {
     String randomLanguage = languages[i];
     Long randomLanguageCount = (long) random.nextInt(100); // Example count
 
-    MajorLanguageJpaEntity majorLanguage = MajorLanguageJpaEntity.builder()
+    return MajorLanguageJpaEntity.builder()
         .majorLanguage(randomLanguage)
         .languageCount(randomLanguageCount)
         .user(user)
         .build();
-    majorLanguages.add(majorLanguage);
-    return majorLanguages;
   }
 
 
