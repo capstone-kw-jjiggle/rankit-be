@@ -80,7 +80,9 @@ public class UserService {
 
 
 
-
+    public User findById(Long id){
+        return userRepository.findById(id).orElseThrow(() -> new NotFoundUserException("게시글 등록 중 사용자를 찾지 못하여 실패하였습니다."));
+    }
 
 
     public User findByUserName(String username) {

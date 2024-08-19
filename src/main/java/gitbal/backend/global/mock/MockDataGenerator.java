@@ -1,6 +1,8 @@
 package gitbal.backend.global.mock;
 
 
+import gitbal.backend.api.guestBookPage.dto.GuestBookWriteRequestDto;
+import gitbal.backend.api.guestBookPage.facade.GuestBookPageFacade;
 import gitbal.backend.domain.region.application.repository.RegionRepository;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.global.constant.Grade;
@@ -35,6 +37,7 @@ public class MockDataGenerator implements CommandLineRunner {
   private final RegionRepository regionRepository;
   private final MajorLanguageRepository majorLanguageRepository;
   private final OneDayCommitJpaRepository oneDayCommitRepository;
+  private final GuestBookPageFacade guestBookPageFacade;
   private final UserRepository userRepository;
   private final UserService userService;
   private final SchoolService schoolService;
@@ -79,6 +82,9 @@ public class MockDataGenerator implements CommandLineRunner {
       newUser.joinUpdateUser(randomSchool, randomRegion, oneDayCommitJpaEntity, majorLanguage,
           newUser.getNickname(), newUser.getScore(), newUser.getProfile_img(), 0);
       User saveUser = userRepository.save(newUser);
+
+      guestBookPageFacade.saveDashBoard(new GuestBookWriteRequestDto(saveUser.getId(), "안녕하세요"));
+      guestBookPageFacade.saveDashBoard(new GuestBookWriteRequestDto(saveUser.getId(), "안녕하세요2"));
       scoring(saveUser);
     }
     // Test를 위한 나(이승준)의 githubid와 동일한 nickname data
