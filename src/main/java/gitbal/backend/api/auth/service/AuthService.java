@@ -62,7 +62,7 @@ public class AuthService {
         return UserDto.of(schoolService.findBySchoolName(joinRequestDto.univName()),
             regionService.findByRegionName(joinRequestDto.region()),
             oneDayCommitService.calculateRecentCommit(gitbalApiDto.getRecentCommit()),
-            majorLanguageService.getUserTopLaunguages(nickname),
+            majorLanguageService.getUserTopLaunguage(nickname),
             nickname,
             gitbalApiDto.getScore(),
             userService.findUserImgByUsername(nickname)
@@ -86,7 +86,7 @@ public class AuthService {
         findUser.joinUpdateUser(userDto.school(),
             userDto.region(),
             userDto.oneDayCommitJpaEntity(),
-            userDto.majorLanguages(),
+            userDto.majorLanguage(),
             userDto.nickname(),
             userDto.score(),
             userDto.profile_img(),

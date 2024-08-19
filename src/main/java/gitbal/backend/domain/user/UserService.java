@@ -155,10 +155,10 @@ public class UserService {
         }
     }
 
-    public List<MajorLanguageJpaEntity> findMajorLanguagesByUsername(String username) {
+    public MajorLanguageJpaEntity findMajorLanguageByUsername(String username) {
         User findUser = userRepository.findByNickname(username)
             .orElseThrow(NotFoundUserException::new);
-        return findUser.getMajorLanguages();
+        return findUser.getMajorLanguage();
     }
 
     @Transactional

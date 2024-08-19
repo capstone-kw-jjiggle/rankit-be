@@ -59,7 +59,7 @@ public class MyPageService {
 
   private List<User> getResultFriends(User user){
     Grade grade = getNextGrade(user.getGrade());
-    String lang = getMostUsedLang(user.getMajorLanguages()).getMajorLanguage();
+    String lang = user.getMajorLanguage().getMajorLanguage();
     Long score = user.getScore();
 
     List<User> allUsers = getAllUserExceptCurrentUser(user);
@@ -94,7 +94,7 @@ public class MyPageService {
 
   private User getRandomSameLanguageUser(List<User> allUsers, String userLang){
     List<User> sameLangUsers = allUsers.stream()
-        .filter(u -> getMostUsedLang(u.getMajorLanguages()).getMajorLanguage().contains(userLang))
+        .filter(u -> u.getMajorLanguage().getMajorLanguage().equals(userLang))
         .toList();
     return checkNullAndReturn(sameLangUsers, allUsers);
   }
@@ -125,7 +125,7 @@ public class MyPageService {
     return FriendSuggestDTO.of(
         user.getNickname(),
         user.getGrade(),
-        getMostUsedLang(user.getMajorLanguages()).getMajorLanguage(),
+        user.getMajorLanguage().getMajorLanguage(),
         user.getSchool().getSchoolName(),
         user.getRegion().getRegionName(),
         user.getProfile_img()
@@ -142,11 +142,6 @@ public class MyPageService {
   private User pickRandomUser(List<User> users) {
     Random random = new Random();
     return users.get(random.nextInt(users.size()));
-  }
-
-  private MajorLanguageJpaEntity getMostUsedLang(List<MajorLanguageJpaEntity> languages){
-    Optional<MajorLanguageJpaEntity> lang = languages.stream().max((l1,l2) -> Long.compare(l1.getLanguageCount(), l2.getLanguageCount()));
-    return lang.orElse(null);
   }
 
 
