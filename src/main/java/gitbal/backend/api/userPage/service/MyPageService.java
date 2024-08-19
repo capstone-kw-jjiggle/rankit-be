@@ -1,8 +1,8 @@
 package gitbal.backend.api.userPage.service;
 
+import gitbal.backend.api.userPage.RandomUserPicker;
+import gitbal.backend.api.userPage.UserCalculator;
 import gitbal.backend.api.userPage.dto.FriendSuggestDTO;
-import gitbal.backend.domain.majorlanguage.MajorLanguage;
-import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
 import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.domain.user.User;
@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -29,9 +27,8 @@ public class MyPageService {
   private final UserService userService;
   private final SchoolService schoolService;
   private final RegionService regionService;
-  private final UserRepository userRepository;
-
-  private final int NEAR_SCORE_BOUNDARY = 1000;
+  private final RandomUserPicker randomUserPicker;
+  private final UserCalculator userCalculator;
 
   //지역이나 학교 수정해도 수정하기 전 후의 지역점수나 학교점수에 유저 점수 직접 더하고 빼지 않음. (어짜피 점수 업데이트 할 때 반영되니깐)
   @Transactional
@@ -58,16 +55,16 @@ public class MyPageService {
   }
 
   private List<User> getResultFriends(User user){
-    Grade grade = getNextGrade(user.getGrade());
+    Grade grade = userCalculator.getNextGrade(user.getGrade());
     String lang = user.getMajorLanguage().getMajorLanguage();
     Long score = user.getScore();
 
-    List<User> allUsers = getAllUserExceptCurrentUser(user);
+    List<User> allUsers = userCalculator.getAllUserExceptCurrentUser(user);
 
-    User purpleUser = getRandomHighestGradeUser(allUsers);
-    User sameLangUser = getRandomSameLanguageUser(allUsers, lang);
-    User nextGradeUser = getRandomNextLanguageUser(allUsers, grade);
-    User nearScoreUser = getRandomNearScoreUser(allUsers, score);
+    User purpleUser = randomUserPicker.getRandomHigestGradeUser(allUsers);
+    User sameLangUser = randomUserPicker.getRandomSameLanguageUser(allUsers, lang);
+    User nextGradeUser = randomUserPicker.getRandomNextLanguageUser(allUsers, grade);
+    User nearScoreUser = randomUserPicker.getRandomNearScoreUser(allUsers, score);
 
     List<User> result = new ArrayList<>();
     if (purpleUser != null) {
@@ -86,41 +83,6 @@ public class MyPageService {
     return result;
   }
 
-  private User getRandomHighestGradeUser(List<User> allUsers){
-    List<User> highestGradeUsers = allUsers.stream()
-        .filter(u -> u.getGrade() == Grade.PURPLE).toList();
-    return checkNullAndReturn(highestGradeUsers, allUsers);
-  }
-
-  private User getRandomSameLanguageUser(List<User> allUsers, String userLang){
-    List<User> sameLangUsers = allUsers.stream()
-        .filter(u -> u.getMajorLanguage().getMajorLanguage().equals(userLang))
-        .toList();
-    return checkNullAndReturn(sameLangUsers, allUsers);
-  }
-
-  private User getRandomNextLanguageUser(List<User> allUsers, Grade nextGrade){
-    List<User> higherGradeUsers = allUsers.stream()
-        .filter(u -> u.getGrade().equals(nextGrade))
-        .toList();
-    return checkNullAndReturn(higherGradeUsers, allUsers);
-  }
-
-  private User getRandomNearScoreUser(List<User> allUsers, Long userScore){
-    List<User> nearScoreUsers = allUsers.stream()
-        .filter(u -> u.getScore() >= userScore - NEAR_SCORE_BOUNDARY && u.getScore() <= userScore + NEAR_SCORE_BOUNDARY )
-        .toList();
-    return checkNullAndReturn(nearScoreUsers, allUsers);
-  }
-
-  private User checkNullAndReturn(List<User> list, List<User> allUsers){
-    if (!list.isEmpty()){
-      return pickRandomUser(list);
-    } else {
-      return pickRandomUser(allUsers);
-    }
-  }
-
   private FriendSuggestDTO convertToDTO(User user) {
     return FriendSuggestDTO.of(
         user.getNickname(),
@@ -130,40 +92,7 @@ public class MyPageService {
         user.getRegion().getRegionName(),
         user.getProfile_img()
     );
-  }
 
-  private List<User> getAllUserExceptCurrentUser(User user){
-    List<User> users = userRepository.findAll();
-    users.remove(user);
-    return users;
-  }
-
-
-  private User pickRandomUser(List<User> users) {
-    Random random = new Random();
-    return users.get(random.nextInt(users.size()));
-  }
-
-
-  private Grade getNextGrade(Grade grade) {
-    switch (grade) {
-      case YELLOW -> {
-        return Grade.GREEN;
-      }
-      case GREEN -> {
-        return Grade.BLUE;
-      }
-      case BLUE -> {
-        return Grade.RED;
-      }
-      case RED -> {
-        return Grade.GREY;
-      }
-      case GREY, PURPLE -> {
-        return Grade.PURPLE;
-      }
-      default -> throw new IllegalArgumentException("알 수 없는 등급입니다: " + grade);
-    }
   }
 
   private User checkAuthAndGetUser(Authentication authentication) {
