@@ -6,7 +6,6 @@ import gitbal.backend.global.BaseTimeEntity;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.global.constant.Grade;
 import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
-import gitbal.backend.domain.onedaycommit.infra.OneDayCommitJpaEntity;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.global.security.GithubOAuth2UserInfo;
 import jakarta.persistence.CascadeType;
@@ -21,7 +20,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,10 +48,6 @@ public class User extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id")
     private Region region;
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @JoinColumn(name = "commit_user_id")
-    private OneDayCommitJpaEntity oneDayCommitJpaEntity;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<MajorLanguageJpaEntity> majorLanguages = new ArrayList<>();
@@ -96,12 +90,11 @@ public class User extends BaseTimeEntity {
     }
 
     @Builder
-    public User(School school, Region region, OneDayCommitJpaEntity oneDayCommitJpaEntity,
+    public User(School school, Region region,
         List<MajorLanguageJpaEntity> majorLanguages,
         String nickname, Long score, String profile_img, Grade grade,int userRank) {
         this.school = school;
         this.region = region;
-        this.oneDayCommitJpaEntity = oneDayCommitJpaEntity;
         this.majorLanguages = majorLanguages;
         this.nickname = nickname;
         this.score = score;
@@ -111,12 +104,11 @@ public class User extends BaseTimeEntity {
     }
 
 
-    public void joinUpdateUser(School school, Region region, OneDayCommitJpaEntity oneDayCommitJpaEntity,
+    public void joinUpdateUser(School school, Region region,
         List<MajorLanguageJpaEntity> majorLanguages,
         String nickname, Long score, String profile_img, int userRank) {
         this.school = school;
         this.region = region;
-        this.oneDayCommitJpaEntity = oneDayCommitJpaEntity;
         this.majorLanguages = majorLanguages;
         this.nickname = nickname;
         this.score = score;
@@ -129,7 +121,7 @@ public class User extends BaseTimeEntity {
     }
 
     public static User of(String username, String avatarUrl) {
-        return new User(null, null, null, null, username, 0L, avatarUrl, Grade.YELLOW, 0);
+        return new User(null, null, null, username, 0L, avatarUrl, Grade.YELLOW, 0);
     }
 
     public void updateImage(GithubOAuth2UserInfo githubOAuth2UserInfo) {
