@@ -6,7 +6,6 @@ import gitbal.backend.domain.refreshtoken.application.RefreshTokenService;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.domain.majorlanguage.application.MajorLanguageService;
-import gitbal.backend.domain.onedaycommit.OneDayCommitService;
 import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.domain.user.UserService;
@@ -30,7 +29,6 @@ public class AuthService {
     private final SchoolService schoolService;
     private final RegionService regionService;
     private final MajorLanguageService majorLanguageService;
-    private final OneDayCommitService oneDayCommitService;
     private final UserService userService;
     private final UserRepository userRepository;
     private final AuthenticationChecker authenticationChecker;
@@ -61,7 +59,6 @@ public class AuthService {
         String nickname) {
         return UserDto.of(schoolService.findBySchoolName(joinRequestDto.univName()),
             regionService.findByRegionName(joinRequestDto.region()),
-            oneDayCommitService.calculateRecentCommit(gitbalApiDto.getRecentCommit()),
             majorLanguageService.getUserTopLaunguage(nickname),
             nickname,
             gitbalApiDto.getScore(),
@@ -85,7 +82,6 @@ public class AuthService {
     private void joinUpdate(User findUser, UserDto userDto) {
         findUser.joinUpdateUser(userDto.school(),
             userDto.region(),
-            userDto.oneDayCommitJpaEntity(),
             userDto.majorLanguage(),
             userDto.nickname(),
             userDto.score(),
