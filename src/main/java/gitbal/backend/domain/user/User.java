@@ -56,7 +56,7 @@ public class User extends BaseTimeEntity {
     private OneDayCommitJpaEntity oneDayCommitJpaEntity;
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private MajorLanguageJpaEntity majorLanguage = null;
+    private MajorLanguageJpaEntity majorLanguage;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<GuestBook> guestBooks = new ArrayList<>();
