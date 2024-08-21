@@ -10,22 +10,21 @@ import java.util.List;
 public record UserDto(
     School school,
     Region region,
-    List<MajorLanguageJpaEntity> majorLanguages,
+    MajorLanguageJpaEntity majorLanguage,
     String nickname,
     Long score,
     String profile_img) {
 
-    public static UserDto of(School school, Region region,
-        List<MajorLanguageJpaEntity> majorLanguages, String nickname, Long score,
+    public static UserDto of(School school, Region region, MajorLanguageJpaEntity majorLanguage, String nickname, Long score,
         String profile_img) {
-        return new UserDto(school, region, majorLanguages, nickname, score, profile_img);
+        return new UserDto(school, region, majorLanguage, nickname, score, profile_img);
     }
 
     public static User toEntity(UserDto userDto) {
         return User.builder()
             .school(userDto.school())
             .region(userDto.region())
-            .majorLanguages(userDto.majorLanguages())
+            .majorLanguage(userDto.majorLanguage)
             .nickname(userDto.nickname())
             .score(userDto.score())
             .profile_img(userDto.profile_img())

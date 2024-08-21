@@ -59,7 +59,7 @@ public class AuthService {
         String nickname) {
         return UserDto.of(schoolService.findBySchoolName(joinRequestDto.univName()),
             regionService.findByRegionName(joinRequestDto.region()),
-            majorLanguageService.getUserTopLaunguages(nickname),
+            majorLanguageService.getUserTopLaunguage(nickname),
             nickname,
             gitbalApiDto.getScore(),
             userService.findUserImgByUsername(nickname)
@@ -82,7 +82,7 @@ public class AuthService {
     private void joinUpdate(User findUser, UserDto userDto) {
         findUser.joinUpdateUser(userDto.school(),
             userDto.region(),
-            userDto.majorLanguages(),
+            userDto.majorLanguage(),
             userDto.nickname(),
             userDto.score(),
             userDto.profile_img(),

@@ -49,8 +49,8 @@ public class User extends BaseTimeEntity {
     @JoinColumn(name = "region_id")
     private Region region;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<MajorLanguageJpaEntity> majorLanguages = new ArrayList<>();
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private MajorLanguageJpaEntity majorLanguage;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<GuestBook> guestBooks = new ArrayList<>();
@@ -91,11 +91,11 @@ public class User extends BaseTimeEntity {
 
     @Builder
     public User(School school, Region region,
-        List<MajorLanguageJpaEntity> majorLanguages,
+        MajorLanguageJpaEntity majorLanguage,
         String nickname, Long score, String profile_img, Grade grade,int userRank) {
         this.school = school;
         this.region = region;
-        this.majorLanguages = majorLanguages;
+        this.majorLanguage = majorLanguage;
         this.nickname = nickname;
         this.score = score;
         this.profile_img = profile_img;
@@ -105,11 +105,11 @@ public class User extends BaseTimeEntity {
 
 
     public void joinUpdateUser(School school, Region region,
-        List<MajorLanguageJpaEntity> majorLanguages,
+        MajorLanguageJpaEntity majorLanguage,
         String nickname, Long score, String profile_img, int userRank) {
         this.school = school;
         this.region = region;
-        this.majorLanguages = majorLanguages;
+        this.majorLanguage = majorLanguage;
         this.nickname = nickname;
         this.score = score;
         this.profile_img = profile_img;

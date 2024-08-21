@@ -1,12 +1,18 @@
 package gitbal.backend.api.userPage.service;
 
+import gitbal.backend.api.userPage.RandomFriendPicker;
+import gitbal.backend.api.userPage.dto.FriendSuggestDTO;
 import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.domain.user.User;
-import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.global.exception.NotLoginedException;
 import gitbal.backend.global.security.CustomUserDetails;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -18,7 +24,7 @@ public class MyPageService {
   private final UserService userService;
   private final SchoolService schoolService;
   private final RegionService regionService;
-  private final UserRepository userRepository;
+  private final RandomFriendPicker randomUserPicker;
 
   //지역이나 학교 수정해도 수정하기 전 후의 지역점수나 학교점수에 유저 점수 직접 더하고 빼지 않음. (어짜피 점수 업데이트 할 때 반영되니깐)
   @Transactional
@@ -31,6 +37,33 @@ public class MyPageService {
   public void modifyRegionName(Authentication authentication, String newRegionName){
     User user = checkAuthAndGetUser(authentication);
     updateUserRegion(user, newRegionName);
+  }
+
+  public ArrayList<FriendSuggestDTO> getFriendSuggestionList(Authentication authentication){
+    User user = checkAuthAndGetUser(authentication);
+    ArrayList <FriendSuggestDTO> friendSuggestionList =
+        Objects.requireNonNull(getResultFriends(user))
+            .stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toCollection(ArrayList::new));
+    Collections.shuffle(friendSuggestionList);
+    return friendSuggestionList;
+  }
+
+  private List<User> getResultFriends(User user){
+    return randomUserPicker.getFriendList(user);
+  }
+
+  private FriendSuggestDTO convertToDTO(User user) {
+    return FriendSuggestDTO.of(
+        user.getNickname(),
+        user.getGrade(),
+        user.getMajorLanguage().getMajorLanguage(),
+        user.getSchool().getSchoolName(),
+        user.getRegion().getRegionName(),
+        user.getProfile_img()
+    );
+
   }
 
   private User checkAuthAndGetUser(Authentication authentication) {

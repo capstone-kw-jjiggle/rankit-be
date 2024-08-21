@@ -36,15 +36,11 @@ public class MajorLanguageRepositoryImpl implements MajorLanguageRepository {
     @Transactional
     public void deleteById(Long id) {
         MajorLanguageJpaEntity majorLanguage = findById(id);
-        User user = majorLanguage.getUser();
-        user.getMajorLanguages().remove(majorLanguage);
         majorLanguageJpaRepository.delete(majorLanguage);
     }
 
     @Override
     public void delete(MajorLanguageJpaEntity majorLanguage) {
-        User user = majorLanguage.getUser();
-        user.getMajorLanguages().remove(majorLanguage);
         majorLanguageJpaRepository.delete(majorLanguage);
     }
 
