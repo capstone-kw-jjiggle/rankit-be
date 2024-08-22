@@ -52,7 +52,7 @@ public class MyPageController {
     }
 
     @GetMapping("/suggest/freind")
-    @Operation(summary = "친구 추천 (8.18 개발 완료 - 코드 리팩토링 해야 할 여지 있음)", description = "친구 추천을 위한 api입니다.")
+    @Operation(summary = "친구 추천 (8.18 개발 완료)", description = "친구 추천을 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "친구 추천 리스트를 가져오기 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "친구 추천 리스트를 가져오기 실패했습니다.")
@@ -62,7 +62,7 @@ public class MyPageController {
     }
 
     @GetMapping("/get/introduction")
-    @Operation(summary = "user 소개글 가져오기 (개발 중)", description = "user 소개글을 가져오기 위한 api입니다.")
+    @Operation(summary = "user 소개글 가져오기 (8.22 개발 완료)", description = "user 소개글을 가져오기 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "user 소개글을 가져오기 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "user 소개글을 가져오기 실패했습니다.")
@@ -72,7 +72,7 @@ public class MyPageController {
     }
 
     @PutMapping("/update/introduction")
-    @Operation(summary = "user 소개글 수정하기 (개발 중)", description = "user 소개글을 수정하기 위한 api입니다.")
+    @Operation(summary = "user 소개글 수정하기 (8.22 개발 완료)", description = "user 소개글을 수정하기 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "user 소개글을 수정하기 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "user 소개글을 수정하기 실패했습니다.")
