@@ -1,20 +1,23 @@
 package gitbal.backend.api.userPage.controller;
 
+import gitbal.backend.api.userPage.dto.FriendSuggestDto;
+import gitbal.backend.api.userPage.dto.IntroductionResponseDto;
+import gitbal.backend.api.userPage.dto.IntroductionupdateRequestDto;
 import gitbal.backend.api.userPage.service.MyPageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 
 
 // TODO : 이거 이름이 myPage가 맞을지 고민을 조금 해봐야함.
@@ -54,8 +57,31 @@ public class MyPageController {
         @ApiResponse(responseCode = "200", description = "친구 추천 리스트를 가져오기 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "친구 추천 리스트를 가져오기 실패했습니다.")
     })
-    public ResponseEntity<?> suggestFreinds(Authentication authentication){
+    public ResponseEntity<List<FriendSuggestDto>> suggestFreinds(Authentication authentication){
         return ResponseEntity.ok(myPageService.getFriendSuggestionList(authentication));
     }
+
+    @GetMapping("/get/introduction")
+    @Operation(summary = "user 소개글 가져오기 (개발 중)", description = "user 소개글을 가져오기 위한 api입니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "user 소개글을 가져오기 성공했습니다."),
+        @ApiResponse(responseCode = "5xx", description = "user 소개글을 가져오기 실패했습니다.")
+    })
+    public ResponseEntity<IntroductionResponseDto> getIntroduction(String username){
+        return ResponseEntity.ok(myPageService.getIntroduction(username));
+    }
+
+    @PutMapping("/update/introduction")
+    @Operation(summary = "user 소개글 수정하기 (개발 중)", description = "user 소개글을 수정하기 위한 api입니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "user 소개글을 수정하기 성공했습니다."),
+        @ApiResponse(responseCode = "5xx", description = "user 소개글을 수정하기 실패했습니다.")
+    })
+    public ResponseEntity<String> updateIntroduction(Authentication authentication, @RequestBody IntroductionupdateRequestDto introductionpdateRequestDto){
+        myPageService.updateIntroduction(authentication, introductionpdateRequestDto);
+        return ResponseEntity.ok("수정이 완료 되었습니다.");
+    }
+
+
 
 }
