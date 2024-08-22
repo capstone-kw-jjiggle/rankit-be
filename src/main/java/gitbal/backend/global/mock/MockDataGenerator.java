@@ -3,6 +3,8 @@ package gitbal.backend.global.mock;
 
 import gitbal.backend.api.guestBookPage.dto.GuestBookWriteRequestDto;
 import gitbal.backend.api.guestBookPage.facade.GuestBookPageFacade;
+import gitbal.backend.domain.introduction.Introduction;
+import gitbal.backend.domain.introduction.application.repository.IntroductionRepository;
 import gitbal.backend.domain.region.application.repository.RegionRepository;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.global.constant.Grade;
@@ -39,6 +41,7 @@ public class MockDataGenerator implements CommandLineRunner {
   private final UserService userService;
   private final SchoolService schoolService;
   private final RegionService regionService;
+  private final IntroductionRepository introductionRepository;
 
   private final Random random = new Random();
 
@@ -71,10 +74,13 @@ public class MockDataGenerator implements CommandLineRunner {
       MajorLanguageJpaEntity majorLanguage = createRandomMajorLanguagesForUser(newUser);
       majorLanguageRepository.save(majorLanguage);
 
+      newUser =  createIntroductionForUser(newUser);
+      userRepository.save(newUser);
+
 
       // Update user with the new relations
       newUser.joinUpdateUser(randomSchool, randomRegion, majorLanguage,
-          newUser.getNickname(), newUser.getScore(), newUser.getProfile_img(), 0);
+          newUser.getNickname(), newUser.getScore(), newUser.getProfile_img(), 0, newUser.getIntroduction());
       User saveUser = userRepository.save(newUser);
 
       guestBookPageFacade.saveDashBoard(new GuestBookWriteRequestDto(saveUser.getId(), "안녕하세요"));
@@ -136,7 +142,7 @@ public class MockDataGenerator implements CommandLineRunner {
     majorLanguageRepository.save(majorLanguage);
 
     leesj000603.joinUpdateUser(school, region, majorLanguage,
-        leesj000603.getNickname(), leesj000603.getScore(), leesj000603.getProfile_img(), 0);
+        leesj000603.getNickname(), leesj000603.getScore(), leesj000603.getProfile_img(), 0, introductionRepository.createIntroductionAndReturn());
     userRepository.save(leesj000603);
 
   }
@@ -155,6 +161,13 @@ public class MockDataGenerator implements CommandLineRunner {
         .user(user)
         .build();
   }
+
+  private User createIntroductionForUser(User user) {
+    user.setIntroduction(introductionRepository.createIntroductionAndReturn());
+    return user;
+  }
+
+
 
 
   private void scoring(User findUser) {
