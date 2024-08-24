@@ -18,7 +18,6 @@ import org.hibernate.annotations.ColumnDefault;
 
 
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,10 +31,10 @@ public class Introduction {
   private String oneLiner = "나에 대해 한 줄로 설명해 주세요.";
 
   @Column(nullable = false)
-  private String goodAt = "나에 대해 한 줄로 설명해 주세요.";
+  private String goodAt = "자신있는 기술에 대해 설명해 주세요.";
 
   @Column(nullable = false)
-  private String learningGoal = "나에 대해 한 줄로 설명해 주세요.";
+  private String learningGoal = "배우고 싶은 기술에 대해 설명해 주세요.";
 
 
   public static Introduction of(Long id, String oneLiner, String goodAt, String learningGoal) {
