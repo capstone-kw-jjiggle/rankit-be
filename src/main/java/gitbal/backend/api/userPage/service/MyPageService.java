@@ -6,7 +6,6 @@ import gitbal.backend.api.userPage.dto.IntroductionResponseDto;
 import gitbal.backend.api.userPage.dto.IntroductionupdateRequestDto;
 import gitbal.backend.domain.introduction.Introduction;
 import gitbal.backend.domain.introduction.application.repository.IntroductionRepository;
-import gitbal.backend.domain.introduction.infra.IntroductionJpaRepository;
 import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.domain.user.User;
