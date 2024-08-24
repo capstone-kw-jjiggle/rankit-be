@@ -31,10 +31,10 @@ public class IntroductionRepositoryImpl implements IntroductionRepository {
 
   @Override
   public void updateIntroduction(Introduction introduction, IntroductionupdateRequestDto dto) {
-    introduction.setOneLiner(dto.getOneLiner());
-    introduction.setGoodAt(dto.getGoodAt());
-    introduction.setLearningGoal(dto.getLearningGoal());
-
-    introductionJpaRepository.save(introduction);
+    Introduction newIntroduction = Introduction.of(introduction.getId(),
+                                                   dto.getOneLiner(),
+                                                   dto.getGoodAt(),
+                                                   dto.getLearningGoal());
+    introductionJpaRepository.save(newIntroduction);
   }
 }

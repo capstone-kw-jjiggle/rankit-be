@@ -1,16 +1,20 @@
 package gitbal.backend.domain.introduction;
 
 
+import gitbal.backend.api.userPage.dto.FriendSuggestDto;
+import gitbal.backend.global.constant.Grade;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 
 @Getter
@@ -24,13 +28,18 @@ public class Introduction {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT '나에 대해 한줄로 소개 해주세요'")
-  private String oneLiner = "나에 대해 한줄로 소개해 주세요.";
+  @Column(nullable = false)
+  private String oneLiner = "나에 대해 한 줄로 설명해 주세요.";
 
-  @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT '자신 있는 기술에 대해 설명해주세요'")
-  private String goodAt = "자신 있는 기술에 대해 설명해 주세요.";
+  @Column(nullable = false)
+  private String goodAt = "나에 대해 한 줄로 설명해 주세요.";
 
-  @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT '배우고 싶은 기술에 대해 설명해주세요'")
-  private String learningGoal = "배우고 싶은 기술에 대해 설명해 주세요.";
+  @Column(nullable = false)
+  private String learningGoal = "나에 대해 한 줄로 설명해 주세요.";
+
+
+  public static Introduction of(Long id, String oneLiner, String goodAt, String learningGoal) {
+    return new Introduction(id, oneLiner, goodAt, learningGoal);
+  }
 
 }
