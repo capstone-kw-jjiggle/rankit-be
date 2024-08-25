@@ -1,6 +1,5 @@
 package gitbal.backend.api.schoolPage.dto;
 
-import java.util.Collections;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
