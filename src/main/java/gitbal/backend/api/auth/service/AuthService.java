@@ -62,7 +62,8 @@ public class AuthService {
             majorLanguageService.getUserTopLaunguage(nickname),
             nickname,
             gitbalApiDto.getScore(),
-            userService.findUserImgByUsername(nickname)
+            userService.findUserImgByUsername(nickname),
+            userService.findByUserName(nickname).getIntroduction()
         );
     }
 
@@ -86,7 +87,8 @@ public class AuthService {
             userDto.nickname(),
             userDto.score(),
             userDto.profile_img(),
-            0
+            0,
+            userDto.introduction()
         );
         schoolService.joinNewUserScore(findUser);
         regionService.joinNewUserScore(findUser);

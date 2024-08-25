@@ -2,6 +2,7 @@ package gitbal.backend.domain.user;
 
 
 import gitbal.backend.domain.guestbook.GuestBook;
+import gitbal.backend.domain.introduction.Introduction;
 import gitbal.backend.global.BaseTimeEntity;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.global.constant.Grade;
@@ -20,6 +21,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +57,8 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<GuestBook> guestBooks = new ArrayList<>();
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private Introduction introduction;
 
     @ColumnDefault(value = "'nothing'")
     private String nickname;
@@ -76,6 +80,10 @@ public class User extends BaseTimeEntity {
     public void setGrade(Grade grade) { this.grade = grade; }
 
     public void setUserRank(int userRank) {this.userRank = userRank;}
+
+    public void setIntroduction(Introduction introduction) {
+        this.introduction = introduction;
+    }
 
     public void setSchool(School school) {
         this.school = school;
@@ -106,7 +114,7 @@ public class User extends BaseTimeEntity {
 
     public void joinUpdateUser(School school, Region region,
         MajorLanguageJpaEntity majorLanguage,
-        String nickname, Long score, String profile_img, int userRank) {
+        String nickname, Long score, String profile_img, int userRank, Introduction introduction) {
         this.school = school;
         this.region = region;
         this.majorLanguage = majorLanguage;
@@ -114,6 +122,7 @@ public class User extends BaseTimeEntity {
         this.score = score;
         this.profile_img = profile_img;
         this.userRank = userRank;
+        this.introduction = introduction;
     }
 
     public void updateScore(Long score){
