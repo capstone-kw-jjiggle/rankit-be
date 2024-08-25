@@ -29,4 +29,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> usersScoreRaced(@Param("userScore") Long userScore, @Param("front") int fowrardCount, @Param("behind") int backwardCount);
 
     Page<User> findUserBySchool_SchoolName(String searchedSchoolName, Pageable pageable);
+
+    Page<User> findUserByRegion_RegionName(String regionName, Pageable pageable);
 }

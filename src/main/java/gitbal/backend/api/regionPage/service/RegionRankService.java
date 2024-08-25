@@ -2,6 +2,9 @@ package gitbal.backend.api.regionPage.service;
 
 
 import gitbal.backend.api.regionPage.dto.RegionListPageResponseDto;
+import gitbal.backend.api.regionPage.dto.UserInfoByRegion;
+import gitbal.backend.api.regionPage.dto.UserPageListByRegionResponseDto;
+import gitbal.backend.api.schoolPage.dto.UserInfoBySchool;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.region.application.repository.RegionRepository;
 import gitbal.backend.domain.user.User;
@@ -11,6 +14,9 @@ import gitbal.backend.global.exception.NotFoundRegionException;
 import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.exception.NotLoginedException;
 import gitbal.backend.domain.user.UserRepository;
+import gitbal.backend.global.exception.PageOutOfRangeException;
+import gitbal.backend.global.exception.RegionRankPageUserInfoByRegionException;
+import gitbal.backend.global.exception.SchoolRankPageUserInfoBySchoolException;
 import gitbal.backend.global.security.CustomUserDetails;
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RegionRankService {
 
+    private static final int PAGE_SIZE = 10;
     private final RegionRepository regionRepository;
     private final UserRepository userRepository;
     private final int page = 1;
@@ -84,4 +91,58 @@ public class RegionRankService {
         }
         throw new NotFoundRegionException();
     }
+
+
+    @Transactional(readOnly = true)
+    public UserPageListByRegionResponseDto getUserListByRegionName(int page, String regionName) {
+        try {
+            Pageable pageable = initpageable(page, "score");
+            Page<User> userByRegionName = userRepository.findUserByRegion_RegionName(regionName,
+                pageable);
+            if (userByRegionName.getTotalPages() < page)
+                throw new PageOutOfRangeException();
+            List<UserInfoByRegion> userInfoByRegions = convertPageByUserInfoByRegion(
+                userByRegionName);
+            return buildUserPageListByRegionResponseDto(page, userInfoByRegions, userByRegionName);
+        }catch (Exception e){
+            if(Objects.isNull(e.getMessage()))
+                throw new RegionRankPageUserInfoByRegionException("지역 랭킹 페이지 유저 정보 조회 중 오류가 발생했습니다.");
+            throw new RegionRankPageUserInfoByRegionException(e.getMessage());
+        }
+    }
+
+
+
+    private List<UserInfoByRegion> convertPageByUserInfoByRegion(Page<User> userBySchoolName) {
+        return userBySchoolName.stream().
+            map(this::convertToUserInfoByRegion)
+            .toList();
+    }
+
+
+    private UserInfoByRegion convertToUserInfoByRegion(User user){
+        return new UserInfoByRegion(
+            user.getNickname(),
+            user.getScore()
+        );
+    }
+
+
+
+    private Pageable initpageable(int page, String sortProperties) {
+        Sort sort = Sort.by(sortProperties).descending();
+        return PageRequest.of(page - 1, PAGE_SIZE, sort);
+    }
+
+
+    private UserPageListByRegionResponseDto buildUserPageListByRegionResponseDto(int page,
+        List<UserInfoByRegion> userInfoByRegions, Page<User> userBySchoolName) {
+        return UserPageListByRegionResponseDto.withAll()
+            .userInfoByRegion(userInfoByRegions)
+            .page(page)
+            .total(userBySchoolName.getTotalElements())
+            .build();
+    }
+
+
 }
