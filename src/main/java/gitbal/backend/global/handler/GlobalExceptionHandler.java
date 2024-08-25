@@ -9,6 +9,7 @@ import gitbal.backend.global.exception.NotFoundRegionException;
 import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.exception.NotLoginedException;
+import gitbal.backend.global.exception.NotUserPermissionException;
 import gitbal.backend.global.exception.PageOutOfRangeException;
 import gitbal.backend.global.exception.UnivCertCodeException;
 import gitbal.backend.global.exception.UnivCertStartException;
@@ -91,6 +92,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnivCertCodeException.class)
     public ResponseEntity<String> handleUnivCertCodeException(UnivCertCodeException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(NotUserPermissionException.class)
+    public ResponseEntity<String> handleNotUserPermissionException(NotUserPermissionException e) {
         return ResponseEntity.status(400).body(e.getMessage());
     }
 

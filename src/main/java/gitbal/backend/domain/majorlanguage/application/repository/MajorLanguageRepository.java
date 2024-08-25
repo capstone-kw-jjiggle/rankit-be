@@ -1,9 +1,7 @@
 package gitbal.backend.domain.majorlanguage.application.repository;
 
-import gitbal.backend.domain.majorlanguage.MajorLanguage;
 import gitbal.backend.domain.majorlanguage.MajorLanguageDto;
 import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
-import jakarta.transaction.Transactional;
 import java.util.List;
 
 public interface MajorLanguageRepository{

@@ -1,12 +1,17 @@
 package gitbal.backend.api.userPage.service;
 
 import gitbal.backend.api.userPage.RandomFriendPicker;
-import gitbal.backend.api.userPage.dto.FriendSuggestDTO;
+import gitbal.backend.api.userPage.dto.FriendSuggestDto;
+import gitbal.backend.api.userPage.dto.IntroductionResponseDto;
+import gitbal.backend.api.userPage.dto.IntroductionupdateRequestDto;
+import gitbal.backend.domain.introduction.Introduction;
+import gitbal.backend.domain.introduction.application.repository.IntroductionRepository;
 import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.global.exception.NotLoginedException;
+import gitbal.backend.global.exception.NotUserPermissionException;
 import gitbal.backend.global.security.CustomUserDetails;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,6 +30,7 @@ public class MyPageService {
   private final SchoolService schoolService;
   private final RegionService regionService;
   private final RandomFriendPicker randomUserPicker;
+  private final IntroductionRepository introductionRepository;
 
   //지역이나 학교 수정해도 수정하기 전 후의 지역점수나 학교점수에 유저 점수 직접 더하고 빼지 않음. (어짜피 점수 업데이트 할 때 반영되니깐)
   @Transactional
@@ -39,23 +45,52 @@ public class MyPageService {
     updateUserRegion(user, newRegionName);
   }
 
-  public ArrayList<FriendSuggestDTO> getFriendSuggestionList(Authentication authentication){
+  public ArrayList<FriendSuggestDto> getFriendSuggestionList(Authentication authentication){
     User user = checkAuthAndGetUser(authentication);
-    ArrayList <FriendSuggestDTO> friendSuggestionList =
+    ArrayList <FriendSuggestDto> friendSuggestionList =
         Objects.requireNonNull(getResultFriends(user))
             .stream()
-            .map(this::convertToDTO)
+            .map(this::convertToFriendSuggestDTO)
             .collect(Collectors.toCollection(ArrayList::new));
     Collections.shuffle(friendSuggestionList);
     return friendSuggestionList;
+  }
+
+  public IntroductionResponseDto getIntroduction(String userName){
+    User user = userService.findByUserName(userName);
+    return converToIntroductionDTO(user.getIntroduction());
+  }
+
+  public void updateIntroduction(Authentication authentication, IntroductionupdateRequestDto dto){
+    User loginUser = checkAuthAndGetUser(authentication);
+    User willUpdateUser = userService.findByUserName(dto.getUserName());
+
+    if (checkValidUSer(loginUser, willUpdateUser)){
+      Introduction introduction = loginUser.getIntroduction();
+      introductionRepository.updateIntroduction(introduction, dto);
+    } else {
+      throw new NotUserPermissionException();
+    }
+  }
+
+  private boolean checkValidUSer(User loginUser, User willUpdateUser){
+    return Objects.equals(loginUser.getId(), willUpdateUser.getId());
   }
 
   private List<User> getResultFriends(User user){
     return randomUserPicker.getFriendList(user);
   }
 
-  private FriendSuggestDTO convertToDTO(User user) {
-    return FriendSuggestDTO.of(
+  private IntroductionResponseDto converToIntroductionDTO(Introduction introduction){
+    return IntroductionResponseDto.of(
+        introduction.getOneLiner(),
+        introduction.getGoodAt(),
+        introduction.getLearningGoal()
+    );
+  }
+
+  private FriendSuggestDto convertToFriendSuggestDTO(User user) {
+    return FriendSuggestDto.of(
         user.getNickname(),
         user.getGrade(),
         user.getMajorLanguage().getMajorLanguage(),
