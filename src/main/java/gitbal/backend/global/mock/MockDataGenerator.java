@@ -63,9 +63,12 @@ public class MockDataGenerator implements CommandLineRunner {
           .orElse(null);
       Region randomRegion = regionRepository.findById((long) (random.nextInt(TOTAL_REGIONS) + 1))
           .orElse(null);
+      School fixSchool = schoolRepository.findById(60L)
+          .orElse(null);
 
       // Create a random user
       User newUser = createUser(randomNickname, randomSchool, randomRegion, i);
+      User fixSchoolUser = createUser(randomNickname, fixSchool,randomRegion, i);
 
       // Create a list of MajorLanguage entities for this user
       MajorLanguageJpaEntity majorLanguage = createRandomMajorLanguagesForUser(newUser);
@@ -75,12 +78,22 @@ public class MockDataGenerator implements CommandLineRunner {
       // Update user with the new relations
       newUser.joinUpdateUser(randomSchool, randomRegion, majorLanguage,
           newUser.getNickname(), newUser.getScore(), newUser.getProfile_img(), 0);
+
+      fixSchoolUser.joinUpdateUser(fixSchool, randomRegion, majorLanguage,
+          fixSchoolUser.getNickname(), fixSchoolUser.getScore(), fixSchoolUser.getProfile_img(), 0);
       User saveUser = userRepository.save(newUser);
+      User fixedUser = userRepository.save(fixSchoolUser);
+
+
 
       guestBookPageFacade.saveDashBoard(new GuestBookWriteRequestDto(saveUser.getId(), "안녕하세요"));
       guestBookPageFacade.saveDashBoard(new GuestBookWriteRequestDto(saveUser.getId(), "안녕하세요2"));
       scoring(saveUser);
+      scoring(fixedUser);
     }
+
+
+
     // Test를 위한 나(이승준)의 githubid와 동일한 nickname data
 
     String lee = "leesj000603";
@@ -114,6 +127,8 @@ public class MockDataGenerator implements CommandLineRunner {
         .grade(Grade.YELLOW)
         .build();
   }
+
+
 
   private void createUserWithNickname(String nickName) {
     School school = schoolRepository.findById(1L)
