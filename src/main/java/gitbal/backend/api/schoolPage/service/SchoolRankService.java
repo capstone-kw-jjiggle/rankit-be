@@ -4,6 +4,8 @@ package gitbal.backend.api.schoolPage.service;
 import gitbal.backend.api.schoolPage.dto.MySchoolInfoResponseDto;
 import gitbal.backend.api.schoolPage.dto.SchoolListDto;
 import gitbal.backend.api.schoolPage.dto.SchoolListPageResponseDto;
+import gitbal.backend.api.schoolPage.dto.UserInfoBySchool;
+import gitbal.backend.api.schoolPage.dto.UserPageListBySchoolResponseDto;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.school.SchoolRepository;
 import gitbal.backend.domain.user.User;
@@ -11,6 +13,7 @@ import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.exception.NotLoginedException;
 import gitbal.backend.global.exception.PageOutOfRangeException;
+import gitbal.backend.global.exception.SchoolRankPageUserInfoBySchoolException;
 import gitbal.backend.global.exception.WrongPageNumberException;
 import gitbal.backend.global.security.CustomUserDetails;
 import java.util.List;
@@ -26,7 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class  SchoolRankService {
+public class SchoolRankService {
 
     private static final int PAGE_SIZE = 10;
     private final SchoolRepository schoolRepository;
@@ -45,8 +48,7 @@ public class  SchoolRankService {
             return getSearchedSchoolList(searchedSchoolName, page);
         }
         try {
-            Sort sort = Sort.by("score").descending();
-            Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE, sort);
+            Pageable pageable = initpageable(page, "score");
             Page<School> schoolPage = schoolRepository.findAll(pageable);
 
             List<SchoolListDto> schoolDtoList = schoolPage.stream()
@@ -73,6 +75,9 @@ public class  SchoolRankService {
 
     }
 
+
+
+
     private SchoolListDto convertToDto(School school) {
         return new SchoolListDto(
             school.getSchoolName(),
@@ -93,6 +98,52 @@ public class  SchoolRankService {
         );
         School school = user.getSchool();
         return MySchoolInfoResponseDto.of(school);
+    }
+
+    @Transactional(readOnly = true)
+    public UserPageListBySchoolResponseDto getUserListBySchoolName(int page, String schoolName) {
+        try {
+            Pageable pageable = initpageable(page, "score");
+            Page<User> userBySchoolName = userRepository.findUserBySchool_SchoolName(schoolName,
+                pageable);
+            if (userBySchoolName.getTotalPages() < page)
+                throw new PageOutOfRangeException();
+            List<UserInfoBySchool> userInfoBySchools = convertPageByUserInfoBySchool(
+                userBySchoolName);
+            return buildUserPageListBySchoolResponseDto(page, userInfoBySchools, userBySchoolName);
+        }catch (Exception e){
+            if(Objects.isNull(e.getMessage()))
+                throw new SchoolRankPageUserInfoBySchoolException("학교 랭킹 페이지 유저 정보 조회 중 오류가 발생했습니다.");
+            throw new SchoolRankPageUserInfoBySchoolException(e.getMessage());
+        }
+    }
+
+    private List<UserInfoBySchool> convertPageByUserInfoBySchool(Page<User> userBySchoolName) {
+        return userBySchoolName.stream().
+            map(this::convertToUserInfoBySchool)
+            .toList();
+    }
+
+    private static Pageable initpageable(int page, String sortProperties) {
+        Sort sort = Sort.by(sortProperties).descending();
+        return PageRequest.of(page - 1, PAGE_SIZE, sort);
+    }
+
+    private static UserPageListBySchoolResponseDto buildUserPageListBySchoolResponseDto(int page,
+        List<UserInfoBySchool> userInfoBySchools, Page<User> userBySchoolName) {
+        return UserPageListBySchoolResponseDto.withAll()
+            .userInfoBySchools(userInfoBySchools)
+            .page(page)
+            .total(userBySchoolName.getTotalElements())
+            .build();
+    }
+
+
+    private UserInfoBySchool convertToUserInfoBySchool(User user){
+        return new UserInfoBySchool(
+            user.getNickname(),
+            user.getScore()
+        );
     }
 
 
