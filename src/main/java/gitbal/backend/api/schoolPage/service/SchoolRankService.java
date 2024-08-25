@@ -124,12 +124,12 @@ public class SchoolRankService {
             .toList();
     }
 
-    private static Pageable initpageable(int page, String sortProperties) {
+    private Pageable initpageable(int page, String sortProperties) {
         Sort sort = Sort.by(sortProperties).descending();
         return PageRequest.of(page - 1, PAGE_SIZE, sort);
     }
 
-    private static UserPageListBySchoolResponseDto buildUserPageListBySchoolResponseDto(int page,
+    private UserPageListBySchoolResponseDto buildUserPageListBySchoolResponseDto(int page,
         List<UserInfoBySchool> userInfoBySchools, Page<User> userBySchoolName) {
         return UserPageListBySchoolResponseDto.withAll()
             .userInfoBySchools(userInfoBySchools)
