@@ -4,6 +4,7 @@ package gitbal.backend.api.schoolPage.controller;
 import gitbal.backend.api.schoolPage.dto.SchoolListPageResponseDto;
 import gitbal.backend.api.schoolPage.dto.SchoolListDto;
 import gitbal.backend.api.schoolPage.dto.MySchoolInfoResponseDto;
+import gitbal.backend.api.schoolPage.dto.UserPageListBySchoolResponseDto;
 import gitbal.backend.api.schoolPage.service.SchoolRankService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -43,6 +44,17 @@ public class SchoolRankController {
     public ResponseEntity<SchoolListPageResponseDto<SchoolListDto>> schoolList(@RequestParam(defaultValue = "1", required = false) int page, @RequestParam(required = false) String searchedSchoolName) {
         return ResponseEntity.ok(schoolRankService.getSchoolList(page, searchedSchoolName));
     }
+
+    @GetMapping("/userList") // 이름, 점수 , 등수는(list 순서대로 pageable 처리함)
+    @Operation(summary = "학교별 유저 리스트 (8.25 개발완료)", description = "학교 리스트에 학교 클릭 후 유저들의 랭킹 리스트 api 요청입니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "학교 별 유저 리스트 조회를 성공했습니다."),
+        @ApiResponse(responseCode = "5xx", description = "학교 별 유저 리스트 조회를 실패했습니다.")
+    })
+    public ResponseEntity<UserPageListBySchoolResponseDto> userListBySchoolName(@RequestParam(defaultValue = "1", required = false) int page, @RequestParam String schoolName) {
+        return ResponseEntity.ok(schoolRankService.getUserListBySchoolName(page, schoolName));
+    }
+
 
 
 }
