@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @EnableJpaAuditing
 @OpenAPIDefinition(servers = {
-	@Server(url = "https://api.gitbal.xyz", description = "deploy Server URL"),
+	@Server(url = "https://api.rankit.xyz", description = "deploy Server URL"),
 	@Server(url = "http://localhost:8080", description = "Localhost URL")
 })
 public class BackendApplication {
