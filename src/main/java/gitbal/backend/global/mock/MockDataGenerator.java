@@ -57,6 +57,7 @@ public class MockDataGenerator implements CommandLineRunner {
     for (int i = 0; i < 1000; i++) {
       String randomNickname = "User" + i; // Example nickname
 
+
       if(userRepository.findByNickname(randomNickname).isPresent()) {
         log.info("continue");
         continue;
@@ -73,8 +74,8 @@ public class MockDataGenerator implements CommandLineRunner {
 
       // Create a random user
       User newUser = createUser(randomNickname, randomSchool, randomRegion, i);
-      User fixSchoolUser = createUser(randomNickname, fixSchool,randomRegion, i);
-      User fixRegionUser = createUser(randomNickname, randomSchool,fixRegion, i);
+      User fixSchoolUser = createUser("FixSchool"+randomNickname, fixSchool,randomRegion, i);
+      User fixRegionUser = createUser("FixRegion"+randomNickname, randomSchool,fixRegion, i);
 
 
       // Create a list of MajorLanguage entities for this user
