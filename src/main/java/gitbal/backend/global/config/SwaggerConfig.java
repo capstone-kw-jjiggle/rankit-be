@@ -26,8 +26,8 @@ public class SwaggerConfig {
 
     private Info apiInfo() {
         return new Info()
-            .title("깃발 API 명세서")
-            .description("GitBal API 명세서입니다.")
+            .title("Rankit API 명세서")
+            .description("Rankit API 명세서입니다.")
             .version("1.0.0");
     }
 

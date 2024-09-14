@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   app:
-    image: khyojun1104/gitbal-be:latest
+    image: rankitrun/rankitrun-be:latest
     platform: linux/amd64
     environment:
       - DATABASE_URL=${MYSQL_DATABASE_URL}
@@ -27,7 +27,7 @@ services:
   db:
     image: mysql:8.0
     environment:
-      - MYSQL_DATABASE=gitbal
+      - MYSQL_DATABASE=rankit
       - MYSQL_ROOT_USER=${MYSQL_USERNAME}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
