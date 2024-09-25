@@ -4,7 +4,6 @@ import gitbal.backend.api.badge.dto.BadgeResponseDTO;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.global.exception.NotFoundUserException;
-import gitbal.backend.global.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,17 +12,25 @@ import org.springframework.stereotype.Service;
 public class BadgeService {
 
   private final UserRepository userRepository;
-  public BadgeResponseDTO getBadge(CustomUserDetails principal){
-    User user = userRepository.findByNickname(principal.getNickname()).orElseThrow(
+  public BadgeResponseDTO getBadge(String username){
+    User user = userRepository.findByNickname(username).orElseThrow(
         NotFoundUserException::new);
-
-    System.out.println("user발견");
 
     return BadgeResponseDTO.builder()
         .userRank(String.valueOf(user.getUserRank()))
         .score(String.valueOf(user.getScore()))
         .langName(user.getMajorLanguage().getMajorLanguage())
-        .grade(user.getGrade())
+        .grade(String.valueOf(user.getGrade()))
+        .build();
+  }
+
+  public BadgeResponseDTO getBadgeFailureResponse(){
+
+    return BadgeResponseDTO.builder()
+        .userRank("load-fail")
+        .score("load-fail")
+        .langName("load-fail")
+        .grade("load-fail")
         .build();
   }
 }

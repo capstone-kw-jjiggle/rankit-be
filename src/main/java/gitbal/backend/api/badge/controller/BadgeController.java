@@ -1,14 +1,13 @@
 package gitbal.backend.api.badge.controller;
 
 
+
 import gitbal.backend.api.badge.dto.BadgeResponseDTO;
 import gitbal.backend.api.badge.service.BadgeService;
-import gitbal.backend.global.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,8 +25,11 @@ public class BadgeController {
       @ApiResponse(responseCode = "200", description = "유저 정보를 가져오는데 성공했습니다."),
       @ApiResponse(responseCode = "400", description = "유저 정보를 가져오는데 실패했습니다.")
   })
-  public BadgeResponseDTO getBadge(Authentication authentication){
-    CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-    return badgeService.getBadge(principal);
+  public BadgeResponseDTO getBadge(String username) {
+    try {
+      return badgeService.getBadge(username);
+    } catch (Exception e) {
+      return badgeService.getBadgeFailureResponse();
+    }
   }
 }
