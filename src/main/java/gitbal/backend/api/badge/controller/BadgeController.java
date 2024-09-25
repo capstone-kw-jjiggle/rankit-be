@@ -27,7 +27,7 @@ public class BadgeController {
   })
   public BadgeResponseDTO getBadge(String username) {
     try {
-      return badgeService.getBadge(username);
+      return badgeService.getBadgeResponse(username);
     } catch (Exception e) {
       return badgeService.getBadgeFailureResponse();
     }
