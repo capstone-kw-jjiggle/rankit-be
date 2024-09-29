@@ -20,8 +20,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findByNicknameContainingIgnoreCase(String searchedname, Pageable pageable);
 
 
-
-
     @Query(value = "(SELECT * FROM user WHERE score < :userScore ORDER BY score DESC LIMIT :behind)" +
         " UNION ALL " +
         "(SELECT * FROM user WHERE score > :userScore ORDER BY score ASC LIMIT :front)",
@@ -31,4 +29,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findUserBySchool_SchoolName(String searchedSchoolName, Pageable pageable);
 
     Page<User> findUserByRegion_RegionName(String regionName, Pageable pageable);
+
+    @Query("select u.refreshToken from User u where u.nickname = :nickname")
+    Optional<String> findRefreshTokenByNickname(String nickname);
 }

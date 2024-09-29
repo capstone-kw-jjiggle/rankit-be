@@ -2,7 +2,6 @@ package gitbal.backend.api.auth.service;
 
 import gitbal.backend.api.auth.dto.JoinRequestDto;
 import gitbal.backend.api.auth.dto.UserDto;
-import gitbal.backend.domain.refreshtoken.application.RefreshTokenService;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.domain.majorlanguage.application.MajorLanguageService;
@@ -18,11 +17,13 @@ import gitbal.backend.global.util.AuthenticationChecker;
 import gitbal.backend.api.auth.dto.GitbalApiDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
 
@@ -32,7 +33,6 @@ public class AuthService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final AuthenticationChecker authenticationChecker;
-    private final RefreshTokenService refreshTokenService;
 
 
     @Transactional
@@ -105,7 +105,10 @@ public class AuthService {
     @Transactional
     public String logoutUser(String username) {
         try {
-            refreshTokenService.deleteByUsername(username);
+            User user = userRepository.findByNickname(username)
+                .orElseThrow(NotFoundUserException::new);
+            user.setRefreshToken("nothing");
+            log.info("로그아웃 성공");
             return "로그아웃에 성공하였습니다.";
         }catch (Exception e){
             e.printStackTrace();

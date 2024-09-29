@@ -16,13 +16,6 @@ spring:
     database-platform: org.hibernate.dialect.MySQLDialect
     defer-datasource-initialization: true
 
-  #redis
-  data:
-    redis:
-      port: ${REDIS_PORT}
-      host: localhost
-      repositories:
-        enabled: false
 
   #### data.sql 시작
   sql:

@@ -7,8 +7,6 @@ services:
       - DATABASE_URL=${MYSQL_DATABASE_URL}
       - USERNAME=${MYSQL_USERNAME}
       - PASSWORD=${MYSQL_PASSWORD}
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
       - SECURITY_CLIENT_ID=${SECURITY_CLIENT_ID}
       - SECURITY_SECRET_ID=${SECURITY_SECRET_ID}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
@@ -33,9 +31,4 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
     ports:
       - "3306:3306"
-
-  redis:
-    image: redis:6.2
-    ports:
-      - "6379:6379"
 
