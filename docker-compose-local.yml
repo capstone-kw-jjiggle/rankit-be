@@ -10,8 +10,3 @@ services:
     ports:
       - "3306:3306"
 
-  redis:
-    image: redis:6.2
-    ports:
-      - "6379:6379"
-
