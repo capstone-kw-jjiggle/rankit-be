@@ -26,10 +26,6 @@ public class BadgeController {
       @ApiResponse(responseCode = "400", description = "유저 정보를 가져오는데 실패했습니다.")
   })
   public BadgeResponseDTO getBadge(String username) {
-    try {
-      return badgeService.getBadgeResponse(username);
-    } catch (Exception e) {
-      return badgeService.getBadgeFailureResponse();
-    }
+    return badgeService.getBadgeResponse(username);
   }
 }
