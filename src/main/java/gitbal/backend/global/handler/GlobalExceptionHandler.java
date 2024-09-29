@@ -1,5 +1,8 @@
 package gitbal.backend.global.handler;
 
+import gitbal.backend.api.badge.dto.BadgeResponseDTO;
+import gitbal.backend.api.badge.service.BadgeService;
+import gitbal.backend.global.exception.BadgeException;
 import gitbal.backend.global.exception.JoinException;
 import gitbal.backend.global.exception.LogoutException;
 import gitbal.backend.global.exception.NoTokenException;
@@ -15,12 +18,16 @@ import gitbal.backend.global.exception.UnivCertCodeException;
 import gitbal.backend.global.exception.UnivCertStartException;
 import gitbal.backend.global.exception.UserRankException;
 import gitbal.backend.global.exception.WrongPageNumberException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    private final BadgeService badgeService;
 
     @ExceptionHandler(JoinException.class)
     public ResponseEntity<String> handleJoinException(JoinException e) {
@@ -98,6 +105,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotUserPermissionException.class)
     public ResponseEntity<String> handleNotUserPermissionException(NotUserPermissionException e) {
         return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(BadgeException.class)
+    public ResponseEntity<BadgeResponseDTO> BadgeException(BadgeException e) {
+        return ResponseEntity.status(e.getStatusCode()).body(badgeService.getBadgeFailureResponse());
     }
 
 }
