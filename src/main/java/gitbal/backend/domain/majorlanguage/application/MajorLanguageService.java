@@ -66,4 +66,8 @@ public class MajorLanguageService {
         MajorLanguageUpdater majorLanguageUpdater = MajorLanguageUpdater.of(updatedLanguage, majorLanguageRepository);
         majorLanguageUpdater.updateLanguage(id);
     }
+
+    public void save(MajorLanguageJpaEntity from) {
+        majorLanguageRepository.save(from);
+    }
 }

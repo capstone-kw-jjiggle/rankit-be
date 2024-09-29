@@ -51,7 +51,7 @@ public class User extends BaseTimeEntity {
     @JoinColumn(name = "region_id")
     private Region region;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private MajorLanguageJpaEntity majorLanguage;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
@@ -77,6 +77,9 @@ public class User extends BaseTimeEntity {
     @ColumnDefault("0")
     private int userRank;
 
+    @ColumnDefault(value="'nothing'")
+    private String refreshToken;
+
     public void setGrade(Grade grade) { this.grade = grade; }
 
     public void setUserRank(int userRank) {this.userRank = userRank;}
@@ -97,13 +100,23 @@ public class User extends BaseTimeEntity {
         this.profile_img = profile_img;
     }
 
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void setMajorLanguage(
+        MajorLanguageJpaEntity majorLanguage) {
+        this.majorLanguage = majorLanguage;
+    }
+
     @Builder
     public User(School school, Region region,
-        MajorLanguageJpaEntity majorLanguage,
+        MajorLanguageJpaEntity majorLanguage,Introduction introduction,
         String nickname, Long score, String profile_img, Grade grade,int userRank) {
         this.school = school;
         this.region = region;
         this.majorLanguage = majorLanguage;
+        this.introduction=introduction;
         this.nickname = nickname;
         this.score = score;
         this.profile_img = profile_img;
@@ -130,8 +143,10 @@ public class User extends BaseTimeEntity {
     }
 
     public static User of(String username, String avatarUrl) {
-        return new User(null, null, null, username, 0L, avatarUrl, Grade.YELLOW, 0);
+        return new User(null, null, null, Introduction.of(),username, 0L, avatarUrl, Grade.YELLOW, 0);
     }
+
+
 
     public void updateImage(GithubOAuth2UserInfo githubOAuth2UserInfo) {
         if(this.profile_img.equals(githubOAuth2UserInfo.getAvatarImgUrl()))  return;
