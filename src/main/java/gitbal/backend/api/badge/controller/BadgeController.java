@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/api/v1/badge")
@@ -25,7 +26,7 @@ public class BadgeController {
       @ApiResponse(responseCode = "200", description = "유저 정보를 가져오는데 성공했습니다."),
       @ApiResponse(responseCode = "400", description = "유저 정보를 가져오는데 실패했습니다.")
   })
-  public BadgeResponseDTO getBadge(String username) {
+  public BadgeResponseDTO getBadge(@RequestParam String username) {
     return badgeService.getBadgeResponse(username);
   }
 }
