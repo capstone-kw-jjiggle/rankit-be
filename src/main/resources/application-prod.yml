@@ -16,13 +16,6 @@ spring:
     defer-datasource-initialization: true
     open-in-view: true
 
-  #redis
-  data:
-    redis:
-      port: ${REDIS_PORT}
-      host: ${REDIS_HOST}
-      repositories:
-        enabled: false
 
   security:
     oauth2:
