@@ -41,4 +41,13 @@ public class Introduction {
     return new Introduction(id, oneLiner, goodAt, learningGoal);
   }
 
+  public Introduction(String oneLiner, String goodAt, String learningGoal) {
+    this.oneLiner = oneLiner;
+    this.goodAt = goodAt;
+    this.learningGoal = learningGoal;
+  }
+
+  public static Introduction of() {
+    return new Introduction("나에 대해 한 줄로 설명해 주세요.", "자신있는 기술에 대해 설명해 주세요.",  "배우고 싶은 기술에 대해 설명해 주세요.");
+  }
 }

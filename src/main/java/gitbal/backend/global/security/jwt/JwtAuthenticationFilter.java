@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -46,8 +45,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } else {
                 log.info("[doFilterInternal] 유효한 JWT 토큰이 없습니다.");
             }
-        } catch (RedisConnectionFailureException e) {
-            log.error("[doFilterInternal] redis 연결에 오류가 발생했습니다.");
+        } catch (Exception e) {
+            log.error("[doFilterInternal] 작업 도중 검증되지 않은 exception이 발생했습니다.");
         }
 
 

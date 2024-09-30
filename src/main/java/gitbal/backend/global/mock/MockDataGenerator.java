@@ -80,10 +80,20 @@ public class MockDataGenerator implements CommandLineRunner {
 
       // Create a list of MajorLanguage entities for this user
       MajorLanguageJpaEntity majorLanguage = createRandomMajorLanguagesForUser(newUser);
+      MajorLanguageJpaEntity majorLanguage2 = createRandomMajorLanguagesForUser(fixSchoolUser);
+      MajorLanguageJpaEntity majorLanguage3 = createRandomMajorLanguagesForUser(fixRegionUser);
+
+
       majorLanguageRepository.save(majorLanguage);
+      majorLanguageRepository.save(majorLanguage2);
+      majorLanguageRepository.save(majorLanguage3);
 
       newUser =  createIntroductionForUser(newUser);
+      fixSchoolUser = createIntroductionForUser(fixSchoolUser);
+      fixRegionUser = createIntroductionForUser(fixRegionUser);
       userRepository.save(newUser);
+      userRepository.save(fixSchoolUser);
+      userRepository.save(fixRegionUser);
 
 
       // Update user with the new relations

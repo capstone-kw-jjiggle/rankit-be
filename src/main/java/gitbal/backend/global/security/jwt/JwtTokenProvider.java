@@ -1,8 +1,6 @@
 package gitbal.backend.global.security.jwt;
 
 
-import gitbal.backend.domain.refreshtoken.RefreshToken;
-import gitbal.backend.domain.refreshtoken.application.repository.RefreshTokenRepository;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.global.security.CustomUserDetails;
 import gitbal.backend.global.security.GithubOAuth2UserInfo;
@@ -10,6 +8,7 @@ import gitbal.backend.domain.user.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Service;
 public class JwtTokenProvider {
 
     private final UserRepository userRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
     @Value("${jwt.key}")
     private String key;
     @Value("${ACCESS_TOKEN_VALIDITY_SECONDS}")
@@ -75,15 +73,13 @@ public class JwtTokenProvider {
 
 
     public String regenerateToken(String accessToken) {
-        RefreshToken tokenInfo = refreshTokenRepository.findByUserNickname(findUserNicknameByToken(accessToken))
-            .orElseThrow(() -> new IllegalArgumentException("[regenerateToken] 어세스 토큰으로 찾을 수 없었습니다."));
+        String refreshToken=userRepository.findRefreshTokenByNickname(findUserNicknameByToken(accessToken))
+            .orElseThrow(() -> new IllegalArgumentException("[regenerateToken] 리프레쉬 토큰을 찾을 수 없습니다."));
         Date now = new Date();
         Date validity = new Date(now.getTime() + ACCESS_EXPIRE_LENGTH);
         Claims claims = JwtUtils.parseClaims(accessToken, key);
         log.info("[regenerateToken] 리프레쉬 토큰 상태에서 claims.getSubject() is = " + claims.getSubject());
-        String regenerateToken = JwtUtils.generateToken(claims.getSubject(), now, validity, key);
-        refreshTokenRepository.save(tokenInfo);
-        return regenerateToken;
+        return JwtUtils.generateToken(claims.getSubject(), now, validity, key);
     }
 
     public String findUserNicknameByToken(String accessToken) {
@@ -92,10 +88,10 @@ public class JwtTokenProvider {
 
     public boolean validateRefreshToken(String token) {
         try {
-            RefreshToken tokenInfo = refreshTokenRepository.findByUserNickname(findUserNicknameByToken(token))
+            String tokenInfo = userRepository.findRefreshTokenByNickname(findUserNicknameByToken(token))
                 .orElseThrow(() -> new IllegalArgumentException("[validateRefreshToken] 찾으려는 리프레시토큰은 없습니다."));
             JwtParser build = JwtUtils.generateJwtParser(key);
-            build.parseClaimsJws(tokenInfo.getRefreshToken());
+            build.parseClaimsJws(tokenInfo);
             log.info("[validateRefreshToken] 토큰 오류 발생 안함!");
             return true;
         } catch (IllegalArgumentException e) {
@@ -106,6 +102,8 @@ public class JwtTokenProvider {
             log.info("[validateRefreshToken] 지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalStateException e) {
             log.info("[validateRefreshToken] JWT 토큰이 잘못되었습니다");
+        } catch(MalformedJwtException e){
+            log.info("[validateRefreshToken] JWT 토큰 형식에 맞지 않는 문제가 있었습니다!");
         }
         return false;
     }

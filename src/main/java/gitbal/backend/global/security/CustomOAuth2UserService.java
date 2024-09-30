@@ -1,5 +1,6 @@
 package gitbal.backend.global.security;
 
+import gitbal.backend.domain.introduction.Introduction;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.domain.user.User;
 import java.util.Map;
