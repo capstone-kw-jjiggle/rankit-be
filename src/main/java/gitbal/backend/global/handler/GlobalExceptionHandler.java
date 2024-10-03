@@ -14,6 +14,7 @@ import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.exception.NotLoginedException;
 import gitbal.backend.global.exception.NotUserPermissionException;
 import gitbal.backend.global.exception.PageOutOfRangeException;
+import gitbal.backend.global.exception.SchoolRankPageUserInfoBySchoolException;
 import gitbal.backend.global.exception.UnivCertCodeException;
 import gitbal.backend.global.exception.UnivCertStartException;
 import gitbal.backend.global.exception.UserRankException;
@@ -104,6 +105,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotUserPermissionException.class)
     public ResponseEntity<String> handleNotUserPermissionException(NotUserPermissionException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(SchoolRankPageUserInfoBySchoolException.class)
+    public ResponseEntity<String> handleSchoolRankPageUserInfoBySchoolException(SchoolRankPageUserInfoBySchoolException e) {
         return ResponseEntity.status(400).body(e.getMessage());
     }
 

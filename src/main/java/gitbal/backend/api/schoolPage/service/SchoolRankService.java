@@ -10,6 +10,7 @@ import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.school.SchoolRepository;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
+import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.exception.NotLoginedException;
 import gitbal.backend.global.exception.PageOutOfRangeException;
@@ -19,6 +20,7 @@ import gitbal.backend.global.security.CustomUserDetails;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 public class SchoolRankService {
 
     private static final int PAGE_SIZE = 14;
@@ -103,19 +106,29 @@ public class SchoolRankService {
     @Transactional(readOnly = true)
     public UserPageListBySchoolResponseDto getUserListBySchoolName(int page, String schoolName) {
         try {
+            if(!isPresentSchoolName(schoolName))
+                throw new NotFoundSchoolException();
+
             Pageable pageable = initpageable(page, "score");
             Page<User> userBySchoolName = userRepository.findUserBySchool_SchoolName(schoolName,
                 pageable);
-            if (userBySchoolName.getTotalPages() < page)
+            log.info("userBySchoolName : {}", userBySchoolName.getTotalPages());
+            if (userBySchoolName.getTotalPages()>0 && userBySchoolName.getTotalPages() < page)
                 throw new PageOutOfRangeException();
+
             List<UserInfoBySchool> userInfoBySchools = convertPageByUserInfoBySchool(
                 userBySchoolName);
             return buildUserPageListBySchoolResponseDto(page, userInfoBySchools, userBySchoolName);
         }catch (Exception e){
+            log.info(e.getMessage());
             if(Objects.isNull(e.getMessage()))
                 throw new SchoolRankPageUserInfoBySchoolException("학교 랭킹 페이지 유저 정보 조회 중 오류가 발생했습니다.");
             throw new SchoolRankPageUserInfoBySchoolException(e.getMessage());
         }
+    }
+
+    private boolean isPresentSchoolName(String schoolName) {
+        return schoolRepository.findBySchoolName(schoolName).isPresent();
     }
 
     private List<UserInfoBySchool> convertPageByUserInfoBySchool(Page<User> userBySchoolName) {
