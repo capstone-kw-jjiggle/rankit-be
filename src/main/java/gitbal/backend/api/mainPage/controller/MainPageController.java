@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/mainPage")
 @RequiredArgsConstructor
-@Tag(name = "메인페이지 API(구현 일부 완료 -> 에러 핸들링, 기획 완료에 따라 진행 예정)", description = "메인페이지에 필요한 정보를 위한 api입니다.")
+@Tag(name = "메인페이지 API", description = "메인페이지에 필요한 정보를 위한 api입니다.")
 public class MainPageController {
 
     private final MainPageService mainPageService;
 
     @GetMapping("/users")
-    @Operation(summary = "메인 페이지 유저들에 대한 API입니다.(일부 구현 완료 -> 등급 기획 완성시 다시 개발 진행)", description = "메인에 나타나는 유저들에 대한 API 12명씩")
+    @Operation(summary = "메인 페이지 유저들에 대한 API입니다.", description = "메인에 나타나는 유저들 페이지당 14명씩")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "유저들을 가져오는데 성공했습니다."),
         @ApiResponse(responseCode = "400", description = "유저들을 가져오는데 실패했습니다.")
@@ -34,7 +34,7 @@ public class MainPageController {
     }
 
     @GetMapping("/{grade}/users")
-    @Operation(summary = "메인 페이지 유저들에 대한 API입니다.(일부 구현 완료 -> 등급 기획 완성시 다시 개발 진행)", description = "메인에 나타나는 유저들에 대한 API 12명씩")
+    @Operation(summary = "메인 페이지 등급별 유저들에 대한 API입니다.", description = "메인에 나오는 등급별 유저 페이지당 14명씩")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "유저들을 가져오는데 성공했습니다."),
         @ApiResponse(responseCode = "400", description = "유저들을 가져오는데 실패했습니다.")
