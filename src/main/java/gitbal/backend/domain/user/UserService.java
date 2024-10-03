@@ -10,6 +10,8 @@ import gitbal.backend.global.constant.Grade;
 import gitbal.backend.global.exception.NotFoundRegionException;
 import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.exception.NotFoundUserException;
+import gitbal.backend.global.exception.UserHasNoRegionException;
+import gitbal.backend.global.exception.UserHasNoSchoolException;
 import gitbal.backend.global.security.GithubOAuth2UserInfo;
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +34,7 @@ public class UserService {
 
 
 
+
     public Long calculateUserScore(String nickname) {
         try {
             ResponseEntity<String> response = userInfoService.requestUserInfo(nickname);
@@ -45,23 +48,6 @@ public class UserService {
             e.printStackTrace();
             throw new NotFoundUserException();
         }
-    }
-
-    public boolean checkUserRecentCommit(String username) {
-        try {
-            ResponseEntity<String> response = userInfoService.requestUserRecentCommit(username);
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode root = objectMapper.readTree(response.getBody());
-            JsonNode dataNode = root.get("data").get("user");
-            return checkOneDayCommit(dataNode);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e); // TODO : 추후 exception 처리하기
-        }
-    }
-
-
-    private boolean checkOneDayCommit(JsonNode dataNode) {
-        return dataNode.get("yesterdayCommits").get("totalCommitContributions").asLong() > 0;
     }
 
     private Long delegateToGitbalScore(JsonNode dataNode) {
@@ -93,13 +79,24 @@ public class UserService {
 
     public School findSchoolByUserName(String username) {
         User findUser = userRepository.findByNickname(username)
-            .orElseThrow(NotFoundSchoolException::new);
+            .orElseThrow(NotFoundUserException::new);
+
+        if(Objects.isNull(findUser.getSchool())){
+            throw new UserHasNoSchoolException();
+        }
+
         return findUser.getSchool();
     }
 
     public Region findRegionByUserName(String username) {
         User findUser = userRepository.findByNickname(username)
-            .orElseThrow(NotFoundRegionException::new);
+            .orElseThrow(NotFoundUserException::new);
+
+        if(Objects.isNull(findUser.getRegion())){
+            throw new UserHasNoRegionException();
+        }
+
+
         return findUser.getRegion();
     }
 
