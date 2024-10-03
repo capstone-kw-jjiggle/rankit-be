@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class SchoolRankService {
 
-    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = 14;
     private final SchoolRepository schoolRepository;
     private final UserRepository userRepository;
 
