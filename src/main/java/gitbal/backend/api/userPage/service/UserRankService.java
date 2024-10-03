@@ -4,6 +4,7 @@ import gitbal.backend.api.userPage.dto.RegionRankDto;
 import gitbal.backend.api.userPage.dto.RegionRankResponseDto;
 import gitbal.backend.api.userPage.dto.SchoolRankDto;
 import gitbal.backend.api.userPage.dto.SchoolRankResponseDto;
+import gitbal.backend.api.userPage.dto.UserRankExpResponseDto;
 import gitbal.backend.api.userPage.dto.UserRankMajorLanguageResponseDto;
 import gitbal.backend.api.userPage.dto.UserRankingResponseDto;
 import gitbal.backend.domain.region.Region;
@@ -11,8 +12,10 @@ import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.majorlanguage.application.MajorLanguageService;
 import gitbal.backend.domain.region.application.RegionService;
+import gitbal.backend.domain.user.UserScoreCalculator;
 import gitbal.backend.domain.user.UserService;
 
+import gitbal.backend.global.constant.Grade;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserRankService {
 
     private final UserService userService;
+    private final UserScoreCalculator userScoreCalculator;
     private final RegionService regionService;
     private final MajorLanguageService majorLanguageService;
 
@@ -56,4 +60,13 @@ public class UserRankService {
         User findUser = userService.findByUserName(username);
         return majorLanguageService.findMostUsageLanguageByUsername(findUser);
     }
+
+    @Transactional(readOnly = true)
+    public UserRankExpResponseDto makeUserRankExpResponse(String username) {
+        User findUser = userService.findByUserName(username);
+        return UserRankExpResponseDto.of(userService.
+            calculateExp(findUser));
+    }
+
+
 }
