@@ -2,10 +2,12 @@ package gitbal.backend.api.mainPage.service;
 
 import gitbal.backend.api.mainPage.dto.MainPageUserDto;
 import gitbal.backend.api.mainPage.dto.MainPageUserResponseDto;
+import gitbal.backend.api.schoolPage.dto.SchoolListPageResponseDto;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.global.constant.Grade;
 import gitbal.backend.global.dto.PageInfoDto;
+import gitbal.backend.global.exception.PageOutOfRangeException;
 import gitbal.backend.global.exception.WrongPageNumberException;
 import gitbal.backend.global.util.PageCalculator;
 import java.util.List;
@@ -52,10 +54,16 @@ public class MainPageService {
             Page<User> searchUsersIgnoreCase = userRepository.findByNicknameContainingIgnoreCase(
                 searchedname,
                 PageRequest.of(page - 1, PAGE_SIZE, Sort.by("score").descending()));
-            validatePage(page, searchUsersIgnoreCase.getTotalElements());
-
-            if(isSearchedUserNone(searchUsersIgnoreCase))
+            if (isSearchedUserNone(searchUsersIgnoreCase)) {
+                if(page >1){
+                    throw new PageOutOfRangeException();
+                }
                 return MainPageUserResponseDto.of(List.of(), new PageInfoDto(0, 0, 0, 0));
+            }
+            if (searchUsersIgnoreCase.getTotalPages() < page) {
+                throw new PageOutOfRangeException();
+            }
+
 
             List<MainPageUserDto> searchUserList = convertToMainPageUserDto(
                 searchUsersIgnoreCase);
