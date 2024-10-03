@@ -80,7 +80,7 @@ public class JwtTokenProvider {
 
     public String regenerateToken(String refreshToken) {
         //한 번 DB에 존재하는지 검증한다 -> 혹여나 DB에서 사라졌을수도 있기에
-        String findRefreshToken = findDBRefreshToken(refreshToken);
+        String findRefreshToken = findDBRefreshTokenByAccessToken(refreshToken);
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + ACCESS_EXPIRE_LENGTH);
@@ -89,9 +89,9 @@ public class JwtTokenProvider {
         return JwtUtils.generateToken(claims.getSubject(), now, validity, key);
     }
 
-    private String findDBRefreshToken(String refreshToken) {
+    private String findDBRefreshTokenByAccessToken(String accessToken) {
         return userRepository.findRefreshTokenByNickname(
-                findUserNicknameByToken(refreshToken))
+                findUserNicknameByToken(accessToken))
             .orElseThrow(
                 () -> new IllegalArgumentException("[regenerateToken] 리프레쉬 토큰을 찾을 수 없습니다."));
     }
@@ -102,9 +102,9 @@ public class JwtTokenProvider {
 
     public boolean validateRefreshToken(String token) {
         try {
-            String tokenInfo = findDBRefreshToken(token);
+            String refreshToken = findDBRefreshTokenByAccessToken(token);
             JwtParser build = JwtUtils.generateJwtParser(key);
-            build.parseClaimsJws(tokenInfo);
+            build.parseClaimsJws(refreshToken);
             log.info("[validateRefreshToken] 토큰 오류 발생 안함!");
             return true;
         } catch (IllegalArgumentException e) {
