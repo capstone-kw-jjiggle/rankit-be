@@ -23,8 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MainPageService {
 
-    private static final int PAGE_SIZE = 12;
-    private static final int GRADE_PAGE_SIZE=14;
+    private static final int PAGE_SIZE = 14;
     private final UserRepository userRepository;
 
 
@@ -32,16 +31,16 @@ public class MainPageService {
     public MainPageUserResponseDto getUsers(int page, String searchedname) {
         if (!Objects.isNull(searchedname))   return getSearchedUserList(searchedname, page);
         try {
-            Page<User> users = userRepository.findAll(
+            Page<User> findUserPages = userRepository.findAll(
                 PageRequest.of(page - 1, PAGE_SIZE, Sort.by("score").descending()));
-            validatePage(page, users.getTotalElements());
-            log.info(String.valueOf(users.getTotalElements()));
-            List<MainPageUserDto> userList = users.stream().map(
-                    u -> new MainPageUserDto(u.getNickname(), u.getScore(),
-                        u.getUserRank(), u.getGrade()))
-                .toList();
-            PageInfoDto pageInfoDto = PageCalculator.calculatePageInfo(users);
-            return MainPageUserResponseDto.of(userList, pageInfoDto);
+            validatePage(page, findUserPages.getTotalElements());
+            log.info(String.valueOf(findUserPages.getTotalElements()));
+
+            List<MainPageUserDto> users = convertToMainPageUserDto(findUserPages);
+
+            PageInfoDto pageInfoDto = PageCalculator.calculatePageInfo(findUserPages);
+
+            return MainPageUserResponseDto.of(users, pageInfoDto);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             throw new WrongPageNumberException(page);
@@ -53,19 +52,27 @@ public class MainPageService {
             Page<User> searchUsersIgnoreCase = userRepository.findByNicknameContainingIgnoreCase(
                 searchedname,
                 PageRequest.of(page - 1, PAGE_SIZE, Sort.by("score").descending()));
+            validatePage(page, searchUsersIgnoreCase.getTotalElements());
+
             if(isSearchedUserNone(searchUsersIgnoreCase))
                 return MainPageUserResponseDto.of(List.of(), new PageInfoDto(0, 0, 0, 0));
-            validatePage(page, searchUsersIgnoreCase.getTotalElements());
-            List<MainPageUserDto> searchUserList = searchUsersIgnoreCase.stream().map(
-                (user) -> new MainPageUserDto(user.getNickname(), user.getScore(),
-                    user.getUserRank(), user.getGrade())
-            ).toList();
+
+            List<MainPageUserDto> searchUserList = convertToMainPageUserDto(
+                searchUsersIgnoreCase);
             PageInfoDto pageInfoDto = PageCalculator.calculatePageInfo(searchUsersIgnoreCase);
+
             return MainPageUserResponseDto.of(searchUserList, pageInfoDto);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             throw new WrongPageNumberException(page);
         }
+    }
+
+    private List<MainPageUserDto> convertToMainPageUserDto(Page<User> users) {
+        return users.stream().map(
+            (u) -> new MainPageUserDto(u.getNickname(), u.getScore(),
+                u.getUserRank())
+        ).toList();
     }
 
     private boolean isSearchedUserNone(Page<User> searchUsersIgnoreCase) {
@@ -95,15 +102,12 @@ public class MainPageService {
     public MainPageUserResponseDto getGradeUsers(int page, Grade grade) {
         try{
             Page<User> findGradeUsers = userRepository.findUserByGrade(grade,
-                PageRequest.of(page - 1, GRADE_PAGE_SIZE, Sort.by("score").descending())
+                PageRequest.of(page - 1, PAGE_SIZE, Sort.by("score").descending())
             );
             validatePage(page, findGradeUsers.getTotalElements());
             log.info(String.valueOf(findGradeUsers.getTotalElements()));
 
-            List<MainPageUserDto> users = findGradeUsers.stream().map(
-                u -> new MainPageUserDto(u.getNickname(), u.getScore(),
-                    u.getUserRank(), u.getGrade())
-            ).toList();
+            List<MainPageUserDto> users = convertToMainPageUserDto(findGradeUsers);
 
             PageInfoDto pageInfoDto = PageCalculator.calculatePageInfo(findGradeUsers);
             return MainPageUserResponseDto.of(users, pageInfoDto);
