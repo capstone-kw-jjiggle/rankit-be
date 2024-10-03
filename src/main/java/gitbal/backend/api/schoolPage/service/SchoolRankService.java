@@ -48,9 +48,12 @@ public class SchoolRankService {
     public SchoolListPageResponseDto<SchoolListDto> getSchoolList(Integer page,
         String searchedSchoolName) {
         if (!Objects.isNull(searchedSchoolName)) {
+            log.info("searchedSchoolName : {}", searchedSchoolName);
             return getSearchedSchoolList(searchedSchoolName, page);
         }
         try {
+            log.info("searchSchooolName : {}", searchedSchoolName);
+
             Pageable pageable = initpageable(page, "score");
             Page<School> schoolPage = schoolRepository.findAll(pageable);
 
@@ -65,7 +68,9 @@ public class SchoolRankService {
                 .total(schoolPage.getTotalElements())
                 .build();
             // 페이지 범위 넘겼을때
+            log.info("schoolList.getTotalPages() : {}", schoolList.getTotalPages());
             if (schoolList.getTotalPages() < page) {
+
                 throw new PageOutOfRangeException();
             }
             return schoolList;
@@ -171,18 +176,29 @@ public class SchoolRankService {
                 searchedSchoolName,
                 PageRequest.of(page - 1, PAGE_SIZE, Sort.by("score").descending()));
             if (isSearchedSchoolHasNothing(schoolPage)) {
+                if(page >1){
+                    throw new PageOutOfRangeException();
+                    }
                 return SchoolListPageResponseDto.emptyList();
             }
-            validatePage(page, schoolPage.getTotalElements());
+            if (schoolPage.getTotalPages() < page) {
+                throw new PageOutOfRangeException();
+            }
+
             List<SchoolListDto> searchedSchoolList = schoolPage.stream()
                 .map(this::convertToDto)
                 .toList();
-
-            return SchoolListPageResponseDto.<SchoolListDto>withALl()
+            log.info("searchedSchoolList : {}", searchedSchoolList);
+            SchoolListPageResponseDto<SchoolListDto> schoolList = SchoolListPageResponseDto.<SchoolListDto>withALl()
                 .schoolList(searchedSchoolList)
                 .page(page)
                 .total(schoolPage.getTotalElements())
                 .build();
+
+            log.info("schoolList.getTotalPages() : {}", schoolList.getTotalPages());
+
+
+            return schoolList;
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             throw new WrongPageNumberException(page);
