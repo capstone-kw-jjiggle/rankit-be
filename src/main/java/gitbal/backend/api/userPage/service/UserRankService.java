@@ -12,10 +12,9 @@ import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.majorlanguage.application.MajorLanguageService;
 import gitbal.backend.domain.region.application.RegionService;
-import gitbal.backend.domain.user.UserScoreCalculator;
 import gitbal.backend.domain.user.UserService;
 
-import gitbal.backend.global.constant.Grade;
+import gitbal.backend.global.exception.UserRankingException;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,13 +27,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserRankService {
 
     private final UserService userService;
-    private final UserScoreCalculator userScoreCalculator;
     private final RegionService regionService;
     private final MajorLanguageService majorLanguageService;
 
     @Transactional(readOnly = true)
     public UserRankingResponseDto makeUserRankResponse(String username) {
         User findUser = userService.findByUserName(username);
+        if(findUser.getUserRank()==0)
+            throw new UserRankingException();
         return UserRankingResponseDto.of(findUser.getUserRank());
     }
 
