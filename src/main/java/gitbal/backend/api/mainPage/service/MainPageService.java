@@ -2,10 +2,9 @@ package gitbal.backend.api.mainPage.service;
 
 import gitbal.backend.api.mainPage.dto.MainPageUserDto;
 import gitbal.backend.api.mainPage.dto.MainPageUserResponseDto;
-import gitbal.backend.domain.region.application.repository.RegionRepository;
-import gitbal.backend.domain.school.SchoolRepository;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
+import gitbal.backend.global.constant.Grade;
 import gitbal.backend.global.dto.PageInfoDto;
 import gitbal.backend.global.exception.WrongPageNumberException;
 import gitbal.backend.global.util.PageCalculator;
@@ -24,10 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MainPageService {
 
-    private final int PAGE_SIZE = 12;
+    private static final int PAGE_SIZE = 12;
+    private static final int GRADE_PAGE_SIZE=14;
     private final UserRepository userRepository;
-    private final SchoolRepository schoolRepository;
-    private final RegionRepository regionRepository;
 
 
     @Transactional(readOnly = true)
@@ -39,8 +37,8 @@ public class MainPageService {
             validatePage(page, users.getTotalElements());
             log.info(String.valueOf(users.getTotalElements()));
             List<MainPageUserDto> userList = users.stream().map(
-                    (user) -> new MainPageUserDto(user.getNickname(), user.getScore(),
-                        user.getUserRank(), user.getGrade()))
+                    u -> new MainPageUserDto(u.getNickname(), u.getScore(),
+                        u.getUserRank(), u.getGrade()))
                 .toList();
             PageInfoDto pageInfoDto = PageCalculator.calculatePageInfo(users);
             return MainPageUserResponseDto.of(userList, pageInfoDto);
@@ -91,5 +89,29 @@ public class MainPageService {
 
     private boolean checkRemainPage(int pageNumber, long totalNumber) {
         return (long) pageNumber * PAGE_SIZE - totalNumber < PAGE_SIZE;
+    }
+
+    @Transactional(readOnly = true)
+    public MainPageUserResponseDto getGradeUsers(int page, Grade grade) {
+        try{
+            Page<User> findGradeUsers = userRepository.findUserByGrade(grade,
+                PageRequest.of(page - 1, GRADE_PAGE_SIZE, Sort.by("score").descending())
+            );
+            validatePage(page, findGradeUsers.getTotalElements());
+            log.info(String.valueOf(findGradeUsers.getTotalElements()));
+
+            List<MainPageUserDto> users = findGradeUsers.stream().map(
+                u -> new MainPageUserDto(u.getNickname(), u.getScore(),
+                    u.getUserRank(), u.getGrade())
+            ).toList();
+
+            PageInfoDto pageInfoDto = PageCalculator.calculatePageInfo(findGradeUsers);
+            return MainPageUserResponseDto.of(users, pageInfoDto);
+        }catch (IllegalArgumentException e){
+            e.printStackTrace();
+            throw new WrongPageNumberException(page);
+        }
+
+
     }
 }
