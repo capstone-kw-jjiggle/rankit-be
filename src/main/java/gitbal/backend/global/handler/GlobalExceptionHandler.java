@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotLoginedException.class)
-    public ResponseEntity<String> handleNotLoginedException(WrongPageNumberException e){
+    public ResponseEntity<String> handleNotLoginedException(NotLoginedException e){
         return ResponseEntity.status(401).body(e.getMessage());
     }
 
