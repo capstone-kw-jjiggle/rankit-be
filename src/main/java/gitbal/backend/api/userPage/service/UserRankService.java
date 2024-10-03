@@ -14,6 +14,7 @@ import gitbal.backend.domain.majorlanguage.application.MajorLanguageService;
 import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.user.UserService;
 
+import gitbal.backend.global.exception.UserHasNoMajorLanguageException;
 import gitbal.backend.global.exception.UserRankingException;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +59,8 @@ public class UserRankService {
     @Transactional(readOnly = true)
     public UserRankMajorLanguageResponseDto makeUserRankLanguageResponseByUsername(String username) {
         User findUser = userService.findByUserName(username);
+        if(Objects.isNull(findUser.getMajorLanguage()))
+            throw new UserHasNoMajorLanguageException();
         return majorLanguageService.findMostUsageLanguageByUsername(findUser);
     }
 

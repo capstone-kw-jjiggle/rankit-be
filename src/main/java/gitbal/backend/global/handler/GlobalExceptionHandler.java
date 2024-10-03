@@ -17,6 +17,7 @@ import gitbal.backend.global.exception.PageOutOfRangeException;
 import gitbal.backend.global.exception.SchoolRankPageUserInfoBySchoolException;
 import gitbal.backend.global.exception.UnivCertCodeException;
 import gitbal.backend.global.exception.UnivCertStartException;
+import gitbal.backend.global.exception.UserHasNoMajorLanguageException;
 import gitbal.backend.global.exception.UserHasNoRegionException;
 import gitbal.backend.global.exception.UserHasNoSchoolException;
 import gitbal.backend.global.exception.UserRankException;
@@ -128,6 +129,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserRankingException.class)
     public ResponseEntity<String> handleUserRankingException(UserRankingException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(UserHasNoMajorLanguageException.class)
+    public ResponseEntity<String> handleUserHasNoMajorLanguageException(UserHasNoMajorLanguageException e) {
         return ResponseEntity.status(400).body(e.getMessage());
     }
 
