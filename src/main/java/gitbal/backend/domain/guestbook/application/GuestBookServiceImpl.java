@@ -8,6 +8,7 @@ import gitbal.backend.domain.guestbook.infra.repository.GuestBookRepository;
 import gitbal.backend.domain.user.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,10 +27,10 @@ public class GuestBookServiceImpl implements GuestBookService {
     }
 
     @Override
-    public void saveGuestBook(User user, GuestBookWriteRequestDto dto) {
+    public void saveGuestBook(User user, String content) {
         GuestBook guestBook = GuestBook.builder()
             .user(user)
-            .boardContent(dto.content())
+            .boardContent(content)
             .build();
         guestBookRepository.save(guestBook);
     }

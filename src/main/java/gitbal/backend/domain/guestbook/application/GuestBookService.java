@@ -9,6 +9,6 @@ public interface GuestBookService {
 
     List<GuestBookResponseDto> getGuestBooks();
 
-    void saveGuestBook(User user, GuestBookWriteRequestDto dto);
+    void saveGuestBook(User user, String content);
 
 }
