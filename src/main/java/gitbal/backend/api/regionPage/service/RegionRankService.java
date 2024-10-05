@@ -70,7 +70,7 @@ public class RegionRankService {
     @Transactional(readOnly = true)
     public MyRegionInfoResponseDto getMyRegionInfo(Authentication authentication) {
         if (authentication == null) {
-            throw new NotLoginedException();
+            throw new NotLoginedException("로그인 후 요청해주세요");
         }
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
         String username = principal.getNickname();
@@ -96,6 +96,7 @@ public class RegionRankService {
     @Transactional(readOnly = true)
     public UserPageListByRegionResponseDto getUserListByRegionName(int page, String regionName) {
         try {
+            Region region = regionRepository.findByRegionName(regionName).orElseThrow(() -> new Exception("올바른 지역명을 입력해주세요."));
             Pageable pageable = initpageable(page, "score");
             Page<User> userByRegionName = userRepository.findUserByRegion_RegionName(regionName,
                 pageable);
