@@ -3,6 +3,7 @@ package gitbal.backend.global.mock;
 
 import gitbal.backend.api.guestBookPage.dto.GuestBookWriteRequestDto;
 import gitbal.backend.api.guestBookPage.facade.GuestBookPageFacade;
+import gitbal.backend.domain.guestbook.application.GuestBookService;
 import gitbal.backend.domain.introduction.Introduction;
 import gitbal.backend.domain.introduction.application.repository.IntroductionRepository;
 import gitbal.backend.domain.region.application.repository.RegionRepository;
@@ -36,6 +37,7 @@ public class MockDataGenerator implements CommandLineRunner {
   private final SchoolRepository schoolRepository;
   private final RegionRepository regionRepository;
   private final MajorLanguageRepository majorLanguageRepository;
+  private final GuestBookService guestBookService;
   private final GuestBookPageFacade guestBookPageFacade;
   private final UserRepository userRepository;
   private final UserService userService;
@@ -111,8 +113,9 @@ public class MockDataGenerator implements CommandLineRunner {
       User fixedRegionUser = userRepository.save(fixRegionUser);
 
 
-      guestBookPageFacade.saveDashBoard(new GuestBookWriteRequestDto(saveUser.getId(), "안녕하세요"));
-      guestBookPageFacade.saveDashBoard(new GuestBookWriteRequestDto(saveUser.getId(), "안녕하세요2"));
+      guestBookService.saveGuestBook(saveUser, "안녕하세요");
+      guestBookService.saveGuestBook(saveUser, "안녕하세요2");
+
       scoring(saveUser);
       scoring(fixedUser);
       scoring(fixedRegionUser);
