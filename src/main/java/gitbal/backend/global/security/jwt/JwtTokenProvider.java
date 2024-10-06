@@ -45,6 +45,12 @@ public class JwtTokenProvider {
     }
 
 
+    public String createRefreshToken(String username) {
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + REFRESH_EXPIRE_LENGTH);
+        return JwtUtils.generateToken(username, now, validity, key);
+    }
+
     public boolean validateToken(String token) {
         try {
             JwtParser build = JwtUtils.generateJwtParser(key);
@@ -72,26 +78,33 @@ public class JwtTokenProvider {
     }
 
 
-    public String regenerateToken(String accessToken) {
-        String refreshToken=userRepository.findRefreshTokenByNickname(findUserNicknameByToken(accessToken))
-            .orElseThrow(() -> new IllegalArgumentException("[regenerateToken] 리프레쉬 토큰을 찾을 수 없습니다."));
+    public String regenerateToken(String refreshToken) {
+        //한 번 DB에 존재하는지 검증한다 -> 혹여나 DB에서 사라졌을수도 있기에
+        String findRefreshToken = findDBRefreshTokenByAccessToken(refreshToken);
+
         Date now = new Date();
         Date validity = new Date(now.getTime() + ACCESS_EXPIRE_LENGTH);
-        Claims claims = JwtUtils.parseClaims(accessToken, key);
-        log.info("[regenerateToken] 리프레쉬 토큰 상태에서 claims.getSubject() is = " + claims.getSubject());
+        Claims claims = JwtUtils.parseClaims(findRefreshToken, key);
+        log.info("[regenerateToken] 리프레쉬 토큰 상태에서 claims.getSubject() is = " + claims.getSubject()); // 유저 id 추출
         return JwtUtils.generateToken(claims.getSubject(), now, validity, key);
     }
 
-    public String findUserNicknameByToken(String accessToken) {
-        return JwtUtils.parseClaims(accessToken, key).getSubject();
+    private String findDBRefreshTokenByAccessToken(String accessToken) {
+        return userRepository.findRefreshTokenByNickname(
+                findUserNicknameByToken(accessToken))
+            .orElseThrow(
+                () -> new IllegalArgumentException("[regenerateToken] 리프레쉬 토큰을 찾을 수 없습니다."));
+    }
+
+    public String findUserNicknameByToken(String token) {
+        return JwtUtils.parseClaims(token, key).getSubject();
     }
 
     public boolean validateRefreshToken(String token) {
         try {
-            String tokenInfo = userRepository.findRefreshTokenByNickname(findUserNicknameByToken(token))
-                .orElseThrow(() -> new IllegalArgumentException("[validateRefreshToken] 찾으려는 리프레시토큰은 없습니다."));
+            String refreshToken = findDBRefreshTokenByAccessToken(token);
             JwtParser build = JwtUtils.generateJwtParser(key);
-            build.parseClaimsJws(tokenInfo);
+            build.parseClaimsJws(refreshToken);
             log.info("[validateRefreshToken] 토큰 오류 발생 안함!");
             return true;
         } catch (IllegalArgumentException e) {

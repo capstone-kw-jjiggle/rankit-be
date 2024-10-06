@@ -2,11 +2,12 @@ package gitbal.backend.api.mainPage.service;
 
 import gitbal.backend.api.mainPage.dto.MainPageUserDto;
 import gitbal.backend.api.mainPage.dto.MainPageUserResponseDto;
-import gitbal.backend.domain.region.application.repository.RegionRepository;
-import gitbal.backend.domain.school.SchoolRepository;
+import gitbal.backend.api.schoolPage.dto.SchoolListPageResponseDto;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
+import gitbal.backend.global.constant.Grade;
 import gitbal.backend.global.dto.PageInfoDto;
+import gitbal.backend.global.exception.PageOutOfRangeException;
 import gitbal.backend.global.exception.WrongPageNumberException;
 import gitbal.backend.global.util.PageCalculator;
 import java.util.List;
@@ -24,26 +25,24 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MainPageService {
 
-    private final int PAGE_SIZE = 12;
+    private static final int PAGE_SIZE = 14;
     private final UserRepository userRepository;
-    private final SchoolRepository schoolRepository;
-    private final RegionRepository regionRepository;
 
 
     @Transactional(readOnly = true)
     public MainPageUserResponseDto getUsers(int page, String searchedname) {
         if (!Objects.isNull(searchedname))   return getSearchedUserList(searchedname, page);
         try {
-            Page<User> users = userRepository.findAll(
+            Page<User> findUserPages = userRepository.findAll(
                 PageRequest.of(page - 1, PAGE_SIZE, Sort.by("score").descending()));
-            validatePage(page, users.getTotalElements());
-            log.info(String.valueOf(users.getTotalElements()));
-            List<MainPageUserDto> userList = users.stream().map(
-                    (user) -> new MainPageUserDto(user.getNickname(), user.getScore(),
-                        user.getUserRank(), user.getGrade()))
-                .toList();
-            PageInfoDto pageInfoDto = PageCalculator.calculatePageInfo(users);
-            return MainPageUserResponseDto.of(userList, pageInfoDto);
+            validatePage(page, findUserPages.getTotalElements());
+            log.info(String.valueOf(findUserPages.getTotalElements()));
+
+            List<MainPageUserDto> users = convertToMainPageUserDto(findUserPages);
+
+            PageInfoDto pageInfoDto = PageCalculator.calculatePageInfo(findUserPages);
+
+            return MainPageUserResponseDto.of(users, pageInfoDto);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             throw new WrongPageNumberException(page);
@@ -55,19 +54,33 @@ public class MainPageService {
             Page<User> searchUsersIgnoreCase = userRepository.findByNicknameContainingIgnoreCase(
                 searchedname,
                 PageRequest.of(page - 1, PAGE_SIZE, Sort.by("score").descending()));
-            if(isSearchedUserNone(searchUsersIgnoreCase))
+            if (isSearchedUserNone(searchUsersIgnoreCase)) {
+                if(page >1){
+                    throw new PageOutOfRangeException();
+                }
                 return MainPageUserResponseDto.of(List.of(), new PageInfoDto(0, 0, 0, 0));
-            validatePage(page, searchUsersIgnoreCase.getTotalElements());
-            List<MainPageUserDto> searchUserList = searchUsersIgnoreCase.stream().map(
-                (user) -> new MainPageUserDto(user.getNickname(), user.getScore(),
-                    user.getUserRank(), user.getGrade())
-            ).toList();
+            }
+            if (searchUsersIgnoreCase.getTotalPages() < page) {
+                throw new PageOutOfRangeException();
+            }
+
+
+            List<MainPageUserDto> searchUserList = convertToMainPageUserDto(
+                searchUsersIgnoreCase);
             PageInfoDto pageInfoDto = PageCalculator.calculatePageInfo(searchUsersIgnoreCase);
+
             return MainPageUserResponseDto.of(searchUserList, pageInfoDto);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             throw new WrongPageNumberException(page);
         }
+    }
+
+    private List<MainPageUserDto> convertToMainPageUserDto(Page<User> users) {
+        return users.stream().map(
+            (u) -> new MainPageUserDto(u.getNickname(), u.getScore(),
+                u.getUserRank())
+        ).toList();
     }
 
     private boolean isSearchedUserNone(Page<User> searchUsersIgnoreCase) {
@@ -91,5 +104,26 @@ public class MainPageService {
 
     private boolean checkRemainPage(int pageNumber, long totalNumber) {
         return (long) pageNumber * PAGE_SIZE - totalNumber < PAGE_SIZE;
+    }
+
+    @Transactional(readOnly = true)
+    public MainPageUserResponseDto getGradeUsers(int page, Grade grade) {
+        try{
+            Page<User> findGradeUsers = userRepository.findUserByGrade(grade,
+                PageRequest.of(page - 1, PAGE_SIZE, Sort.by("score").descending())
+            );
+            validatePage(page, findGradeUsers.getTotalElements());
+            log.info(String.valueOf(findGradeUsers.getTotalElements()));
+
+            List<MainPageUserDto> users = convertToMainPageUserDto(findGradeUsers);
+
+            PageInfoDto pageInfoDto = PageCalculator.calculatePageInfo(findGradeUsers);
+            return MainPageUserResponseDto.of(users, pageInfoDto);
+        }catch (IllegalArgumentException e){
+            e.printStackTrace();
+            throw new WrongPageNumberException(page);
+        }
+
+
     }
 }

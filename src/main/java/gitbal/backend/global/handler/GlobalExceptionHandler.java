@@ -15,9 +15,14 @@ import gitbal.backend.global.exception.NotLoginedException;
 import gitbal.backend.global.exception.NotUserPermissionException;
 import gitbal.backend.global.exception.PageOutOfRangeException;
 import gitbal.backend.global.exception.RegionRankPageUserInfoByRegionException;
+import gitbal.backend.global.exception.SchoolRankPageUserInfoBySchoolException;
 import gitbal.backend.global.exception.UnivCertCodeException;
 import gitbal.backend.global.exception.UnivCertStartException;
+import gitbal.backend.global.exception.UserHasNoMajorLanguageException;
+import gitbal.backend.global.exception.UserHasNoRegionException;
+import gitbal.backend.global.exception.UserHasNoSchoolException;
 import gitbal.backend.global.exception.UserRankException;
+import gitbal.backend.global.exception.UserRankingException;
 import gitbal.backend.global.exception.WrongPageNumberException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -105,6 +110,31 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotUserPermissionException.class)
     public ResponseEntity<String> handleNotUserPermissionException(NotUserPermissionException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(SchoolRankPageUserInfoBySchoolException.class)
+    public ResponseEntity<String> handleSchoolRankPageUserInfoBySchoolException(SchoolRankPageUserInfoBySchoolException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(UserHasNoSchoolException.class)
+    public ResponseEntity<String> handleNotFoundUserException(UserHasNoSchoolException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(UserHasNoRegionException.class)
+    public ResponseEntity<String> handleNotFoundUserException(UserHasNoRegionException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(UserRankingException.class)
+    public ResponseEntity<String> handleUserRankingException(UserRankingException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(UserHasNoMajorLanguageException.class)
+    public ResponseEntity<String> handleUserHasNoMajorLanguageException(UserHasNoMajorLanguageException e) {
         return ResponseEntity.status(400).body(e.getMessage());
     }
 

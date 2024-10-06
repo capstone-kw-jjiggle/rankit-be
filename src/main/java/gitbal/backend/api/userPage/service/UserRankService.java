@@ -4,6 +4,7 @@ import gitbal.backend.api.userPage.dto.RegionRankDto;
 import gitbal.backend.api.userPage.dto.RegionRankResponseDto;
 import gitbal.backend.api.userPage.dto.SchoolRankDto;
 import gitbal.backend.api.userPage.dto.SchoolRankResponseDto;
+import gitbal.backend.api.userPage.dto.UserRankExpResponseDto;
 import gitbal.backend.api.userPage.dto.UserRankMajorLanguageResponseDto;
 import gitbal.backend.api.userPage.dto.UserRankingResponseDto;
 import gitbal.backend.domain.region.Region;
@@ -13,6 +14,8 @@ import gitbal.backend.domain.majorlanguage.application.MajorLanguageService;
 import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.user.UserService;
 
+import gitbal.backend.global.exception.UserHasNoMajorLanguageException;
+import gitbal.backend.global.exception.UserRankingException;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +34,8 @@ public class UserRankService {
     @Transactional(readOnly = true)
     public UserRankingResponseDto makeUserRankResponse(String username) {
         User findUser = userService.findByUserName(username);
+        if(findUser.getUserRank()==0)
+            throw new UserRankingException();
         return UserRankingResponseDto.of(findUser.getUserRank());
     }
 
@@ -54,6 +59,17 @@ public class UserRankService {
     @Transactional(readOnly = true)
     public UserRankMajorLanguageResponseDto makeUserRankLanguageResponseByUsername(String username) {
         User findUser = userService.findByUserName(username);
+        if(Objects.isNull(findUser.getMajorLanguage()))
+            throw new UserHasNoMajorLanguageException();
         return majorLanguageService.findMostUsageLanguageByUsername(findUser);
     }
+
+    @Transactional(readOnly = true)
+    public UserRankExpResponseDto makeUserRankExpResponse(String username) {
+        User findUser = userService.findByUserName(username);
+        return UserRankExpResponseDto.of(userService.
+            calculateExp(findUser));
+    }
+
+
 }

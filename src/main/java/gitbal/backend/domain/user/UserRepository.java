@@ -1,6 +1,7 @@
 package gitbal.backend.domain.user;
 
 
+import gitbal.backend.global.constant.Grade;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -32,4 +33,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u.refreshToken from User u where u.nickname = :nickname")
     Optional<String> findRefreshTokenByNickname(String nickname);
+
+
+    Page<User> findUserByGrade(Grade grade, Pageable pageable);
 }

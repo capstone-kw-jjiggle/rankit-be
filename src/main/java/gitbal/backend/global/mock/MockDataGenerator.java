@@ -145,7 +145,7 @@ public class MockDataGenerator implements CommandLineRunner {
 
     String randomProfileImg =
         "https://example.com/image" + random.nextInt(100); // Example profile image URL
-    Long randomScore = (long) random.nextInt(1000, 100000); // Example userScore
+    Long randomScore = (long) random.nextInt(0, 20000); // Example userScore
 
     return User.builder()
         .school(school)
@@ -169,7 +169,7 @@ public class MockDataGenerator implements CommandLineRunner {
         .school(school)
         .region(region)
         .nickname(nickName)
-        .score(500L)
+        .score(140000L)
         .profile_img("sdqsdqwefqwef")
         .grade(Grade.PURPLE)
         .build();
