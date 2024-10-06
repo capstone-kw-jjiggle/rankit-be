@@ -1,5 +1,6 @@
 package gitbal.backend.global.security.jwt;
 
+import gitbal.backend.global.exception.NotLoginedException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,6 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             log.error("[doFilterInternal] 작업 도중 검증되지 않은 exception이 발생했습니다.");
+            log.error(e.getMessage());
         }
 
 

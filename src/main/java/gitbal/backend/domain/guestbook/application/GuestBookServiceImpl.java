@@ -2,7 +2,6 @@ package gitbal.backend.domain.guestbook.application;
 
 
 import gitbal.backend.api.guestBookPage.dto.GuestBookResponseDto;
-import gitbal.backend.api.guestBookPage.dto.GuestBookWriteRequestDto;
 import gitbal.backend.domain.guestbook.GuestBook;
 import gitbal.backend.domain.guestbook.infra.repository.GuestBookRepository;
 import gitbal.backend.domain.user.User;
@@ -26,10 +25,10 @@ public class GuestBookServiceImpl implements GuestBookService {
     }
 
     @Override
-    public void saveGuestBook(User user, GuestBookWriteRequestDto dto) {
+    public void saveGuestBook(User user, String content) {
         GuestBook guestBook = GuestBook.builder()
             .user(user)
-            .boardContent(dto.content())
+            .boardContent(content)
             .build();
         guestBookRepository.save(guestBook);
     }

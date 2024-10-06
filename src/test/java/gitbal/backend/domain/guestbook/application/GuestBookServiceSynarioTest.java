@@ -60,7 +60,6 @@ class GuestBookServiceSynarioTest {
     void saveGuestBook() {
         //given
         User mockUser = mock(User.class);
-        GuestBookWriteRequestDto mockDto = mock(GuestBookWriteRequestDto.class);
 
         GuestBook build = GuestBook.builder()
             .user(mockUser)
@@ -70,7 +69,7 @@ class GuestBookServiceSynarioTest {
         when(guestBookRepository.save(any(GuestBook.class))).thenReturn(build);
 
         //then
-        guestBookService.saveGuestBook(mockUser, mockDto);
+        guestBookService.saveGuestBook(mockUser, "content");
 
         //verify
         verify(guestBookRepository, times(1)).save(any(GuestBook.class));

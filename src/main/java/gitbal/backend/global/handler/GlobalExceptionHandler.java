@@ -14,6 +14,7 @@ import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.exception.NotLoginedException;
 import gitbal.backend.global.exception.NotUserPermissionException;
 import gitbal.backend.global.exception.PageOutOfRangeException;
+import gitbal.backend.global.exception.RegionRankPageUserInfoByRegionException;
 import gitbal.backend.global.exception.SchoolRankPageUserInfoBySchoolException;
 import gitbal.backend.global.exception.UnivCertCodeException;
 import gitbal.backend.global.exception.UnivCertStartException;
@@ -140,6 +141,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadgeException.class)
     public ResponseEntity<BadgeResponseDTO> BadgeException(BadgeException e) {
         return ResponseEntity.status(e.getStatusCode()).body(badgeService.getBadgeFailureResponse());
+    }
+
+    @ExceptionHandler(RegionRankPageUserInfoByRegionException.class)
+    public ResponseEntity<String> handleRegionRankPageUserInfoByRegionException(RegionRankPageUserInfoByRegionException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
     }
 
 }

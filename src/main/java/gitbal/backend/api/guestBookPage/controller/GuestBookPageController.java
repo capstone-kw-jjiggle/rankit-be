@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,8 +43,8 @@ public class GuestBookPageController {
         @ApiResponse(responseCode = "200", description = "방명록 목록 전달 성공"),
         @ApiResponse(responseCode = "500", description = "방명록 목록을 서버 측에서 오류가 발생하여 전달하지 못했습니다.")
     })
-    public ResponseEntity<String> writeGuestBook(@RequestBody GuestBookWriteRequestDto dto) {
-        guestBookPageFacade.saveDashBoard(dto);
+    public ResponseEntity<String> writeGuestBook(Authentication authentication ,@RequestBody String content) {
+        guestBookPageFacade.saveDashBoard(authentication, content);
         return ResponseEntity.ok("방명록 등록에 성공하였습니다.");
     }
 
