@@ -191,15 +191,15 @@ public class UserService {
         for (User user : users) {
             Long score = user.getScore();
 
-            if (score <= Grade.YELLOW.getUppderBound()) {
+            if (score <= Grade.YELLOW.getUpperBound()) {
                 user.setGrade(Grade.YELLOW);
-            } else if (score <= Grade.GREEN.getUppderBound()) {
+            } else if (score <= Grade.GREEN.getUpperBound()) {
                 user.setGrade(Grade.GREEN);
-            } else if (score <= Grade.BLUE.getUppderBound()) {
+            } else if (score <= Grade.BLUE.getUpperBound()) {
                 user.setGrade(Grade.BLUE);
-            } else if (score <= Grade.RED.getUppderBound()) {
+            } else if (score <= Grade.RED.getUpperBound()) {
                 user.setGrade(Grade.RED);
-            } else if (score <= Grade.GREY.getUppderBound()) {
+            } else if (score <= Grade.GREY.getUpperBound()) {
                 user.setGrade(Grade.GREY);
             } else {
                 user.setGrade(Grade.PURPLE);
@@ -222,6 +222,7 @@ public class UserService {
     public int calculateExp(User findUser) {
         Grade nextGrade = getNextGrade(findUser);
         Grade nowUserGrade = findUser.getGrade();
+        if(nowUserGrade == Grade.PURPLE) return 100;
 
         double nextGradeScore = nextGrade.getUnderBound();
         double nowGradeUnderBound = nowUserGrade.getUnderBound();

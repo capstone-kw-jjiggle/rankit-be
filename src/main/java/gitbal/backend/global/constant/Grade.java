@@ -1,20 +1,23 @@
 package gitbal.backend.global.constant;
 
+import lombok.Getter;
+
+@Getter
 public enum Grade {
     YELLOW(0,20000),
     GREEN(20001, 40000),
     BLUE(40001, 60000),
     RED(60001, 80000),
     GREY(80001, 100000),
-    PURPLE(100001, 120000);
+    PURPLE(100001, Long.MAX_VALUE);
 
-    Grade(int underBound, int uppperBound) {
+    Grade(long underBound, long upperBound) {
         this.underBound = underBound;
-        this.uppperBound = uppperBound;
+        this.upperBound = upperBound;
     }
 
-    private final int underBound;
-    private final int uppperBound;
+    private final long underBound;
+    private final long upperBound;
 
     public static Grade nextGrade(Grade grade) {
         switch (grade) {
@@ -37,11 +40,5 @@ public enum Grade {
         }
     }
 
-    public int getUnderBound() {
-        return underBound;
-    }
 
-    public int getUppderBound() {
-        return this.uppperBound;
-    }
 }
