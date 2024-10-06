@@ -8,8 +8,7 @@ import lombok.Getter;
 public class GitbalApiDto {
 
     private Long score;
-    private Boolean recentCommit;
-    public static GitbalApiDto of(Long score, Boolean recentCommit) {
-        return new GitbalApiDto(score, recentCommit);
+    public static GitbalApiDto of(Long score) {
+        return new GitbalApiDto(score);
     }
 }

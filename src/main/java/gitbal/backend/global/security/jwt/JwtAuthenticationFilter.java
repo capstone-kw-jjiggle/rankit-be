@@ -28,16 +28,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
 
-        String token = extractAccessToken(request);
+        String accessToken = extractAccessToken(request);
 
         try {
-            if (isValidAccessToken(token)) {
-                Authentication authentication = registerAuthenticationToContext(token);
+            if (isValidAccessToken(accessToken)) {
+                Authentication authentication = registerAuthenticationToContext(accessToken);
                 log.info("[doFilterInternal]" + authentication.getName() + "의 인증정보 저장");
                 response.setStatus(200);
-            } else if (isValidRefreshToken(token)) {
+            } else if (isValidRefreshToken(accessToken)) {
                 log.info("[doFilterInternal] 다시 로그인을 해야합니다! 리프레시 토큰을 확인한 후 재발급합니다.");
-                String regenerateToken = tokenProvider.regenerateToken(token);
+                String regenerateToken = tokenProvider.regenerateToken(accessToken);
                 Authentication authentication = registerAuthenticationToContext(regenerateToken);
                 response.setHeader(AUTHORIZATION_HEADER, regenerateToken);
                 response.setStatus(200);

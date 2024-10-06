@@ -4,12 +4,14 @@ import gitbal.backend.api.auth.dto.JoinRequestDto;
 import gitbal.backend.api.auth.service.AuthService;
 import gitbal.backend.api.auth.dto.UserInfoDto;
 import gitbal.backend.api.auth.service.UserAuthInfoService;
+import gitbal.backend.global.exception.NotLoginedException;
 import gitbal.backend.global.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -36,6 +38,9 @@ public class AuthController {
     })
     public ResponseEntity<String> login(Authentication authentication,
         @RequestBody JoinRequestDto joinRequestDto, HttpServletResponse response) {
+
+        if(Objects.isNull(authentication))
+            throw new NotLoginedException();
 
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
 

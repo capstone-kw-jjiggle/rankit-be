@@ -10,6 +10,7 @@ import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.school.SchoolRepository;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
+import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.exception.NotLoginedException;
 import gitbal.backend.global.exception.PageOutOfRangeException;
@@ -19,6 +20,7 @@ import gitbal.backend.global.security.CustomUserDetails;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,9 +31,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 public class SchoolRankService {
 
-    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = 14;
     private final SchoolRepository schoolRepository;
     private final UserRepository userRepository;
 
@@ -45,9 +48,12 @@ public class SchoolRankService {
     public SchoolListPageResponseDto<SchoolListDto> getSchoolList(Integer page,
         String searchedSchoolName) {
         if (!Objects.isNull(searchedSchoolName)) {
+            log.info("searchedSchoolName : {}", searchedSchoolName);
             return getSearchedSchoolList(searchedSchoolName, page);
         }
         try {
+            log.info("searchSchooolName : {}", searchedSchoolName);
+
             Pageable pageable = initpageable(page, "score");
             Page<School> schoolPage = schoolRepository.findAll(pageable);
 
@@ -62,7 +68,9 @@ public class SchoolRankService {
                 .total(schoolPage.getTotalElements())
                 .build();
             // 페이지 범위 넘겼을때
+            log.info("schoolList.getTotalPages() : {}", schoolList.getTotalPages());
             if (schoolList.getTotalPages() < page) {
+
                 throw new PageOutOfRangeException();
             }
             return schoolList;
@@ -103,19 +111,29 @@ public class SchoolRankService {
     @Transactional(readOnly = true)
     public UserPageListBySchoolResponseDto getUserListBySchoolName(int page, String schoolName) {
         try {
+            if(!isPresentSchoolName(schoolName))
+                throw new NotFoundSchoolException();
+
             Pageable pageable = initpageable(page, "score");
             Page<User> userBySchoolName = userRepository.findUserBySchool_SchoolName(schoolName,
                 pageable);
-            if (userBySchoolName.getTotalPages() < page)
+            log.info("userBySchoolName : {}", userBySchoolName.getTotalPages());
+            if (userBySchoolName.getTotalPages()>0 && userBySchoolName.getTotalPages() < page)
                 throw new PageOutOfRangeException();
+
             List<UserInfoBySchool> userInfoBySchools = convertPageByUserInfoBySchool(
                 userBySchoolName);
             return buildUserPageListBySchoolResponseDto(page, userInfoBySchools, userBySchoolName);
         }catch (Exception e){
+            log.info(e.getMessage());
             if(Objects.isNull(e.getMessage()))
                 throw new SchoolRankPageUserInfoBySchoolException("학교 랭킹 페이지 유저 정보 조회 중 오류가 발생했습니다.");
             throw new SchoolRankPageUserInfoBySchoolException(e.getMessage());
         }
+    }
+
+    private boolean isPresentSchoolName(String schoolName) {
+        return schoolRepository.findBySchoolName(schoolName).isPresent();
     }
 
     private List<UserInfoBySchool> convertPageByUserInfoBySchool(Page<User> userBySchoolName) {
@@ -158,18 +176,29 @@ public class SchoolRankService {
                 searchedSchoolName,
                 PageRequest.of(page - 1, PAGE_SIZE, Sort.by("score").descending()));
             if (isSearchedSchoolHasNothing(schoolPage)) {
+                if(page >1){
+                    throw new PageOutOfRangeException();
+                    }
                 return SchoolListPageResponseDto.emptyList();
             }
-            validatePage(page, schoolPage.getTotalElements());
+            if (schoolPage.getTotalPages() < page) {
+                throw new PageOutOfRangeException();
+            }
+
             List<SchoolListDto> searchedSchoolList = schoolPage.stream()
                 .map(this::convertToDto)
                 .toList();
-
-            return SchoolListPageResponseDto.<SchoolListDto>withALl()
+            log.info("searchedSchoolList : {}", searchedSchoolList);
+            SchoolListPageResponseDto<SchoolListDto> schoolList = SchoolListPageResponseDto.<SchoolListDto>withALl()
                 .schoolList(searchedSchoolList)
                 .page(page)
                 .total(schoolPage.getTotalElements())
                 .build();
+
+            log.info("schoolList.getTotalPages() : {}", schoolList.getTotalPages());
+
+
+            return schoolList;
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             throw new WrongPageNumberException(page);

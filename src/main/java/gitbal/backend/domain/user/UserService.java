@@ -10,6 +10,8 @@ import gitbal.backend.global.constant.Grade;
 import gitbal.backend.global.exception.NotFoundRegionException;
 import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.exception.NotFoundUserException;
+import gitbal.backend.global.exception.UserHasNoRegionException;
+import gitbal.backend.global.exception.UserHasNoSchoolException;
 import gitbal.backend.global.security.GithubOAuth2UserInfo;
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +34,7 @@ public class UserService {
 
 
 
+
     public Long calculateUserScore(String nickname) {
         try {
             ResponseEntity<String> response = userInfoService.requestUserInfo(nickname);
@@ -45,23 +48,6 @@ public class UserService {
             e.printStackTrace();
             throw new NotFoundUserException();
         }
-    }
-
-    public boolean checkUserRecentCommit(String username) {
-        try {
-            ResponseEntity<String> response = userInfoService.requestUserRecentCommit(username);
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode root = objectMapper.readTree(response.getBody());
-            JsonNode dataNode = root.get("data").get("user");
-            return checkOneDayCommit(dataNode);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e); // TODO : 추후 exception 처리하기
-        }
-    }
-
-
-    private boolean checkOneDayCommit(JsonNode dataNode) {
-        return dataNode.get("yesterdayCommits").get("totalCommitContributions").asLong() > 0;
     }
 
     private Long delegateToGitbalScore(JsonNode dataNode) {
@@ -93,13 +79,24 @@ public class UserService {
 
     public School findSchoolByUserName(String username) {
         User findUser = userRepository.findByNickname(username)
-            .orElseThrow(NotFoundSchoolException::new);
+            .orElseThrow(NotFoundUserException::new);
+
+        if(Objects.isNull(findUser.getSchool())){
+            throw new UserHasNoSchoolException();
+        }
+
         return findUser.getSchool();
     }
 
     public Region findRegionByUserName(String username) {
         User findUser = userRepository.findByNickname(username)
-            .orElseThrow(NotFoundRegionException::new);
+            .orElseThrow(NotFoundUserException::new);
+
+        if(Objects.isNull(findUser.getRegion())){
+            throw new UserHasNoRegionException();
+        }
+
+
         return findUser.getRegion();
     }
 
@@ -194,15 +191,15 @@ public class UserService {
         for (User user : users) {
             Long score = user.getScore();
 
-            if (score <= 60000) {
+            if (score <= Grade.YELLOW.getUppderBound()) {
                 user.setGrade(Grade.YELLOW);
-            } else if (score <= 70000) {
+            } else if (score <= Grade.GREEN.getUppderBound()) {
                 user.setGrade(Grade.GREEN);
-            } else if (score <= 80000) {
+            } else if (score <= Grade.BLUE.getUppderBound()) {
                 user.setGrade(Grade.BLUE);
-            } else if (score <= 90000) {
+            } else if (score <= Grade.RED.getUppderBound()) {
                 user.setGrade(Grade.RED);
-            } else if (score <= 96000) {
+            } else if (score <= Grade.GREY.getUppderBound()) {
                 user.setGrade(Grade.GREY);
             } else {
                 user.setGrade(Grade.PURPLE);
@@ -219,25 +216,25 @@ public class UserService {
     public Grade getNextGrade(User user) {
         Grade grade = user.getGrade();
 
-        switch (grade) {
-            case YELLOW -> {
-                return Grade.GREEN;
-            }
-            case GREEN -> {
-                return Grade.BLUE;
-            }
-            case BLUE -> {
-                return Grade.RED;
-            }
-            case RED -> {
-                return Grade.GREY;
-            }
-            case GREY, PURPLE -> {
-                return Grade.PURPLE;
-            }
-            default -> throw new IllegalArgumentException("알 수 없는 등급입니다: " + grade);
-        }
+        return Grade.nextGrade(grade);
     }
+
+    public int calculateExp(User findUser) {
+        Grade nextGrade = getNextGrade(findUser);
+        Grade nowUserGrade = findUser.getGrade();
+
+        double nextGradeScore = nextGrade.getUnderBound();
+        double nowGradeUnderBound = nowUserGrade.getUnderBound();
+        double relativeScore = findUser.getScore() - nowGradeUnderBound;
+
+        double v =  relativeScore / (nextGradeScore - nowGradeUnderBound) * 100.0;
+        long round = Math.round(v);
+        log.info("round : {}", round);
+        return Math.toIntExact(round);
+    }
+
+
+
 
 
 }
