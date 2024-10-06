@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/userRank")
 @RequiredArgsConstructor
-@Tag(name = "유저 순위 API", description = "유저 페이지의 rank탭 관련 api 입니다.")
+@Tag(name = "유저 순위 API", description = "유저 페이지의 랭킹 관련 api 입니다.")
 public class UserRankContorller {
 
     private final UserRankService userRankService;
@@ -45,6 +45,7 @@ public class UserRankContorller {
     @Operation(summary = "유저의 현재 점수", description = "유저의 현재 점수를 가져오는 api 입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "유저 현재 점수 요청을 성공했습니다."),
+        @ApiResponse(responseCode = "400", description = "유저 정보를 가져오는데 실패했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저 현재 점수 요청을 실패했습니다.")
     })
     public ResponseEntity<UserRankingResponseDto> userRanking(@RequestParam String username){
@@ -55,6 +56,7 @@ public class UserRankContorller {
     @Operation(summary = "유저랭크 학교 탭 부분", description = "유저 랭크 페이지의 학교 탭의 정보를 위한 api")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "유저 학교 상황 정보 요청을 성공했습니다."),
+        @ApiResponse(responseCode = "400", description = "유저 정보를 가져오는데 실패했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저 학교 상황 정보 요청을 실패했습니다.")
     })
     public ResponseEntity<SchoolRankResponseDto> schoolTab(@RequestParam String username){
@@ -65,6 +67,7 @@ public class UserRankContorller {
     @Operation(summary = "유저랭크 지역 탭 부분", description = "유저 랭크 페이지의 지역 탭의 정보를 위한 api")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "유저 지역 탭 정보 요청을 성공했습니다."),
+        @ApiResponse(responseCode = "400", description = "유저 정보를 가져오는데 실패했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저 지역 탭 정보 요청을 실패했습니다.")
     })
     public ResponseEntity<RegionRankResponseDto> regionTab(@RequestParam String username){
@@ -75,6 +78,7 @@ public class UserRankContorller {
     @Operation(summary = "유저랭크 사용 언어 탭 부분", description = "유저 랭크 페이지의 사용 언어 탭의 정보를 위한 api")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "유저 사용 언어 탭 정보 요청을 성공했습니다."),
+        @ApiResponse(responseCode = "400", description = "유저 정보를 가져오는데 실패했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저 사용 언어 탭 정보 요청을 실패했습니다.")
     })
     public ResponseEntity<UserRankMajorLanguageResponseDto> majorLanguageTab(@RequestParam String username){
