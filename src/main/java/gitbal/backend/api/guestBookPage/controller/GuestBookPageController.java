@@ -38,9 +38,10 @@ public class GuestBookPageController {
 
 
     @PostMapping("/write")
-    @Operation(summary = "유저가 방명록을 작성할 때", description = "방명록을 작성하는 api 입니다.")
+    @Operation(summary = "유저가 방명록을 작성할 때 (헤더에 토큰 필요 Authorization: Bearer {토큰 값 넣기})", description = "방명록을 작성하는 api 입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "방명록 목록 전달 성공"),
+        @ApiResponse(responseCode = "401", description = "인증된 유저가 없는 상태로 요청하셨습니다. github 로그인을 진행해주세요."),
         @ApiResponse(responseCode = "500", description = "방명록 목록을 서버 측에서 오류가 발생하여 전달하지 못했습니다.")
     })
     public ResponseEntity<String> writeGuestBook(Authentication authentication ,@RequestBody String content) {

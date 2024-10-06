@@ -23,7 +23,7 @@ public class BadgeController {
   private final BadgeService badgeService;
 
   @GetMapping("/get")
-  @Operation(summary = "뱃지 생성을 위한 유저 정보 조회 (구현 완료)", description = "뱃지 생성을 위한 유저 정보 조회 api입니다.")
+  @Operation(summary = "뱃지 생성을 위한 유저 정보 조회(새로 업데이트 된 api)", description = "뱃지 생성을 위한 유저 정보 조회 api입니다.")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "유저 정보를 가져오는데 성공했습니다."),
       @ApiResponse(responseCode = "400", description = "유저 정보를 가져오는데 실패했습니다.")

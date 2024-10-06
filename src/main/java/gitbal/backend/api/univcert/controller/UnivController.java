@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/univ")
 @RequiredArgsConstructor
-@Tag(name = "대학인증 API(구현 완료)", description = "대학 인증 관련 api입니다.")
+@Tag(name = "대학인증 API", description = "대학 인증 관련 api입니다.")
 public class UnivController {
 
 
@@ -30,7 +30,7 @@ public class UnivController {
 
 
   @PostMapping("/certificate")
-  @Operation(summary = "대학 인증 메일을 요청 (구현 완료)", description = "대학 인증을 위해 요청하는 곳입니다.")
+  @Operation(summary = "대학 인증 메일을 요청", description = "대학 인증을 위해 요청하는 곳입니다.")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "대학 인증 요청을 성공했습니다."),
       @ApiResponse(responseCode = "400", description = "대학 인증 요청을 실패했습니다.")
@@ -41,7 +41,7 @@ public class UnivController {
 
 
   @PostMapping("/validate")
-  @Operation(summary = "메일로 받은 인증번호 검증 (구현완료)", description = "메일로 받은 인증번호를 검증하는 곳입니다.")
+  @Operation(summary = "메일로 받은 인증번호 검증", description = "메일로 받은 인증번호를 검증하는 곳입니다.")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "인증번호 검증을 성공했습니다."),
       @ApiResponse(responseCode = "400", description = "인증번호 검증을 실패했습니다.")
