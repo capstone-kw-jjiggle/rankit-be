@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 public class GuestBookPageFacade{
 
     private final GuestBookServiceImpl guestBookService;
-    private final UserService userService;
     private final UserRepository userRepository;
 
 
@@ -29,7 +28,7 @@ public class GuestBookPageFacade{
 
     @Transactional
     public void saveDashBoard(Authentication authentication, String content) {
-        User user = userRepository.findByNickname(authentication.getName()).orElseThrow(()-> new NotFoundUserException("해당하는 user가 존재하지 않습니다."));
+        User user = userRepository.findByNickname(authentication.getName()).orElseThrow(NotFoundUserException::new);
         guestBookService.saveGuestBook(user, content);
     }
 }

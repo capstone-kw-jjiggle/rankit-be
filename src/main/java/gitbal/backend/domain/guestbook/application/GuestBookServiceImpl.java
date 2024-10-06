@@ -2,13 +2,11 @@ package gitbal.backend.domain.guestbook.application;
 
 
 import gitbal.backend.api.guestBookPage.dto.GuestBookResponseDto;
-import gitbal.backend.api.guestBookPage.dto.GuestBookWriteRequestDto;
 import gitbal.backend.domain.guestbook.GuestBook;
 import gitbal.backend.domain.guestbook.infra.repository.GuestBookRepository;
 import gitbal.backend.domain.user.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service

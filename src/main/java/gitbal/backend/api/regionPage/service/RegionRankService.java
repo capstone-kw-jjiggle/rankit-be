@@ -96,7 +96,7 @@ public class RegionRankService {
     @Transactional(readOnly = true)
     public UserPageListByRegionResponseDto getUserListByRegionName(int page, String regionName) {
         try {
-            Region region = regionRepository.findByRegionName(regionName).orElseThrow(() -> new Exception("올바른 지역명을 입력해주세요."));
+            Region region = regionRepository.findByRegionName(regionName).orElseThrow(NotFoundRegionException::new);
             Pageable pageable = initpageable(page, "score");
             Page<User> userByRegionName = userRepository.findUserByRegion_RegionName(regionName,
                 pageable);
