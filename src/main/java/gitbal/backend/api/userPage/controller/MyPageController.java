@@ -24,13 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/my")
 @RequiredArgsConstructor
-@Tag(name = "마이페이지 API(일부 구현)", description = "마이페이지에 필요한 정보를 위한 api입니다.")
+@Tag(name = "마이페이지 API", description = "마이페이지에 필요한 정보를 위한 api입니다.")
 public class MyPageController {
 
     private final MyPageService myPageService;
 
     @PutMapping("/config/school")
-    @Operation(summary = "학교 수정 (구현 완료)", description = "학교 수정을 위한 api입니다.")
+    @Operation(summary = "학교 수정(헤더에 토큰 필요 Authorization: Bearer {토큰 값 넣기})", description = "학교 수정을 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "학교 수정에 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "학교 수정에 실패했습니다.")
@@ -41,7 +41,7 @@ public class MyPageController {
     }
 
     @PutMapping("/config/region")
-    @Operation(summary = "지역 수정 (예외 처리 필요)", description = "지역 수정을 위한 api입니다.")
+    @Operation(summary = "지역 수정(헤더에 토큰 필요 Authorization: Bearer {토큰 값 넣기})", description = "지역 수정을 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "지역 수정에 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "지역 수정에 실패했습니다.")
@@ -52,7 +52,7 @@ public class MyPageController {
     }
 
     @GetMapping("/suggest/freind")
-    @Operation(summary = "친구 추천 (8.18 개발 완료)", description = "친구 추천을 위한 api입니다.")
+    @Operation(summary = "친구 추천(헤더에 토큰 필요 Authorization: Bearer {토큰 값 넣기})", description = "친구 추천을 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "친구 추천 리스트를 가져오기 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "친구 추천 리스트를 가져오기 실패했습니다.")
@@ -62,7 +62,7 @@ public class MyPageController {
     }
 
     @GetMapping("/get/introduction")
-    @Operation(summary = "user 소개글 가져오기 (8.22 개발 완료)", description = "user 소개글을 가져오기 위한 api입니다.")
+    @Operation(summary = "user 소개글 가져오기", description = "user 소개글을 가져오기 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "user 소개글을 가져오기 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "user 소개글을 가져오기 실패했습니다.")
@@ -72,9 +72,10 @@ public class MyPageController {
     }
 
     @PutMapping("/update/introduction")
-    @Operation(summary = "user 소개글 수정하기 (8.22 개발 완료)", description = "user 소개글을 수정하기 위한 api입니다.")
+    @Operation(summary = "user 소개글 수정하기(헤더에 토큰 필요 Authorization: Bearer {토큰 값 넣기})", description = "user 소개글을 수정하기 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "user 소개글을 수정하기 성공했습니다."),
+        @ApiResponse(responseCode = "401", description = "인증된 유저가 없는 상태로 요청하셨습니다. github 로그인을 진행해주세요."),
         @ApiResponse(responseCode = "5xx", description = "user 소개글을 수정하기 실패했습니다.")
     })
     public ResponseEntity<String> updateIntroduction(Authentication authentication, @RequestBody IntroductionupdateRequestDto introductionpdateRequestDto){
