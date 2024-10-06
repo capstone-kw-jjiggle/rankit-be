@@ -63,18 +63,8 @@ public class MyPageService {
 
   public void updateIntroduction(Authentication authentication, IntroductionupdateRequestDto dto){
     User loginUser = checkAuthAndGetUser(authentication);
-    User willUpdateUser = userService.findByUserName(dto.getUserName());
-
-    if (checkValidUSer(loginUser, willUpdateUser)){
-      Introduction introduction = loginUser.getIntroduction();
-      introductionRepository.updateIntroduction(introduction, dto);
-    } else {
-      throw new NotUserPermissionException();
-    }
-  }
-
-  private boolean checkValidUSer(User loginUser, User willUpdateUser){
-    return Objects.equals(loginUser.getId(), willUpdateUser.getId());
+    Introduction introduction = loginUser.getIntroduction();
+    introductionRepository.updateIntroduction(introduction, dto);
   }
 
   private List<User> getResultFriends(User user){
