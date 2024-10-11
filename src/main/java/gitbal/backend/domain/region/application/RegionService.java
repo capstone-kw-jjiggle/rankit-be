@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 public class RegionService{
 
   private final RegionRepository regionRepository;
-  private final UserRepository userRepository;
   private final ScheduleUpdater<Region> regionScheduleUpdater;
 
 
@@ -33,25 +32,9 @@ public class RegionService{
     regionJoinUpdater.process(findUser);
   }
 
-  public void insertTopContributorInfo() {
-    List<User> users = userRepository.findAll();
-    for (Region region : regionRepository.findAll()) {
-      for (User user : users) {
-        if (user.getRegion() != null && user.getRegion().getRegionId() == region.getRegionId()) {
-          region.updateContributerInfo(user.getNickname(), user.getScore());
-          regionRepository.save(region);
-        }
-      }
-    }
-  }
-
-
-
-
   public void updateByUserScore(Region region, String username, Long oldScore, Long newScore) {
     regionScheduleUpdater.update(region, username, oldScore, newScore);
   }
-
 
   public int findRegionRanking(String regionName) {
     List<Region> regionList = regionRepository.findAll(

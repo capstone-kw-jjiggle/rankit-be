@@ -117,7 +117,6 @@ public class AuthService {
     private void updateRank() {
         userService.updateUserRank();
         userService.updateUserGrade();
-        schoolService.updateSchoolGrade();
         schoolService.updateSchoolRank();
     }
 }
