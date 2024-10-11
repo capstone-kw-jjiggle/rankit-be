@@ -56,7 +56,7 @@ public class MockDataGenerator implements CommandLineRunner {
   public void run(String... args) throws Exception {
     log.info("Start runner to create mock data");
 
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 200; i++) {
       String randomNickname = "User" + i; // Example nickname
 
 
@@ -134,9 +134,7 @@ public class MockDataGenerator implements CommandLineRunner {
     createUserWithNickname(lee);
     userService.updateUserRank(); //user 순위 업데이트
     userService.updateUserGrade(); // user 등급 업데이트
-    insertRegionSchoolTopContributorInfo();
     schoolService.updateSchoolRank(); // school 순위 업데이트
-    schoolService.updateSchoolGrade(); // school 등급 업데이트
     log.info("Mock data creation completed!!!!!!");
   }
 
@@ -213,11 +211,6 @@ public class MockDataGenerator implements CommandLineRunner {
     regionService.joinNewUserScore(findUser);
   }
 
-
-  private void insertRegionSchoolTopContributorInfo() {
-    regionService.insertTopContributorInfo();
-    schoolService.insertSchoolTopContributorInfo();
-  }
 
 
 }
