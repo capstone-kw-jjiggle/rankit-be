@@ -17,6 +17,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -32,7 +33,11 @@ import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
-@Table(name = "user")
+@Table(name = "user",
+indexes ={
+    @Index(name = "user_name_index", columnList = "nickname")
+}
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
 
