@@ -1,25 +1,19 @@
 package gitbal.backend.global.mock;
 
 
-import gitbal.backend.api.guestBookPage.dto.GuestBookWriteRequestDto;
 import gitbal.backend.api.guestBookPage.facade.GuestBookPageFacade;
 import gitbal.backend.domain.guestbook.application.GuestBookService;
-import gitbal.backend.domain.introduction.Introduction;
 import gitbal.backend.domain.introduction.application.repository.IntroductionRepository;
 import gitbal.backend.domain.region.application.repository.RegionRepository;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.global.constant.Grade;
-import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.user.User;
-import gitbal.backend.domain.majorlanguage.application.repository.MajorLanguageRepository;
 import gitbal.backend.domain.school.SchoolRepository;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.school.SchoolService;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +30,6 @@ public class MockDataGenerator implements CommandLineRunner {
   // Repositories and services declarations are omitted for brevity
   private final SchoolRepository schoolRepository;
   private final RegionRepository regionRepository;
-  private final MajorLanguageRepository majorLanguageRepository;
   private final GuestBookService guestBookService;
   private final GuestBookPageFacade guestBookPageFacade;
   private final UserRepository userRepository;
@@ -59,11 +52,12 @@ public class MockDataGenerator implements CommandLineRunner {
     for (int i = 0; i < 200; i++) {
       String randomNickname = "User" + i; // Example nickname
 
-
+      System.out.println("helloworld");
       if(userRepository.findByNickname(randomNickname).isPresent()) {
         log.info("continue");
         continue;
       }
+      System.out.println("helloworld2");
       // Fetch random school and region
       School randomSchool = schoolRepository.findById((long) (random.nextInt(TOTAL_SCHOOLS) + 1))
           .orElse(null);
@@ -81,31 +75,28 @@ public class MockDataGenerator implements CommandLineRunner {
 
 
       // Create a list of MajorLanguage entities for this user
-      MajorLanguageJpaEntity majorLanguage = createRandomMajorLanguagesForUser(newUser);
-      MajorLanguageJpaEntity majorLanguage2 = createRandomMajorLanguagesForUser(fixSchoolUser);
-      MajorLanguageJpaEntity majorLanguage3 = createRandomMajorLanguagesForUser(fixRegionUser);
+      String randomMajorLanguagesForUser = createRandomMajorLanguagesForUser(newUser);
+      String randomMajorLanguagesForUser1 = createRandomMajorLanguagesForUser(fixSchoolUser);
+      String randomMajorLanguagesForUser2 = createRandomMajorLanguagesForUser(fixRegionUser);
 
-
-      majorLanguageRepository.save(majorLanguage);
-      majorLanguageRepository.save(majorLanguage2);
-      majorLanguageRepository.save(majorLanguage3);
 
       newUser =  createIntroductionForUser(newUser);
       fixSchoolUser = createIntroductionForUser(fixSchoolUser);
       fixRegionUser = createIntroductionForUser(fixRegionUser);
+
       userRepository.save(newUser);
       userRepository.save(fixSchoolUser);
       userRepository.save(fixRegionUser);
 
 
       // Update user with the new relations
-      newUser.joinUpdateUser(randomSchool, randomRegion, majorLanguage,
+      newUser.joinUpdateUser(randomSchool, randomRegion, randomMajorLanguagesForUser,
           newUser.getNickname(), newUser.getScore(), newUser.getProfile_img(), 0, newUser.getIntroduction());
 
-      fixSchoolUser.joinUpdateUser(fixSchool, randomRegion, majorLanguage,
+      fixSchoolUser.joinUpdateUser(fixSchool, randomRegion, randomMajorLanguagesForUser1,
           fixSchoolUser.getNickname(), fixSchoolUser.getScore(), fixSchoolUser.getProfile_img(), 0, fixSchoolUser.getIntroduction());
 
-      fixRegionUser.joinUpdateUser(fixSchool, randomRegion, majorLanguage,
+      fixRegionUser.joinUpdateUser(fixSchool, randomRegion, randomMajorLanguagesForUser2,
           fixRegionUser.getNickname(), fixRegionUser.getScore(), fixRegionUser.getProfile_img(), 0, fixRegionUser.getIntroduction());
       
       User saveUser = userRepository.save(newUser);
@@ -172,30 +163,22 @@ public class MockDataGenerator implements CommandLineRunner {
         .grade(Grade.PURPLE)
         .build();
 
+    String randomMajorLanguagesForUser = createRandomMajorLanguagesForUser(leesj000603);
 
-
-    MajorLanguageJpaEntity majorLanguage = createRandomMajorLanguagesForUser(leesj000603);
-    majorLanguageRepository.save(majorLanguage);
-
-    leesj000603.joinUpdateUser(school, region, majorLanguage,
+    leesj000603.joinUpdateUser(school, region, randomMajorLanguagesForUser,
         leesj000603.getNickname(), leesj000603.getScore(), leesj000603.getProfile_img(), 0, introductionRepository.createIntroductionAndReturn());
     userRepository.save(leesj000603);
 
   }
 
-  private MajorLanguageJpaEntity createRandomMajorLanguagesForUser(User user) {
+  private String createRandomMajorLanguagesForUser(User user) {
     // Generate a random number of languages for each user
     int languagesCount = 1; // Random number of languages between 1 and 5
     int i = random.nextInt(5);
     String[] languages = {"Java", "C#", "JavaScript", "Python", "C"};
     String randomLanguage = languages[i];
-    Long randomLanguageCount = (long) random.nextInt(100); // Example count
 
-    return MajorLanguageJpaEntity.builder()
-        .majorLanguage(randomLanguage)
-        .languageCount(randomLanguageCount)
-        .user(user)
-        .build();
+    return randomLanguage;
   }
 
   private User createIntroductionForUser(User user) {

@@ -18,7 +18,7 @@ public class RandomFriendPicker {
   public List<User> getFriendList(User user) {
     List <User> allUsers = userService.getAllUserExceptCurrentUser(user);
     User highestGradeUser = getRandomHigestGradeUser(allUsers);
-    User sameLangUser = getRandomSameLanguageUser(allUsers, user.getMajorLanguage().getMajorLanguage());
+    User sameLangUser = getRandomSameLanguageUser(allUsers, user.getMajorLanguage());
     User nextGradeUser = getRandomNextLanguageUser(allUsers, userService.getNextGrade(user));
     User nearScoreUser = getRandomNearScoreUser(allUsers, user.getScore());
 
@@ -53,7 +53,7 @@ public class RandomFriendPicker {
 
   private User getRandomSameLanguageUser(List<User> allUsers, String userLang){
     List<User> sameLangUsers = allUsers.stream()
-        .filter(u -> u.getMajorLanguage().getMajorLanguage().equals(userLang))
+        .filter(u -> u.getMajorLanguage().equals(userLang))
         .toList();
     return checkNullAndReturn(sameLangUsers, allUsers);
   }

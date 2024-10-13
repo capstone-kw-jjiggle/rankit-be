@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
+    @Query("select u from User u where u.nickname = :nickname")
     Optional<User> findByNickname(String nickname);
 
     @Query("select u.profile_img from User u where u.nickname = :nickname")

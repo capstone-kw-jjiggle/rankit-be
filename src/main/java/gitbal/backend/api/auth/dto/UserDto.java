@@ -2,23 +2,21 @@ package gitbal.backend.api.auth.dto;
 
 
 import gitbal.backend.domain.introduction.Introduction;
-import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.user.User;
-import java.util.List;
 
 public record UserDto(
     School school,
     Region region,
-    MajorLanguageJpaEntity majorLanguage,
+    String majorLanguage,
     String nickname,
     Long score,
     String profile_img,
 
     Introduction introduction) {
 
-    public static UserDto of(School school, Region region, MajorLanguageJpaEntity majorLanguage, String nickname, Long score,
+    public static UserDto of(School school, Region region, String majorLanguage, String nickname, Long score,
         String profile_img, Introduction introduction) {
         return new UserDto(school, region, majorLanguage, nickname, score, profile_img, introduction);
     }

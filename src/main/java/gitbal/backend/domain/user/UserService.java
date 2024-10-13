@@ -3,12 +3,9 @@ package gitbal.backend.domain.user;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.global.constant.Grade;
-import gitbal.backend.global.exception.NotFoundRegionException;
-import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.exception.UserHasNoRegionException;
 import gitbal.backend.global.exception.UserHasNoSchoolException;
@@ -137,7 +134,7 @@ public class UserService {
     }
 
     public List<String> findAllUserNames() {
-        return userRepository.findAll().stream().map(u -> u.getNickname()).toList();
+        return userRepository.findAll().stream().map(User::getNickname).toList();
     }
 
     public void updateUserScore(User findUser, Long newScore) {
@@ -154,7 +151,7 @@ public class UserService {
         }
     }
 
-    public MajorLanguageJpaEntity findMajorLanguageByUsername(String username) {
+    public String findMajorLanguageByUsername(String username) {
         User findUser = userRepository.findByNickname(username)
             .orElseThrow(NotFoundUserException::new);
         return findUser.getMajorLanguage();
