@@ -83,7 +83,7 @@ public class MyPageService {
     return FriendSuggestDto.of(
         user.getNickname(),
         user.getGrade(),
-        user.getMajorLanguage().getMajorLanguage(),
+        user.getMajorLanguage(),
         user.getSchool().getSchoolName(),
         user.getRegion().getRegionName(),
         user.getProfile_img()

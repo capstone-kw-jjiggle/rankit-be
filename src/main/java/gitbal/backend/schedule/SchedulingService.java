@@ -1,15 +1,15 @@
 package gitbal.backend.schedule;
 
-import gitbal.backend.schedule.schoolupdate.schoolGrade.SchoolGradeUpdater;
-import gitbal.backend.schedule.schoolupdate.schoolPrevDayScore.SchoolPrevDayScoreUpdater;
 import gitbal.backend.schedule.schoolupdate.schoolRank.SchoolRankUpdater;
 import gitbal.backend.schedule.userupdate.majorLanguage.UserLanguagesUpdater;
 import gitbal.backend.schedule.userupdate.score.UserScoreUpdater;
 import gitbal.backend.schedule.userupdate.userGrade.UserGradeUpdater;
 import gitbal.backend.schedule.userupdate.userRank.UserRankUpdater;
+import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -22,46 +22,30 @@ public class SchedulingService {
     private final UserLanguagesUpdater userLanguagesUpdater;
     private final SchoolRankUpdater schoolRankUpdater;
     private final UserRankUpdater userRankUpdater;
-    private final SchoolGradeUpdater schoolGradeUpdater;
     private final UserGradeUpdater userGradeUpdater;
-    private final SchoolPrevDayScoreUpdater schoolPrevDayScoreUpdater;
 
 
-
-
-    @Scheduled(initialDelay = 3, fixedRate = 360, timeUnit = TimeUnit.MINUTES)
+    @Async("taskAExecutor")
+    @Scheduled(initialDelay = 1, fixedRate = 360, timeUnit = TimeUnit.MINUTES) // fixedRate를 사용하여 일정한 6시간의 주기를 가지는것이 중요!
     public void updateUserScore() {
         userScoreUpdater.update();
+        userRankUpdater.update();
+        schoolRankUpdater.update();
+        userGradeUpdater.update();
+        log.info("taskA- {} - {}", LocalDateTime.now(), Thread.currentThread().getName());
     }
 
-    @Scheduled(cron = "1 0 0 * * ?")
-    public void updateSchoolPrevDayScore() {
-        schoolPrevDayScoreUpdater.update();
-    }
-
-    @Scheduled(initialDelay = 4, fixedRate = 360, timeUnit = TimeUnit.MINUTES)
+    @Async("taskBExecutor")
+    @Scheduled(initialDelay = 1, fixedRate = 360, timeUnit = TimeUnit.MINUTES) // fixedRate를 사용하여 일정한 6시간의 주기를 가지는것이 중요!
     public void updateUserLanguages() {
         userLanguagesUpdater.update();
+        log.info("taskBUpdateUserLanguages - {} - {}", LocalDateTime.now(), Thread.currentThread().getName());
     }
 
-    @Scheduled(initialDelay = 4, fixedRate = 360, timeUnit = TimeUnit.MINUTES)
-    public void updateSchoolRanks() {
-        schoolRankUpdater.update();
-    }
 
-    @Scheduled(initialDelay = 4, fixedRate = 360, timeUnit = TimeUnit.MINUTES)
-    public void updateUserRanks() {
-        userRankUpdater.update();
-    }
 
-    @Scheduled(initialDelay = 5, fixedRate = 360, timeUnit = TimeUnit.MINUTES)
-    public void updateSchoolGrade() {
-        schoolGradeUpdater.update();
-    }
 
-    @Scheduled(initialDelay = 5, fixedRate = 360, timeUnit = TimeUnit.MINUTES)
-    public void updateUserGrade() {
-        userGradeUpdater.update();
-    }
+
+
 
 }

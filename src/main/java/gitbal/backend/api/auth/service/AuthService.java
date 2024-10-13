@@ -57,7 +57,7 @@ public class AuthService {
         String nickname) {
         return UserDto.of(schoolService.findBySchoolName(joinRequestDto.univName()),
             regionService.findByRegionName(joinRequestDto.region()),
-            majorLanguageService.getUserTopLaunguage(nickname),
+            majorLanguageService.getUserTopLaunguage(nickname).getMajorLanguage(),
             nickname,
             gitbalApiDto.getScore(),
             userService.findUserImgByUsername(nickname),
@@ -117,7 +117,6 @@ public class AuthService {
     private void updateRank() {
         userService.updateUserRank();
         userService.updateUserGrade();
-        schoolService.updateSchoolGrade();
         schoolService.updateSchoolRank();
     }
 }

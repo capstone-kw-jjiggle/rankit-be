@@ -20,7 +20,7 @@ public class BadgeServiceImpl implements BadgeService{
       return BadgeResponseDTO.builder()
           .userRank(String.valueOf(user.getUserRank()))
           .score(String.valueOf(user.getScore()))
-          .langName(user.getMajorLanguage().getMajorLanguage())
+          .langName(user.getMajorLanguage())
           .grade(String.valueOf(user.getGrade()))
           .build();
     } catch (BadgeException badgeException) {

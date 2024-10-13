@@ -6,7 +6,6 @@ import gitbal.backend.domain.introduction.Introduction;
 import gitbal.backend.global.BaseTimeEntity;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.global.constant.Grade;
-import gitbal.backend.domain.majorlanguage.infra.MajorLanguageJpaEntity;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.global.security.GithubOAuth2UserInfo;
 import jakarta.persistence.CascadeType;
@@ -51,8 +50,8 @@ public class User extends BaseTimeEntity {
     @JoinColumn(name = "region_id")
     private Region region;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private MajorLanguageJpaEntity majorLanguage;
+
+    private String majorLanguage;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<GuestBook> guestBooks = new ArrayList<>();
@@ -105,13 +104,13 @@ public class User extends BaseTimeEntity {
     }
 
     public void setMajorLanguage(
-        MajorLanguageJpaEntity majorLanguage) {
+        String majorLanguage) {
         this.majorLanguage = majorLanguage;
     }
 
     @Builder
     public User(School school, Region region,
-        MajorLanguageJpaEntity majorLanguage,Introduction introduction,
+        String majorLanguage,Introduction introduction,
         String nickname, Long score, String profile_img, Grade grade,int userRank) {
         this.school = school;
         this.region = region;
@@ -126,7 +125,7 @@ public class User extends BaseTimeEntity {
 
 
     public void joinUpdateUser(School school, Region region,
-        MajorLanguageJpaEntity majorLanguage,
+        String majorLanguage,
         String nickname, Long score, String profile_img, int userRank, Introduction introduction) {
         this.school = school;
         this.region = region;
