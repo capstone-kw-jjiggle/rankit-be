@@ -28,6 +28,9 @@ public class Introduction {
   private Long id;
 
   @Column(nullable = false)
+  private String title = "자기소개를 설정해 주세요";
+
+  @Column(nullable = false)
   private String oneLiner = "나에 대해 한 줄로 설명해 주세요.";
 
   @Column(nullable = false)
@@ -37,17 +40,18 @@ public class Introduction {
   private String learningGoal = "배우고 싶은 기술에 대해 설명해 주세요.";
 
 
-  public static Introduction of(Long id, String oneLiner, String goodAt, String learningGoal) {
-    return new Introduction(id, oneLiner, goodAt, learningGoal);
+  public static Introduction of(Long id,String title, String oneLiner, String goodAt, String learningGoal) {
+    return new Introduction(id, title, oneLiner, goodAt, learningGoal);
   }
 
-  public Introduction(String oneLiner, String goodAt, String learningGoal) {
+  public Introduction(String title, String oneLiner, String goodAt, String learningGoal) {
+    this.title = title;
     this.oneLiner = oneLiner;
     this.goodAt = goodAt;
     this.learningGoal = learningGoal;
   }
 
   public static Introduction of() {
-    return new Introduction("나에 대해 한 줄로 설명해 주세요.", "자신있는 기술에 대해 설명해 주세요.",  "배우고 싶은 기술에 대해 설명해 주세요.");
+    return new Introduction("자기소개를 설정해 주세요","나에 대해 한 줄로 설명해 주세요.", "자신있는 기술에 대해 설명해 주세요.",  "배우고 싶은 기술에 대해 설명해 주세요.");
   }
 }

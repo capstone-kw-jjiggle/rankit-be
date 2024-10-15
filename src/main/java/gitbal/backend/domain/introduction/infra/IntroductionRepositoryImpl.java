@@ -31,7 +31,9 @@ public class IntroductionRepositoryImpl implements IntroductionRepository {
 
   @Override
   public void updateIntroduction(Introduction introduction, IntroductionupdateRequestDto dto) {
-    Introduction newIntroduction = Introduction.of(introduction.getId(),
+    Introduction newIntroduction = Introduction.of(
+                                                   introduction.getId(),
+                                                   dto.getTitle(),
                                                    dto.getOneLiner(),
                                                    dto.getGoodAt(),
                                                    dto.getLearningGoal());

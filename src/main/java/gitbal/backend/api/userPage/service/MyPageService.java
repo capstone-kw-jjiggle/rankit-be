@@ -81,6 +81,7 @@ public class MyPageService {
 
   private IntroductionResponseDto converToIntroductionDTO(Introduction introduction){
     return IntroductionResponseDto.of(
+        introduction.getTitle(),
         introduction.getOneLiner(),
         introduction.getGoodAt(),
         introduction.getLearningGoal()
