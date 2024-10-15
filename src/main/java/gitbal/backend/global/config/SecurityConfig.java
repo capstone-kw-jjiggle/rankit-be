@@ -35,7 +35,6 @@ public class SecurityConfig {
 
     private static final String[] AUTH_REQUIRED_URLS = {
         "/api/v1/my/config/**",
-        "/api/v1/my/suggest/**",
         "/api/v1/my/update/**",
         "/api/v1/auth/logout",
         "/api/v1/auth/withdraw",

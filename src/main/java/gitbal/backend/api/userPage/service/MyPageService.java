@@ -46,14 +46,22 @@ public class MyPageService {
   }
 
   public ArrayList<FriendSuggestDto> getFriendSuggestionList(Authentication authentication){
-    User user = checkAuthAndGetUser(authentication);
-    ArrayList <FriendSuggestDto> friendSuggestionList =
-        Objects.requireNonNull(getResultFriends(user))
-            .stream()
-            .map(this::convertToFriendSuggestDTO)
-            .collect(Collectors.toCollection(ArrayList::new));
-    Collections.shuffle(friendSuggestionList);
-    return friendSuggestionList;
+
+    if (authentication == null) {
+      return randomUserPicker.getAllRandomFriendList()
+          .stream()
+          .map(this::convertToFriendSuggestDTO)
+          .collect(Collectors.toCollection(ArrayList::new));
+    } else {
+      User user = checkAuthAndGetUser(authentication);
+      ArrayList<FriendSuggestDto> friendSuggestionList =
+          Objects.requireNonNull(getResultFriends(user))
+              .stream()
+              .map(this::convertToFriendSuggestDTO)
+              .collect(Collectors.toCollection(ArrayList::new));
+      Collections.shuffle(friendSuggestionList);
+      return friendSuggestionList;
+    }
   }
 
   public IntroductionResponseDto getIntroduction(String userName){
@@ -88,9 +96,7 @@ public class MyPageService {
         user.getRegion().getRegionName(),
         user.getProfile_img()
     );
-
   }
-
   private User checkAuthAndGetUser(Authentication authentication) {
     if (authentication == null) {
       throw new NotLoginedException();

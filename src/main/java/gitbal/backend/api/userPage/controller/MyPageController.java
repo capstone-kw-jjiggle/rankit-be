@@ -51,8 +51,8 @@ public class MyPageController {
         return ResponseEntity.ok("지역 수정에 성공했습니다.");
     }
 
-    @GetMapping("/suggest/freind")
-    @Operation(summary = "친구 추천(헤더에 토큰 필요 Authorization: Bearer {토큰 값 넣기})", description = "친구 추천을 위한 api입니다.")
+    @GetMapping("/suggest/friend")
+    @Operation(summary = "친구 추천(헤더에 토큰 필요 Authorization: Bearer {토큰 값 넣기} 토큰이 없다면 랜덤으로 추천합니다.)", description = "친구 추천을 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "친구 추천 리스트를 가져오기 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "친구 추천 리스트를 가져오기 실패했습니다.")

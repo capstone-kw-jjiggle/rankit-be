@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RandomFriendPicker {
   private final int NEAR_SCORE_BOUNDARY = 1000;
+  private final int NUM_OF_SUGGESTING_FRIENDS = 4;
   private final UserService userService;
 
   public List<User> getFriendList(User user) {
@@ -23,6 +24,15 @@ public class RandomFriendPicker {
     User nearScoreUser = getRandomNearScoreUser(allUsers, user.getScore());
 
     return getList(highestGradeUser, sameLangUser, nextGradeUser, nearScoreUser);
+  }
+
+  public List<User> getAllRandomFriendList() {
+    List<User> allUsers = userService.getAllUser();
+    List<User> result = new ArrayList<>();
+    for (int i = 0; i < NUM_OF_SUGGESTING_FRIENDS; i++){
+      result.add(pickRandomUser(allUsers));
+    }
+    return result;
   }
 
   private List<User> getList(User highestGradeUser, User sameLangUser, User nextGradeUser,

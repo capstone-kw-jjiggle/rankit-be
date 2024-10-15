@@ -128,6 +128,11 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public List<User> getAllUser(){
+        return userRepository.findAll();
+    }
+
+
     public void deleteUserProfileImg(User user) {
         user.setProfileImg(null);
         userRepository.save(user);
