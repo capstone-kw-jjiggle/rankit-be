@@ -3,7 +3,8 @@ package gitbal.backend.api.userPage.controller;
 import gitbal.backend.api.userPage.dto.FriendSuggestDto;
 import gitbal.backend.api.userPage.dto.IntroductionResponseDto;
 import gitbal.backend.api.userPage.dto.IntroductionupdateRequestDto;
-import gitbal.backend.api.userPage.service.MyPageService;
+import gitbal.backend.api.userPage.dto.UserInfoResponseDto;
+import gitbal.backend.api.userPage.service.UserPageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,34 +21,34 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
-// TODO : 이거 이름이 myPage가 맞을지 고민을 조금 해봐야함.
+
 @RestController
-@RequestMapping("/api/v1/my")
+@RequestMapping("/api/v1/userPage")
 @RequiredArgsConstructor
-@Tag(name = "마이페이지 API", description = "마이페이지에 필요한 정보를 위한 api입니다.")
-public class MyPageController {
+@Tag(name = "유저페이지 API", description = "유저 페이지에 필요한 정보를 위한 api입니다.")
+public class UserPageController {
 
-    private final MyPageService myPageService;
+    private final UserPageService userPageService;
 
-    @PutMapping("/config/school")
+    @PutMapping("/my/config/school")
     @Operation(summary = "학교 수정(헤더에 토큰 필요 Authorization: Bearer {토큰 값 넣기})", description = "학교 수정을 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "학교 수정에 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "학교 수정에 실패했습니다.")
     })
     public ResponseEntity<String> modifySchool(Authentication authentication, @RequestParam String modifySchoolName){
-        myPageService.modifySchoolName(authentication, modifySchoolName);
+        userPageService.modifySchoolName(authentication, modifySchoolName);
         return ResponseEntity.ok("학교 수정에 성공했습니다.");
     }
 
-    @PutMapping("/config/region")
+    @PutMapping("/my/config/region")
     @Operation(summary = "지역 수정(헤더에 토큰 필요 Authorization: Bearer {토큰 값 넣기})", description = "지역 수정을 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "지역 수정에 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "지역 수정에 실패했습니다.")
     })
     public ResponseEntity<String> modifyRegion(Authentication authentication, @RequestParam String modifyRegionName){
-        myPageService.modifyRegionName(authentication, modifyRegionName);
+        userPageService.modifyRegionName(authentication, modifyRegionName);
         return ResponseEntity.ok("지역 수정에 성공했습니다.");
     }
 
@@ -58,7 +59,7 @@ public class MyPageController {
         @ApiResponse(responseCode = "5xx", description = "친구 추천 리스트를 가져오기 실패했습니다.")
     })
     public ResponseEntity<List<FriendSuggestDto>> suggestFreinds(Authentication authentication){
-        return ResponseEntity.ok(myPageService.getFriendSuggestionList(authentication));
+        return ResponseEntity.ok(userPageService.getFriendSuggestionList(authentication));
     }
 
     @GetMapping("/get/introduction")
@@ -68,10 +69,10 @@ public class MyPageController {
         @ApiResponse(responseCode = "5xx", description = "user 소개글을 가져오기 실패했습니다.")
     })
     public ResponseEntity<IntroductionResponseDto> getIntroduction(String username){
-        return ResponseEntity.ok(myPageService.getIntroduction(username));
+        return ResponseEntity.ok(userPageService.getIntroduction(username));
     }
 
-    @PutMapping("/update/introduction")
+    @PutMapping("/my/update/introduction")
     @Operation(summary = "user 소개글 수정하기(헤더에 토큰 필요 Authorization: Bearer {토큰 값 넣기})", description = "user 소개글을 수정하기 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "user 소개글을 수정하기 성공했습니다."),
@@ -79,8 +80,19 @@ public class MyPageController {
         @ApiResponse(responseCode = "5xx", description = "user 소개글을 수정하기 실패했습니다.")
     })
     public ResponseEntity<String> updateIntroduction(Authentication authentication, @RequestBody IntroductionupdateRequestDto introductionpdateRequestDto){
-        myPageService.updateIntroduction(authentication, introductionpdateRequestDto);
+        userPageService.updateIntroduction(authentication, introductionpdateRequestDto);
         return ResponseEntity.ok("수정이 완료 되었습니다.");
+    }
+
+
+    @GetMapping("/userInfo")
+    @Operation(summary = "유저페이지에 필요한 유저 정보를 불러온다.", description = "유저의 페이지에 필요한 정보를 가져오는 api 입니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "유저페이지에 필요한 유저 개인 정보 로딩을 성공했습니다."),
+        @ApiResponse(responseCode = "5xx", description = "유저페이지에 필요한 유저 개인 정보 로딩을 실패했습니다.")
+    })
+    public ResponseEntity<UserInfoResponseDto> userInfo(String username){
+        return ResponseEntity.ok(userPageService.makeUserInfoResponse(username));
     }
 
 
