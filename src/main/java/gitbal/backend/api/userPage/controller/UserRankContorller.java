@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/api/v1/userRank")
+@RequestMapping("/api/v1/userPage/rank")
 @RequiredArgsConstructor
-@Tag(name = "유저 순위 API", description = "유저 페이지의 랭킹 관련 api 입니다.")
+@Tag(name = "유저 페이지의 랭킹 API", description = "유저 페이지의 랭킹 관련 api 입니다.")
 public class UserRankContorller {
 
     private final UserRankService userRankService;

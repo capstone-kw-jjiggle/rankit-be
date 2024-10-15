@@ -4,6 +4,7 @@ import gitbal.backend.api.userPage.RandomFriendPicker;
 import gitbal.backend.api.userPage.dto.FriendSuggestDto;
 import gitbal.backend.api.userPage.dto.IntroductionResponseDto;
 import gitbal.backend.api.userPage.dto.IntroductionupdateRequestDto;
+import gitbal.backend.api.userPage.dto.UserPageUserInfoResponseDto;
 import gitbal.backend.domain.introduction.Introduction;
 import gitbal.backend.domain.introduction.application.repository.IntroductionRepository;
 import gitbal.backend.domain.region.application.RegionService;
@@ -11,7 +12,6 @@ import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.global.exception.NotLoginedException;
-import gitbal.backend.global.exception.NotUserPermissionException;
 import gitbal.backend.global.security.CustomUserDetails;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class MyPageService {
+public class UserPageService {
   private final UserService userService;
   private final SchoolService schoolService;
   private final RegionService regionService;
@@ -113,5 +113,10 @@ public class MyPageService {
 
   private void updateUserRegion(User user, String regionName) {
     userService.updateUserRegion(user, regionService.findByRegionName(regionName));
+  }
+
+  @Transactional(readOnly = true)
+  public UserPageUserInfoResponseDto makeUserInfoResponse(String username) {
+      return userService.makeUserInfoResponse(username);
   }
 }
