@@ -9,22 +9,22 @@ import lombok.Getter;
 @Getter
 public class UserInfoDto {
 
-    private final String userName;
+    private final String username;
     private final String univName;
     private final String regionName;
-    private final String imgUrl;
+    private final String profileImg;
     private final String title;
-    private final Integer rank;
+    private final Integer userRank;
     private final Grade grade;
 
-    public UserInfoDto(String userName, String univName, String regionName, String imgUrl,
-        String title, Integer rank, Grade grade) {
-        this.userName = userName;
+    public UserInfoDto(String username, String univName, String regionName, String profileImg,
+                       String title, Integer userRank, Grade grade) {
+        this.username = username;
         this.univName = univName;
         this.regionName = regionName;
-        this.imgUrl = imgUrl;
+        this.profileImg = profileImg;
         this.title = title;
-        this.rank = rank;
+        this.userRank = userRank;
         this.grade=grade;
     }
 

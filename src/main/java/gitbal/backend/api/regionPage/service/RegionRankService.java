@@ -4,7 +4,6 @@ package gitbal.backend.api.regionPage.service;
 import gitbal.backend.api.regionPage.dto.RegionListPageResponseDto;
 import gitbal.backend.api.regionPage.dto.UserInfoByRegion;
 import gitbal.backend.api.regionPage.dto.UserPageListByRegionResponseDto;
-import gitbal.backend.api.schoolPage.dto.UserInfoBySchool;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.region.application.repository.RegionRepository;
 import gitbal.backend.domain.user.User;
@@ -16,11 +15,13 @@ import gitbal.backend.global.exception.NotLoginedException;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.global.exception.PageOutOfRangeException;
 import gitbal.backend.global.exception.RegionRankPageUserInfoByRegionException;
-import gitbal.backend.global.exception.SchoolRankPageUserInfoBySchoolException;
 import gitbal.backend.global.security.CustomUserDetails;
+
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,8 +31,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-//TODO : 이후에 regionChangeScore 반영해야함!
 
 
 @Service
@@ -48,23 +47,31 @@ public class RegionRankService {
         Pageable pageable = PageRequest.of(page - 1, 10, sort);
         Page<Region> regionPage = regionRepository.findAll(pageable);
 
-        List<RegionListDto> regionDtoList = regionPage.stream()
-            .map(this::convertToDto)
-            .collect(Collectors.toList());
+        List<Region> sortedRegion = regionPage.stream()
+                .sorted(Comparator.comparing(Region::getScore).reversed())
+                .toList();
 
-        // 3. PageResponseDto 생성
+
+        List<RegionListDto> regionListDtos = convertListToDto(sortedRegion);
+
         RegionListPageResponseDto<RegionListDto> RegionList = RegionListPageResponseDto.<RegionListDto>withALl()
-            .regionList(regionDtoList)
-            .build();
+                .regionList(regionListDtos)
+                .build();
 
         return ResponseEntity.ok(RegionList);
     }
 
-    private RegionListDto convertToDto(Region region) {
-        return new RegionListDto(
-            region.getRegionName(),
-            region.getScore()
-        );
+    private List<RegionListDto> convertListToDto(List<Region> regions) {
+        List<RegionListDto> regionListDtos = new ArrayList<>();
+        for(int index = 0; index < regions.size(); index++) {
+            Region region = regions.get(index);
+            regionListDtos.add(new RegionListDto(
+                    region.getRegionName(),
+                    region.getScore(),
+                    index+1
+            ));
+        }
+        return regionListDtos;
     }
 
     @Transactional(readOnly = true)
@@ -75,19 +82,19 @@ public class RegionRankService {
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
         String username = principal.getNickname();
         User user = userRepository.findByNickname(username).orElseThrow(
-            NotFoundUserException::new
+                NotFoundUserException::new
         );
         Region region = user.getRegion();
-        if(Objects.isNull(region)) return MyRegionInfoResponseDto.of(0, null);
+        if (Objects.isNull(region)) return MyRegionInfoResponseDto.of(0, null);
         return MyRegionInfoResponseDto.of(findRegionRank(region.getRegionName()), region);
     }
 
     //TODO: 이후에 school, region 관련하여서 더 생각해보기
-    private int findRegionRank(String regionName){
+    private int findRegionRank(String regionName) {
         List<Region> regions = regionRepository.findAll(Sort.by("score").descending());
         for (int i = 0; i < regions.size(); i++) {
             Region region = regions.get(i);
-            if(region.getRegionName().equals(regionName))  return i+1;
+            if (region.getRegionName().equals(regionName)) return i + 1;
         }
         throw new NotFoundRegionException();
     }
@@ -99,35 +106,40 @@ public class RegionRankService {
             Region region = regionRepository.findByRegionName(regionName).orElseThrow(NotFoundRegionException::new);
             Pageable pageable = initpageable(page, "score");
             Page<User> userByRegionName = userRepository.findUserByRegion_RegionName(regionName,
-                pageable);
+                    pageable);
             if (userByRegionName.getTotalPages() < page)
                 throw new PageOutOfRangeException();
             List<UserInfoByRegion> userInfoByRegions = convertPageByUserInfoByRegion(
-                userByRegionName);
+                    userByRegionName);
             return buildUserPageListByRegionResponseDto(page, userInfoByRegions, userByRegionName);
-        }catch (Exception e){
-            if(Objects.isNull(e.getMessage()))
+        } catch (Exception e) {
+            if (Objects.isNull(e.getMessage()))
                 throw new RegionRankPageUserInfoByRegionException("지역 랭킹 페이지 유저 정보 조회 중 오류가 발생했습니다.");
             throw new RegionRankPageUserInfoByRegionException(e.getMessage());
         }
     }
 
 
-
     private List<UserInfoByRegion> convertPageByUserInfoByRegion(Page<User> userBySchoolName) {
-        return userBySchoolName.stream().
-            map(this::convertToUserInfoByRegion)
-            .toList();
+        List<User> users = userBySchoolName.get().toList();
+        List<UserInfoByRegion> userInfoByRegions= new ArrayList<>();
+        for(int index=0; index<users.size(); index++){
+            User user = users.get(index);
+            userInfoByRegions.add(convertToUserInfoByRegion(user, index+1));
+        }
+
+        return userInfoByRegions;
     }
 
 
-    private UserInfoByRegion convertToUserInfoByRegion(User user){
+    private UserInfoByRegion convertToUserInfoByRegion(User user, int rank) {
         return new UserInfoByRegion(
-            user.getNickname(),
-            user.getScore()
+                user.getNickname(),
+                user.getProfile_img(),
+                user.getScore(),
+                rank
         );
     }
-
 
 
     private Pageable initpageable(int page, String sortProperties) {
@@ -137,12 +149,12 @@ public class RegionRankService {
 
 
     private UserPageListByRegionResponseDto buildUserPageListByRegionResponseDto(int page,
-        List<UserInfoByRegion> userInfoByRegions, Page<User> userBySchoolName) {
+                                                                                 List<UserInfoByRegion> userInfoByRegions, Page<User> userBySchoolName) {
         return UserPageListByRegionResponseDto.withAll()
-            .userInfoByRegion(userInfoByRegions)
-            .page(page)
-            .total(userBySchoolName.getTotalElements())
-            .build();
+                .userInfoByRegion(userInfoByRegions)
+                .page(page)
+                .total(userBySchoolName.getTotalElements())
+                .build();
     }
 
 

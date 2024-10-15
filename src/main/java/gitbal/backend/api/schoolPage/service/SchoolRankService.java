@@ -1,11 +1,13 @@
 package gitbal.backend.api.schoolPage.service;
 
 
+import gitbal.backend.api.regionPage.dto.RegionListDto;
 import gitbal.backend.api.schoolPage.dto.MySchoolInfoResponseDto;
 import gitbal.backend.api.schoolPage.dto.SchoolListDto;
 import gitbal.backend.api.schoolPage.dto.SchoolListPageResponseDto;
 import gitbal.backend.api.schoolPage.dto.UserInfoBySchool;
 import gitbal.backend.api.schoolPage.dto.UserPageListBySchoolResponseDto;
+import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.school.SchoolRepository;
 import gitbal.backend.domain.user.User;
@@ -17,9 +19,12 @@ import gitbal.backend.global.exception.PageOutOfRangeException;
 import gitbal.backend.global.exception.SchoolRankPageUserInfoBySchoolException;
 import gitbal.backend.global.exception.WrongPageNumberException;
 import gitbal.backend.global.security.CustomUserDetails;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,7 +51,7 @@ public class SchoolRankService {
 
     @Transactional(readOnly = true)
     public SchoolListPageResponseDto<SchoolListDto> getSchoolList(Integer page,
-        String searchedSchoolName) {
+                                                                  String searchedSchoolName) {
         if (!Objects.isNull(searchedSchoolName)) {
             log.info("searchedSchoolName : {}", searchedSchoolName);
             return getSearchedSchoolList(searchedSchoolName, page);
@@ -58,15 +63,15 @@ public class SchoolRankService {
             Page<School> schoolPage = schoolRepository.findAll(pageable);
 
             List<SchoolListDto> schoolDtoList = schoolPage.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+                    .map(this::convertToDto)
+                    .collect(Collectors.toList());
 
             // PageResponseDto 생성
             SchoolListPageResponseDto<SchoolListDto> schoolList = SchoolListPageResponseDto.<SchoolListDto>withALl()
-                .schoolList(schoolDtoList)
-                .page(page)
-                .total(schoolPage.getTotalElements())
-                .build();
+                    .schoolList(schoolDtoList)
+                    .page(page)
+                    .total(schoolPage.getTotalElements())
+                    .build();
             // 페이지 범위 넘겼을때
             log.info("schoolList.getTotalPages() : {}", schoolList.getTotalPages());
             if (schoolList.getTotalPages() < page) {
@@ -84,13 +89,11 @@ public class SchoolRankService {
     }
 
 
-
-
     private SchoolListDto convertToDto(School school) {
         return new SchoolListDto(
-            school.getSchoolName(),
-            school.getScore(),
-            school.getSchoolRank()
+                school.getSchoolName(),
+                school.getScore(),
+                school.getSchoolRank()
         );
     }
 
@@ -102,7 +105,7 @@ public class SchoolRankService {
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
         String username = principal.getNickname();
         User user = userRepository.findByNickname(username).orElseThrow(
-            NotFoundUserException::new
+                NotFoundUserException::new
         );
         School school = user.getSchool();
         return MySchoolInfoResponseDto.of(school);
@@ -111,22 +114,22 @@ public class SchoolRankService {
     @Transactional(readOnly = true)
     public UserPageListBySchoolResponseDto getUserListBySchoolName(int page, String schoolName) {
         try {
-            if(!isPresentSchoolName(schoolName))
+            if (!isPresentSchoolName(schoolName))
                 throw new NotFoundSchoolException();
 
             Pageable pageable = initpageable(page, "score");
             Page<User> userBySchoolName = userRepository.findUserBySchool_SchoolName(schoolName,
-                pageable);
+                    pageable);
             log.info("userBySchoolName : {}", userBySchoolName.getTotalPages());
-            if (userBySchoolName.getTotalPages()>0 && userBySchoolName.getTotalPages() < page)
+            if (userBySchoolName.getTotalPages() > 0 && userBySchoolName.getTotalPages() < page)
                 throw new PageOutOfRangeException();
 
             List<UserInfoBySchool> userInfoBySchools = convertPageByUserInfoBySchool(
-                userBySchoolName);
+                    userBySchoolName);
             return buildUserPageListBySchoolResponseDto(page, userInfoBySchools, userBySchoolName);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.info(e.getMessage());
-            if(Objects.isNull(e.getMessage()))
+            if (Objects.isNull(e.getMessage()))
                 throw new SchoolRankPageUserInfoBySchoolException("학교 랭킹 페이지 유저 정보 조회 중 오류가 발생했습니다.");
             throw new SchoolRankPageUserInfoBySchoolException(e.getMessage());
         }
@@ -137,9 +140,13 @@ public class SchoolRankService {
     }
 
     private List<UserInfoBySchool> convertPageByUserInfoBySchool(Page<User> userBySchoolName) {
-        return userBySchoolName.stream().
-            map(this::convertToUserInfoBySchool)
-            .toList();
+        List<User> users = userBySchoolName.get().toList();
+        List<UserInfoBySchool> userInfoBySchools = new ArrayList<>();
+        for (int index = 0; index < users.size(); index++) {
+            User user = users.get(index);
+            convertToUserInfoBySchool(user, index+1);
+        }
+        return userInfoBySchools;
     }
 
     private Pageable initpageable(int page, String sortProperties) {
@@ -148,37 +155,39 @@ public class SchoolRankService {
     }
 
     private UserPageListBySchoolResponseDto buildUserPageListBySchoolResponseDto(int page,
-        List<UserInfoBySchool> userInfoBySchools, Page<User> userBySchoolName) {
+                                                                                 List<UserInfoBySchool> userInfoBySchools, Page<User> userBySchoolName) {
         return UserPageListBySchoolResponseDto.withAll()
-            .userInfoBySchools(userInfoBySchools)
-            .page(page)
-            .total(userBySchoolName.getTotalElements())
-            .build();
+                .userInfoBySchools(userInfoBySchools)
+                .page(page)
+                .total(userBySchoolName.getTotalElements())
+                .build();
     }
 
 
-    private UserInfoBySchool convertToUserInfoBySchool(User user){
+    private UserInfoBySchool convertToUserInfoBySchool(User user, int rank) {
         return new UserInfoBySchool(
-            user.getNickname(),
-            user.getScore()
+                user.getNickname(),
+                user.getProfile_img(),
+                user.getScore(),
+                rank
         );
     }
 
 
     private SchoolListPageResponseDto<SchoolListDto> getSearchedSchoolList(
-        String searchedSchoolName,
-        int page) {
+            String searchedSchoolName,
+            int page) {
         if (page == 0) {
             page = 1;
         }
         try {
             Page<School> schoolPage = schoolRepository.findBySchoolNameContainingIgnoreCase(
-                searchedSchoolName,
-                PageRequest.of(page - 1, PAGE_SIZE, Sort.by("score").descending()));
+                    searchedSchoolName,
+                    PageRequest.of(page - 1, PAGE_SIZE, Sort.by("score").descending()));
             if (isSearchedSchoolHasNothing(schoolPage)) {
-                if(page >1){
+                if (page > 1) {
                     throw new PageOutOfRangeException();
-                    }
+                }
                 return SchoolListPageResponseDto.emptyList();
             }
             if (schoolPage.getTotalPages() < page) {
@@ -186,14 +195,14 @@ public class SchoolRankService {
             }
 
             List<SchoolListDto> searchedSchoolList = schoolPage.stream()
-                .map(this::convertToDto)
-                .toList();
+                    .map(this::convertToDto)
+                    .toList();
             log.info("searchedSchoolList : {}", searchedSchoolList);
             SchoolListPageResponseDto<SchoolListDto> schoolList = SchoolListPageResponseDto.<SchoolListDto>withALl()
-                .schoolList(searchedSchoolList)
-                .page(page)
-                .total(schoolPage.getTotalElements())
-                .build();
+                    .schoolList(searchedSchoolList)
+                    .page(page)
+                    .total(schoolPage.getTotalElements())
+                    .build();
 
             log.info("schoolList.getTotalPages() : {}", schoolList.getTotalPages());
 
