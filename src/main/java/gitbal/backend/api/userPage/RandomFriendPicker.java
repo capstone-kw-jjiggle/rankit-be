@@ -25,6 +25,15 @@ public class RandomFriendPicker {
     return getList(highestGradeUser, sameLangUser, nextGradeUser, nearScoreUser);
   }
 
+  public List<User> getAllRandomFriendList() {
+    List<User> allUsers = userService.getAllUser();
+    List<User> result = new ArrayList<>();
+    for (int i = 0; i < 4; i++){
+      result.add(pickRandomUser(allUsers));
+    }
+    return result;
+  }
+
   private List<User> getList(User highestGradeUser, User sameLangUser, User nextGradeUser,
       User nearScoreUser) {
     List<User> result = new ArrayList<>();
