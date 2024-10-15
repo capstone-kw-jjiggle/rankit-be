@@ -3,7 +3,7 @@ package gitbal.backend.api.userPage.controller;
 import gitbal.backend.api.userPage.dto.FriendSuggestDto;
 import gitbal.backend.api.userPage.dto.IntroductionResponseDto;
 import gitbal.backend.api.userPage.dto.IntroductionupdateRequestDto;
-import gitbal.backend.api.userPage.dto.UserInfoResponseDto;
+import gitbal.backend.api.userPage.dto.UserPageUserInfoResponseDto;
 import gitbal.backend.api.userPage.service.UserPageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -91,7 +91,7 @@ public class UserPageController {
         @ApiResponse(responseCode = "200", description = "유저페이지에 필요한 유저 개인 정보 로딩을 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "유저페이지에 필요한 유저 개인 정보 로딩을 실패했습니다.")
     })
-    public ResponseEntity<UserInfoResponseDto> userInfo(String username){
+    public ResponseEntity<UserPageUserInfoResponseDto> userInfo(String username){
         return ResponseEntity.ok(userPageService.makeUserInfoResponse(username));
     }
 

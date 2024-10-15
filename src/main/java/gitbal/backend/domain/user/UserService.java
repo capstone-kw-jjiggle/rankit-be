@@ -3,7 +3,7 @@ package gitbal.backend.domain.user;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gitbal.backend.api.userPage.dto.UserInfoResponseDto;
+import gitbal.backend.api.userPage.dto.UserPageUserInfoResponseDto;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.global.constant.Grade;
@@ -237,11 +237,11 @@ public class UserService {
     }
 
 
-    public UserInfoResponseDto makeUserInfoResponse(String username) {
+    public UserPageUserInfoResponseDto makeUserInfoResponse(String username) {
         User findUser = userRepository.findByNickname(username)
             .orElseThrow(NotFoundUserException::new);
 
-        return UserInfoResponseDto.of(findUser.getNickname(), findUser.getGrade()
+        return UserPageUserInfoResponseDto.of(findUser.getNickname(), findUser.getGrade()
         ,findUser.getProfile_img());
     }
 }

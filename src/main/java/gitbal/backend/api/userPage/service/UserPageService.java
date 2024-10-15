@@ -4,7 +4,7 @@ import gitbal.backend.api.userPage.RandomFriendPicker;
 import gitbal.backend.api.userPage.dto.FriendSuggestDto;
 import gitbal.backend.api.userPage.dto.IntroductionResponseDto;
 import gitbal.backend.api.userPage.dto.IntroductionupdateRequestDto;
-import gitbal.backend.api.userPage.dto.UserInfoResponseDto;
+import gitbal.backend.api.userPage.dto.UserPageUserInfoResponseDto;
 import gitbal.backend.domain.introduction.Introduction;
 import gitbal.backend.domain.introduction.application.repository.IntroductionRepository;
 import gitbal.backend.domain.region.application.RegionService;
@@ -116,7 +116,7 @@ public class UserPageService {
   }
 
   @Transactional(readOnly = true)
-  public UserInfoResponseDto makeUserInfoResponse(String username) {
+  public UserPageUserInfoResponseDto makeUserInfoResponse(String username) {
       return userService.makeUserInfoResponse(username);
   }
 }
