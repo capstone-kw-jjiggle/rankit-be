@@ -78,7 +78,7 @@ public class MainPageService {
 
     private List<MainPageUserDto> convertToMainPageUserDto(Page<User> users) {
         return users.stream().map(
-            (u) -> new MainPageUserDto(u.getNickname(), u.getScore(),
+            (u) -> new MainPageUserDto(u.getNickname(), u.getProfile_img(), u.getScore(),
                 u.getUserRank())
         ).toList();
     }

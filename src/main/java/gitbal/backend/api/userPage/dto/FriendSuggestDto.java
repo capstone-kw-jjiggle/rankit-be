@@ -7,15 +7,15 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class FriendSuggestDto {
-  private String nickname;
+  private String username;
   private Grade grade;
   private String language;
   private String schoolName;
   private String regionName;
-  private String imgURL;
+  private String profileImg;
 
 
-  public static FriendSuggestDto of(String nickname, Grade grade, String language, String schoolName, String regionName, String imgURL) {
-    return new FriendSuggestDto(nickname, grade, language, schoolName, regionName, imgURL);
+  public static FriendSuggestDto of(String username, Grade grade, String language, String schoolName, String regionName, String profileImg) {
+    return new FriendSuggestDto(username, grade, language, schoolName, regionName, profileImg);
   }
 }
