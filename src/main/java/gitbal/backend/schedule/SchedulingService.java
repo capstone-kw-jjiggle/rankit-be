@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class SchedulingService {
 
     @Async("taskAExecutor")
     @Scheduled(initialDelay = 1, fixedRate = 360, timeUnit = TimeUnit.MINUTES) // fixedRate를 사용하여 일정한 6시간의 주기를 가지는것이 중요!
+    @SchedulerLock(name="updateUserScore")
     public void updateUserScore() {
         userScoreUpdater.update();
         userRankUpdater.update();
@@ -37,6 +39,7 @@ public class SchedulingService {
 
     @Async("taskBExecutor")
     @Scheduled(initialDelay = 1, fixedRate = 360, timeUnit = TimeUnit.MINUTES) // fixedRate를 사용하여 일정한 6시간의 주기를 가지는것이 중요!
+    @SchedulerLock(name = "updateUserLanguages")
     public void updateUserLanguages() {
         userLanguagesUpdater.update();
         log.info("taskBUpdateUserLanguages - {} - {}", LocalDateTime.now(), Thread.currentThread().getName());
