@@ -1,4 +1,4 @@
-name: develop branch bluegreen deployment
+name: rankit-multiaz-rolling-zerodowntime-cicd
 
 on:
   push:
