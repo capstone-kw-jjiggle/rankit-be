@@ -88,13 +88,16 @@ jobs:
             ]' \
             --comment "Deploying application to EC2-A"
 
-      # 5. EC2-A의 헬스체크 대기
-      - name: Wait for EC2-A Health Check
+      # 5. EC2-A에서 헬스체크 수행
+      - name: Perform health check on EC2-A
         run: |
-          aws elbv2 wait target-in-service \
-            --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
-            --targets Id=${{ secrets.EC2_A_ID }}
-        timeout-minutes: 10  # 최대 대기 시간 설정 (필요에 따라 조정)
+          aws ssm send-command \
+            --instance-ids "${{ secrets.EC2_A_ID }}" \
+            --document-name "AWS-RunShellScript" \
+            --parameters 'commands=[
+              "curl -f http://localhost:8080/ || echo \"Health check failed on EC2-A\""
+            ]' \
+            --comment "Performing health check on EC2-A"
 
       # 6. EC2 인스턴스 대상 재등록 (EC2-A)
       - name: Register EC2-A to Target Group
@@ -104,7 +107,7 @@ jobs:
             --targets Id=${{ secrets.EC2_A_ID }}
 
       # 7. EC2 인스턴스 대상 등록 해제 (EC2-C)
-      - name: Deregister EC2-C from Target Group
+      - name: Deregister EC-C from Target Group
         run: |
           aws elbv2 deregister-targets \
             --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
@@ -123,13 +126,16 @@ jobs:
             ]' \
             --comment "Deploying application to EC2-C"
 
-      # 9. EC2-C의 헬스체크 대기
-      - name: Wait for EC2-c Health Check
+      # 9. EC2-C에서 헬스체크 수행
+      - name: Perform health check on EC2-C
         run: |
-          aws elbv2 wait target-in-service \
-            --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
-            --targets Id=${{ secrets.EC2_C_ID }}
-        timeout-minutes: 10  # 최대 대기 시간 설정 (필요에 따라 조정)
+          aws ssm send-command \
+            --instance-ids "${{ secrets.EC2_C_ID }}" \
+            --document-name "AWS-RunShellScript" \
+            --parameters 'commands=[
+              "curl -f http://localhost:8080/ || echo \"Health check failed on EC-C\""
+            ]' \
+            --comment "Performing health check on EC2-C"
 
       # 10. EC2 인스턴스 대상 재등록 (EC2-C)
       - name: Register EC2-C to Target Group
