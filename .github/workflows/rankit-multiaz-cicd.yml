@@ -85,10 +85,11 @@ jobs:
               "if [ $(docker ps -q -f \"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\" -f \"status=running\") ]; then docker stop $(docker ps -q -f \"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\"); fi", 
               "docker pull ${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest", 
               "docker-compose -f docker-compose.yml up -d", 
-              "sleep 10",  # 컨테이너가 시작될 시간을 기다립니다.
+              "sleep 10", 
               "docker-compose -f docker-compose.yml logs"
             ]' \
             --comment "Deploying application to EC2-A"
+
 
       # 5. EC2-A에서 헬스체크 수행
       - name: Perform health check on EC2-A
@@ -137,7 +138,7 @@ jobs:
             --parameters 'commands=[
               "if [ $(docker ps -q -f \"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\" -f \"status=running\") ]; then docker stop $(docker ps -q -f \"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\"); fi", 
               "docker pull ${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest", 
-               "docker-compose -f docker-compose.yml up -d", 
+              "docker-compose -f docker-compose.yml up -d", 
               "sleep 15",  # 컨테이너가 시작될 시간을 기다립니다.
               "docker-compose -f docker-compose.yml logs"
             ]' \
