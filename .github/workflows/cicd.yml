@@ -59,10 +59,10 @@ jobs:
           ssh-private-key: ${{ secrets.API_RANKIT_PEM }}
 
       # 2. EC2에 blue green 무중단 배포를 위한 스크립트 실행
-      - name: Run dPlanner.sh for CICD and switch blue-green container
-        run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
-          cd bluegreen/
-          chmod +x dplanner.sh  # 만약 실행 권한이 없다면 추가
+      #- name: Run dPlanner.sh for CICD and switch blue-green container
+      #  run: |
+      #    ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+      #    cd bluegreen/
+      #    chmod +x dplanner.sh  # 만약 실행 권한이 없다면 추가
           ./dplanner.sh         # 스크립트 실행
           EOF
