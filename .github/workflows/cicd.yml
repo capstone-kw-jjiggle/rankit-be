@@ -64,5 +64,5 @@ jobs:
       #    ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
       #    cd bluegreen/
       #    chmod +x dplanner.sh  # 만약 실행 권한이 없다면 추가
-          ./dplanner.sh         # 스크립트 실행
-          EOF
+      #    ./dplanner.sh         # 스크립트 실행
+      #    EOF
