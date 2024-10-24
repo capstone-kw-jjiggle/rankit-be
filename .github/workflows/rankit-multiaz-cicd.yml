@@ -81,12 +81,9 @@ jobs:
           aws ssm send-command \
             --instance-ids "${{ secrets.EC2_A_ID }}" \
             --document-name "AWS-RunShellScript" \
-            --parameters '{"commands": [
-              "if [ $(docker ps -q -f \\"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\\" -f \\"status=running\\") ]; then docker stop $(docker ps -q -f \\"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\\"); fi && docker pull ${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest && cd /home/ec2-user && docker-compose -f docker-compose.yml up -d"
-            ]}' \
+            --parameters '{"commands":["if [ $(docker ps -q -f \"ancestor='${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest'\" -f \"status=running\") ]; then docker stop $(docker ps -q -f \"ancestor='${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest'\"); fi && docker pull '${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest' && cd /home/ec2-user && docker-compose -f docker-compose.yml up -d"]}' \
             --comment "Deploying application to EC2-A"
-
-
+      
       # 5. EC2-A에서 헬스체크 수행
       - name: Perform health check on EC2-A
         id: healthcheck-ec2-a
@@ -94,17 +91,12 @@ jobs:
           RESULT=$(aws ssm send-command \
             --instance-ids "${{ secrets.EC2_A_ID }}" \
             --document-name "AWS-RunShellScript" \
-            --parameters 'commands=[ 
-              "curl -f http://localhost:8080/ || echo \"Health check failed on EC2-A\""
-            ]' \
+            --parameters '{"commands":["curl -f http://localhost:8080/ || echo \"Health check failed on EC2-A\""]}' \
             --comment "Performing health check on EC2-A" \
             --query "Command.CommandId" \
             --output text)
-
           sleep 10  # 헬스 체크 결과를 기다리기 위해 대기
-
           OUTPUT=$(aws ssm list-command-invocations --command-id $RESULT --details --output json)
-
           # 헬스 체크 실패 여부 확인
           if echo "$OUTPUT" | grep -q "Health check failed"; then
             echo "Health check failed on EC2-A"
@@ -117,7 +109,7 @@ jobs:
           aws elbv2 register-targets \
             --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
             --targets Id=${{ secrets.EC2_A_ID }}
-
+      
       # 7. EC2 인스턴스 대상 등록 해제 (EC2-C)
       - name: Deregister EC-C from Target Group
         run: |
@@ -125,43 +117,35 @@ jobs:
             --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
             --targets Id=${{ secrets.EC2_C_ID }}
 
-            # 8. EC2-C에 Docker 컨테이너 배포
+      # 8. EC2-C에 Docker 컨테이너 배포
       - name: Deploy to EC2-C via SSM
         run: |
           aws ssm send-command \
             --instance-ids "${{ secrets.EC2_C_ID }}" \
             --document-name "AWS-RunShellScript" \
-            --parameters '{"commands": [
-              "if [ $(docker ps -q -f \\"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\\" -f \\"status=running\\") ]; then docker stop $(docker ps -q -f \\"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\\"); fi && docker pull ${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest && cd /home/ec2-user && docker-compose -f docker-compose.yml up -d"
-            ]}' \
+            --parameters '{"commands":["if [ $(docker ps -q -f \"ancestor='${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest'\" -f \"status=running\") ]; then docker stop $(docker ps -q -f \"ancestor='${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest'\"); fi && docker pull '${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest' && cd /home/ec2-user && docker-compose -f docker-compose.yml up -d"]}' \
             --comment "Deploying application to EC2-C"
 
-
       # 9. EC2-C에서 헬스체크 수행
-      - name: Perform health check on EC2-C
+      - name: Perform health check on EC-C
         id: healthcheck-ec2-c
         run: |
           RESULT=$(aws ssm send-command \
             --instance-ids "${{ secrets.EC2_C_ID }}" \
             --document-name "AWS-RunShellScript" \
-            --parameters 'commands=[ 
-              "curl -f http://localhost:8080/ || echo \"Health check failed on EC-C\""
-            ]' \
+            --parameters '{"commands":["curl -f http://localhost:8080/ || echo \"Health check failed on EC-C\""]}' \
             --comment "Performing health check on EC-C" \
             --query "Command.CommandId" \
             --output text)
-
           sleep 10  # 헬스 체크 결과를 기다리기 위해 대기
-
           OUTPUT=$(aws ssm list-command-invocations --command-id $RESULT --details --output json)
-
           # 헬스 체크 실패 여부 확인
           if echo "$OUTPUT" | grep -q "Health check failed"; then
             echo "Health check failed on EC-C"
             exit 1  # 파이프라인 종료
           fi
 
-      # 10. EC2 인스턴스 대상 재등록 (EC2-C)
+      # 10. EC2 인스턴스 대상 재등록 (EC-C)
       - name: Register EC-C to Target Group
         run: |
           aws elbv2 register-targets \
