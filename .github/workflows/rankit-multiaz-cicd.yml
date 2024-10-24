@@ -81,15 +81,10 @@ jobs:
           aws ssm send-command \
             --instance-ids "${{ secrets.EC2_A_ID }}" \
             --document-name "AWS-RunShellScript" \
-            --parameters 'commands=[
-              "if [ $(docker ps -q -f \"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\" -f \"status=running\") ]; then docker stop $(docker ps -q -f \"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\"); fi",
-              "sleep 10", 
-              "docker pull ${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest", 
-              "cd /home/ec2-user/app",  # docker-compose.yml 파일이 있는 경로로 이동
-              "docker-compose -f docker-compose.yml up -d"
-            ]' \
+            --parameters '{"commands": [
+              "if [ $(docker ps -q -f \\"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\\" -f \\"status=running\\") ]; then docker stop $(docker ps -q -f \\"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\\"); fi && docker pull ${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest && cd /home/ec2-user && docker-compose -f docker-compose.yml up -d"
+            ]}' \
             --comment "Deploying application to EC2-A"
-
 
 
       # 5. EC2-A에서 헬스체크 수행
@@ -130,21 +125,17 @@ jobs:
             --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
             --targets Id=${{ secrets.EC2_C_ID }}
 
-      # 8. EC2-C에 Docker 컨테이너 배포
+            # 8. EC2-C에 Docker 컨테이너 배포
       - name: Deploy to EC2-C via SSM
         run: |
           aws ssm send-command \
             --instance-ids "${{ secrets.EC2_C_ID }}" \
             --document-name "AWS-RunShellScript" \
-            --parameters 'commands=[
-              "if [ $(docker ps -q -f \"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\" -f \"status=running\") ]; then docker stop $(docker ps -q -f \"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\"); fi", 
-              "sleep 10", 
-              "docker pull ${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest", 
-              "cd /home/ec2-user/app",  # docker-compose.yml 파일이 있는 경로로 이동
-              "chmod +x docker-compose.yml",  # 실행 권한 부여
-              "docker-compose -f docker-compose.yml up -d"
-            ]' \
+            --parameters '{"commands": [
+              "if [ $(docker ps -q -f \\"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\\" -f \\"status=running\\") ]; then docker stop $(docker ps -q -f \\"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\\"); fi && docker pull ${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest && cd /home/ec2-user && docker-compose -f docker-compose.yml up -d"
+            ]}' \
             --comment "Deploying application to EC2-C"
+
 
       # 9. EC2-C에서 헬스체크 수행
       - name: Perform health check on EC2-C
