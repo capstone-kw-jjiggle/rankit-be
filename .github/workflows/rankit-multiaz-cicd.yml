@@ -85,6 +85,8 @@ jobs:
               "if [ $(docker ps -q -f \"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\" -f \"status=running\") ]; then docker stop $(docker ps -q -f \"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\"); fi",
               "sleep 10", 
               "docker pull ${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest", 
+              "cd /home/ec2-user/app",  # docker-compose.yml 파일이 있는 경로로 이동
+              "chmod +x docker-compose.yml",  # 실행 권한 부여
               "docker-compose -f docker-compose.yml up -d"
             ]' \
             --comment "Deploying application to EC2-A"
@@ -138,6 +140,8 @@ jobs:
               "if [ $(docker ps -q -f \"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\" -f \"status=running\") ]; then docker stop $(docker ps -q -f \"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\"); fi", 
               "sleep 10", 
               "docker pull ${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest", 
+              "cd /home/ec2-user/app",  # docker-compose.yml 파일이 있는 경로로 이동
+              "chmod +x docker-compose.yml",  # 실행 권한 부여
               "docker-compose -f docker-compose.yml up -d"
             ]' \
             --comment "Deploying application to EC2-C"
