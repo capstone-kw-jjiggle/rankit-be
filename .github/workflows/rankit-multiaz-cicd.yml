@@ -90,14 +90,27 @@ jobs:
 
       # 5. EC2-A에서 헬스체크 수행
       - name: Perform health check on EC2-A
+        id: healthcheck-ec2-a
         run: |
-          aws ssm send-command \
+          RESULT=$(aws ssm send-command \
             --instance-ids "${{ secrets.EC2_A_ID }}" \
             --document-name "AWS-RunShellScript" \
-            --parameters 'commands=[
+            --parameters 'commands=[ 
               "curl -f http://localhost:8080/ || echo \"Health check failed on EC2-A\""
             ]' \
-            --comment "Performing health check on EC2-A"
+            --comment "Performing health check on EC2-A" \
+            --query "Command.CommandId" \
+            --output text)
+
+          sleep 10  # 헬스 체크 결과를 기다리기 위해 대기
+
+          OUTPUT=$(aws ssm list-command-invocations --command-id $RESULT --details --output json)
+
+          # 헬스 체크 실패 여부 확인
+          if echo "$OUTPUT" | grep -q "Health check failed"; then
+            echo "Health check failed on EC2-A"
+            exit 1  # 파이프라인 종료
+          fi
 
       # 6. EC2 인스턴스 대상 재등록 (EC2-A)
       - name: Register EC2-A to Target Group
@@ -128,17 +141,30 @@ jobs:
 
       # 9. EC2-C에서 헬스체크 수행
       - name: Perform health check on EC2-C
+        id: healthcheck-ec2-c
         run: |
-          aws ssm send-command \
+          RESULT=$(aws ssm send-command \
             --instance-ids "${{ secrets.EC2_C_ID }}" \
             --document-name "AWS-RunShellScript" \
-            --parameters 'commands=[
+            --parameters 'commands=[ 
               "curl -f http://localhost:8080/ || echo \"Health check failed on EC-C\""
             ]' \
-            --comment "Performing health check on EC2-C"
+            --comment "Performing health check on EC-C" \
+            --query "Command.CommandId" \
+            --output text)
+
+          sleep 10  # 헬스 체크 결과를 기다리기 위해 대기
+
+          OUTPUT=$(aws ssm list-command-invocations --command-id $RESULT --details --output json)
+
+          # 헬스 체크 실패 여부 확인
+          if echo "$OUTPUT" | grep -q "Health check failed"; then
+            echo "Health check failed on EC-C"
+            exit 1  # 파이프라인 종료
+          fi
 
       # 10. EC2 인스턴스 대상 재등록 (EC2-C)
-      - name: Register EC2-C to Target Group
+      - name: Register EC-C to Target Group
         run: |
           aws elbv2 register-targets \
             --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
