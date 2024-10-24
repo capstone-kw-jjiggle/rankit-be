@@ -82,11 +82,10 @@ jobs:
             --instance-ids "${{ secrets.EC2_A_ID }}" \
             --document-name "AWS-RunShellScript" \
             --parameters 'commands=[
-              "if [ $(docker ps -q -f \"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\" -f \"status=running\") ]; then docker stop $(docker ps -q -f \"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\"); fi", 
-              "docker pull ${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest", 
-              "docker-compose -f docker-compose.yml up -d", 
+              "if [ $(docker ps -q -f \"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\" -f \"status=running\") ]; then docker stop $(docker ps -q -f \"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\"); fi",
               "sleep 10", 
-              "docker-compose -f docker-compose.yml logs"
+              "docker pull ${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest", 
+              "docker-compose -f docker-compose.yml up -d"
             ]' \
             --comment "Deploying application to EC2-A"
 
@@ -137,10 +136,9 @@ jobs:
             --document-name "AWS-RunShellScript" \
             --parameters 'commands=[
               "if [ $(docker ps -q -f \"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\" -f \"status=running\") ]; then docker stop $(docker ps -q -f \"ancestor=${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest\"); fi", 
+              "sleep 10", 
               "docker pull ${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest", 
-              "docker-compose -f docker-compose.yml up -d", 
-              "sleep 15",  # 컨테이너가 시작될 시간을 기다립니다.
-              "docker-compose -f docker-compose.yml logs"
+              "docker-compose -f docker-compose.yml up -d"
             ]' \
             --comment "Deploying application to EC2-C"
 
