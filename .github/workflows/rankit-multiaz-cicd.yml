@@ -25,25 +25,26 @@ jobs:
         run: |
           aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-          aws configure set region ap-northeast-2
+          aws configure set region ap-northeast-2  # 서울 AWS 리전을 설정
       
-      # 3. Bastion 호스트에 접속하여 EC2-A에 docker-compose 실행
-      - name: Deploy to EC2-A via Bastion Host
-        env:
-          BASTION_HOST: ${{ secrets.BASTION_HOST }}
-          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}
-        run: |
-          echo "$SSH_PRIVATE_KEY" > private_key.pem
-          chmod 600 private_key.pem
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST << 'EOF'
-          ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@${{ secrets.EC2_A_IP }} << 'INNER_EOF'
-          if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then
-            docker-compose stop;
-          fi
-          sleep 3 && docker-compose up -d --pull always
-INNER_EOF
-EOF
-          rm private_key.pem
+			# 3. Bastion 호스트에 접속하여 EC2-A에 docker-compose 실행
+			- name: Deploy to EC2-A via Bastion Host
+			  env:
+			    BASTION_HOST: ${{ secrets.BASTION_HOST }}
+			    SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}  # SSH 개인 키
+			  run: |
+			    echo "$SSH_PRIVATE_KEY" > private_key.pem
+			    chmod 600 private_key.pem
+			    ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST << 'EOF'
+			      ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@${{ secrets.EC2_A_IP }} << 'INNER_EOF'
+			        if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then
+			          docker-compose stop;
+			        fi
+			        sleep 3
+			        docker-compose up -d --pull always
+			      INNER_EOF
+			    EOF
+			    rm private_key.pem  # 사용 후 PEM 파일 삭제
           
       # 4. EC2-A alb 연결상태 확인
       - name: Register EC2-A to Target Group
@@ -62,13 +63,13 @@ EOF
               break
             else
               echo "Waiting for EC2-A to become healthy..."
-              sleep 10
-              ATTEMPT=$((ATTEMPT + 1))
+              sleep 10  # 10초 대기 후 상태 확인
+              ATTEMPT=$((ATTEMPT + 1))  # 시도 횟수 증가
             fi
       
             if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
               echo "EC2-A is not healthy after $MAX_ATTEMPTS attempts. Exiting."
-              exit 1
+              exit 1  # 파이프라인 종료
             fi
           done
 
@@ -76,19 +77,20 @@ EOF
       - name: Deploy to EC2-C via Bastion Host
         env:
           BASTION_HOST: ${{ secrets.BASTION_HOST }}
-          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}
+          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}  # SSH 개인 키
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
           ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST << 'EOF'
-          ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@${{ secrets.EC2_C_IP }} << 'INNER_EOF'
-          if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then
-            docker-compose stop;
-          fi
-          sleep 3 && docker-compose up -d --pull always
-INNER_EOF
-EOF
-          rm private_key.pem
+            ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@${{ secrets.EC2_C_IP }} << 'INNER_EOF'
+              if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then
+                docker-compose stop;
+              fi
+              sleep 3
+              docker-compose up -d --pull always
+            INNER_EOF
+          EOF
+          rm private_key.pem  # 사용 후 PEM 파일 삭제
 
       # 6. EC2-C alb 연결상태 확인
       - name: Register EC2-C to Target Group
@@ -107,12 +109,12 @@ EOF
               break
             else
               echo "Waiting for EC2-C to become healthy..."
-              sleep 10
-              ATTEMPT=$((ATTEMPT + 1))
+              sleep 10  # 10초 대기 후 상태 확인
+              ATTEMPT=$((ATTEMPT + 1))  # 시도 횟수 증가
             fi
       
             if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
               echo "EC2-C is not healthy after $MAX_ATTEMPTS attempts. Exiting."
-              exit 1
+              exit 1  # 파이프라인 종료
             fi
           done
