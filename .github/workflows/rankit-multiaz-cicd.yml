@@ -11,110 +11,98 @@ jobs:
       contents: read
 
     steps:
-      # 1. AWS CLI 설치
       - name: Install AWS CLI
         run: |
           sudo apt-get update
           sudo apt-get install awscli -y
 
-      # 2. AWS 자격 증명 설정
       - name: Configure AWS credentials
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
-          aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
-          aws configure set region "ap-northeast-2"  # 서울 AWS 리전을 설정
-
-      # 3. Bastion 호스트에 접속하여 EC2-A에 docker-compose 실행
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set region ap-northeast-2
+      
       - name: Deploy to EC2-A via Bastion Host
         env:
           BASTION_HOST: ${{ secrets.BASTION_HOST }}
-          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}  # SSH 개인 키
+          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST << 'EOF'
-            ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@${{ secrets.EC2_A_IP }} << 'INNER_EOF'
-              if [ "$(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}')" = "true" ]; then
-                docker-compose stop
-              fi
-              sleep 3
-              docker-compose up -d --pull always
-            INNER_EOF
-          EOF
-          rm private_key.pem  # 사용 후 PEM 파일 삭제
+          cat << 'EOSSH' > deploy.sh
+          ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@${{ secrets.EC2_A_IP }} '
+          if [ "$(docker-compose ps -q app | xargs -r docker inspect -f '\''{{.State.Running}}'\'')" = "true" ]; then
+            docker-compose stop
+          fi
+          sleep 3 && docker-compose up -d --pull always
+          '
+          EOSSH
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST 'bash -s' < deploy.sh
+          rm private_key.pem deploy.sh
           
-      # 4. EC2-A alb 연결상태 확인
       - name: Register EC2-A to Target Group
         run: |
           MAX_ATTEMPTS=30
           ATTEMPT=0
-      
           while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
             HEALTH_STATUS=$(aws elbv2 describe-target-health \
               --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
               --query "TargetHealthDescriptions[?Target.Id=='${{ secrets.EC2_A_ID }}'].TargetHealth.State" \
               --output text)
-      
-            if [ "$HEALTH_STATUS" = "healthy" ]; then
+            if [ "$HEALTH_STATUS" == "healthy" ]; then
               echo "EC2-A is healthy."
               break
             else
               echo "Waiting for EC2-A to become healthy..."
-              sleep 10  # 10초 대기 후 상태 확인
-              ATTEMPT=$((ATTEMPT + 1))  # 시도 횟수 증가
+              sleep 10
+              ATTEMPT=$((ATTEMPT + 1))
             fi
-      
             if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
               echo "EC2-A is not healthy after $MAX_ATTEMPTS attempts. Exiting."
-              exit 1  # 파이프라인 종료
+              exit 1
             fi
           done
 
-      # 5. Bastion 호스트에 접속하여 EC2-C에 Docker 컨테이너 배포
       - name: Deploy to EC2-C via Bastion Host
         env:
           BASTION_HOST: ${{ secrets.BASTION_HOST }}
-          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}  # SSH 개인 키
+          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST << 'EOF'
-            ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@${{ secrets.EC2_C_IP }} << 'INNER_EOF'
-              if [ "$(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}')" = "true" ]; then
-                docker-compose stop
-              fi
-              sleep 3
-              docker-compose up -d --pull always
-            INNER_EOF
-          EOF
-          rm private_key.pem  # 사용 후 PEM 파일 삭제
+          cat << 'EOSSH' > deploy.sh
+          ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@${{ secrets.EC2_C_IP }} '
+          if [ "$(docker-compose ps -q app | xargs -r docker inspect -f '\''{{.State.Running}}'\'')" = "true" ]; then
+            docker-compose stop
+          fi
+          sleep 3 && docker-compose up -d --pull always
+          '
+          EOSSH
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST 'bash -s' < deploy.sh
+          rm private_key.pem deploy.sh
 
-      # 6. EC2-C alb 연결상태 확인
       - name: Register EC2-C to Target Group
         run: |
           MAX_ATTEMPTS=30
           ATTEMPT=0
-      
           while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
             HEALTH_STATUS=$(aws elbv2 describe-target-health \
               --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
               --query "TargetHealthDescriptions[?Target.Id=='${{ secrets.EC2_C_ID }}'].TargetHealth.State" \
               --output text)
-      
-            if [ "$HEALTH_STATUS" = "healthy" ]; then
+            if [ "$HEALTH_STATUS" == "healthy" ]; then
               echo "EC2-C is healthy."
               break
             else
               echo "Waiting for EC2-C to become healthy..."
-              sleep 10  # 10초 대기 후 상태 확인
-              ATTEMPT=$((ATTEMPT + 1))  # 시도 횟수 증가
+              sleep 10
+              ATTEMPT=$((ATTEMPT + 1))
             fi
-      
             if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
               echo "EC2-C is not healthy after $MAX_ATTEMPTS attempts. Exiting."
-              exit 1  # 파이프라인 종료
+              exit 1
             fi
           done
