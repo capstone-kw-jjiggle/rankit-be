@@ -72,7 +72,7 @@ jobs:
       - name: Deploy to EC2-A via Bastion Host
         env:
           BASTION_HOST: ${{ secrets.BASTION_HOST }}
-          EC2_A_IP: ${{ secrets.EC2_A_IP }}  # EC2-A의 사설 IP 주소
+          EC2_A_IP: ${{ secrets.EC2_A_ID }}  # EC2-A의 사설 IP 주소
           SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}  # SSH 개인 키
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key.pem
@@ -118,7 +118,7 @@ jobs:
       - name: Deploy to EC2-C via Bastion Host
         env:
           BASTION_HOST: ${{ secrets.BASTION_HOST }}
-          EC2_C_IP: ${{ secrets.EC2_C_IP }}  # EC2-C의 사설 IP 주소
+          EC2_C_IP: ${{ secrets.EC2_C_ID }}  # EC2-C의 사설 IP 주소
           SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}  # SSH 개인 키
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key.pem
