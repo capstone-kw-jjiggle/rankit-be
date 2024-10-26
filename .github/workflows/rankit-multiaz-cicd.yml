@@ -78,7 +78,7 @@ jobs:
           # Bastion 호스트에 접속하여 EC2-A에 docker-compose 실행
           ssh -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") ec2-user@$BASTION_HOST << 'EOF'
             ssh -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") ec2-user@$EC2_A_IP << 'INNER_EOF'
-	            sudo -i
+	      sudo -i
               if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then
                 docker-compose stop;
               fi
