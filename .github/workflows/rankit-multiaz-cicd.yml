@@ -68,19 +68,27 @@ jobs:
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
           aws configure set region ap-northeast-2  # 서울 AWS 리전을 설정
       
-      # 3. EC2-A에 Docker 컨테이너 배포
-      - name: Deploy to EC2-A via SSM
+      # 3. Bastion 호스트에 접속하여 EC2-A에 Docker 컨테이너 배포
+      - name: Deploy to EC2-A via Bastion Host
+        env:
+          BASTION_HOST: ${{ secrets.BASTION_HOST }}
+          EC2_A_IP: ${{ secrets.EC2_A_IP }}  # EC2-A의 사설 IP 주소
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH 개인 키
         run: |
-          aws ssm send-command \
-            --instance-ids "${{ secrets.EC2_A_ID }}" \
-            --document-name "AWS-RunShellScript" \
-            --parameters '{"commands":["if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then docker-compose stop; fi && cd /home/ssm-user && echo $(pwd) && sleep 3 && docker-compose up -d --pull always"]}' \
-            --comment "Deploying application to EC2-A"
+          # Bastion 호스트에 접속하여 EC2-A에 docker-compose 실행
+          ssh -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") ec2-user@$BASTION_HOST << 'EOF'
+            ssh -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") ec2-user@$EC2_A_IP << 'INNER_EOF'
+	            sudo -i
+              if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then
+                docker-compose stop;
+              fi
+              cd /home/ssm-user && sleep 3 && docker-compose up -d --pull always
+            INNER_EOF
+          EOF
 
       # 4. EC2-A alb 연결상태 확인
       - name: Register EC2-A to Target Group
         run: |
-          # ALB에서 헬스 체크 상태 확인
           MAX_ATTEMPTS=30
           ATTEMPT=0
       
@@ -99,26 +107,33 @@ jobs:
               ATTEMPT=$((ATTEMPT + 1))  # 시도 횟수 증가
             fi
       
-            # 시도 횟수가 MAX_ATTEMPTS에 도달했는지 확인
             if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
               echo "EC2-A is not healthy after $MAX_ATTEMPTS attempts. Exiting."
               exit 1  # 파이프라인 종료
             fi
           done
 
-      # 5. EC2-C에 Docker 컨테이너 배포
-      - name: Deploy to EC2-C via SSM
+      # 5. Bastion 호스트에 접속하여 EC2-C에 Docker 컨테이너 배포
+      - name: Deploy to EC2-C via Bastion Host
+        env:
+          BASTION_HOST: ${{ secrets.BASTION_HOST }}
+          EC2_C_IP: ${{ secrets.EC2_C_IP }}  # EC2-C의 사설 IP 주소
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH 개인 키
         run: |
-          aws ssm send-command \
-            --instance-ids "${{ secrets.EC2_C_ID }}" \
-            --document-name "AWS-RunShellScript" \
-            --parameters '{"commands":["if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then docker-compose stop; fi && echo $(pwd) && sleep 3 && docker-compose up -d --pull always"]}' \
-            --comment "Deploying application to EC2-C"
-            
+          # Bastion 호스트에 접속하여 EC2-C에 docker-compose 실행
+          ssh -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") ec2-user@$BASTION_HOST << 'EOF'
+            ssh -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") ec2-user@$EC2_C_IP << 'INNER_EOF'
+              sudo -i
+              if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then
+                docker-compose stop;
+              fi
+              cd /home/ssm-user && sleep 3 && docker-compose up -d --pull always
+            INNER_EOF
+          EOF
+
       # 6. EC2-C alb 연결상태 확인
-      - name: Register EC2-A to Target Group
+      - name: Register EC2-C to Target Group
         run: |
-          # ALB에서 헬스 체크 상태 확인
           MAX_ATTEMPTS=30
           ATTEMPT=0
       
@@ -137,10 +152,8 @@ jobs:
               ATTEMPT=$((ATTEMPT + 1))  # 시도 횟수 증가
             fi
       
-            # 시도 횟수가 MAX_ATTEMPTS에 도달했는지 확인
             if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
               echo "EC2-C is not healthy after $MAX_ATTEMPTS attempts. Exiting."
               exit 1  # 파이프라인 종료
             fi
           done
-            
