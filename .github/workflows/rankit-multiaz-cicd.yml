@@ -51,12 +51,23 @@ jobs:
               sleep 3
               docker-compose up -d --pull always
 
-              # 헬스 체크
-              sleep 5  # 컨테이너가 시작될 시간을 주기 위해 잠시 대기
-              if curl -s 127.0.0.1:8080 | grep -q "health Check Success"; then
-                echo "EC2-A is healthy."
-              else
-                echo "EC2-A health check failed."
+              # 헬스 체크 반복 수행
+              MAX_ATTEMPTS=10
+              ATTEMPT=0
+              while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+                sleep 5  # 컨테이너가 시작될 시간을 주기 위해 잠시 대기
+                if curl -s 127.0.0.1:8080 | grep -q "health Check Success"; then
+                  echo "EC2-A is healthy."
+                  break  # 성공하면 반복 종료
+                else
+                  echo "EC2-A health check failed. Attempt $(($ATTEMPT + 1)) of $MAX_ATTEMPTS."
+                  ATTEMPT=$(($ATTEMPT + 1))  # 시도 횟수 증가
+                  sleep 5  # 잠시 대기 후 다시 시도
+                fi
+              done
+
+              if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+                echo "EC2-A is not healthy after $MAX_ATTEMPTS attempts. Exiting."
                 exit 1  # 파이프라인 종료
               fi
             INNER_EOF
@@ -122,12 +133,23 @@ jobs:
               sleep 3
               docker-compose up -d --pull always
 
-              # 헬스 체크
-              sleep 5  # 컨테이너가 시작될 시간을 주기 위해 잠시 대기
-              if curl -s 127.0.0.1:8080 | grep -q "health Check Success"; then
-                echo "EC2-C is healthy."
-              else
-                echo "EC2-C health check failed."
+              # 헬스 체크 반복 수행
+              MAX_ATTEMPTS=10
+              ATTEMPT=0
+              while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+                sleep 5  # 컨테이너가 시작될 시간을 주기 위해 잠시 대기
+                if curl -s 127.0.0.1:8080 | grep -q "health Check Success"; then
+                  echo "EC2-C is healthy."
+                  break  # 성공하면 반복 종료
+                else
+                  echo "EC2-C health check failed. Attempt $(($ATTEMPT + 1)) of $MAX_ATTEMPTS."
+                  ATTEMPT=$(($ATTEMPT + 1))  # 시도 횟수 증가
+                  sleep 5  # 잠시 대기 후 다시 시도
+                fi
+              done
+
+              if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+                echo "EC2-C is not healthy after $MAX_ATTEMPTS attempts. Exiting."
                 exit 1  # 파이프라인 종료
               fi
             INNER_EOF
@@ -164,7 +186,4 @@ jobs:
             fi
       
             if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-              echo "EC2-C is not healthy in ALB after $MAX_ATTEMPTS attempts. Exiting."
-              exit 1  # 파이프라인 종료
-            fi
-          done
+              echo "EC2-C is not
