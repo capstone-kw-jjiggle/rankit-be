@@ -16,7 +16,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install awscli -y
-      
+
       # 2. AWS 자격 증명 설정
       - name: Configure AWS credentials
         env:
@@ -31,20 +31,19 @@ jobs:
       - name: Deploy to EC2-A via Bastion Host
         env:
           BASTION_HOST: ${{ secrets.BASTION_HOST }}
-          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}  # SSH 개인 키
+          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
           ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST << 'EOF'
-            ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@${{ secrets.EC2_A_IP }} << 'INNER_EOF'
-              if [ "$(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}')" = 'true' ]; then
-                docker-compose stop;
-              fi
-              sleep 3
-              docker-compose up -d --pull always
-            INNER_EOF
-          EOF
-          rm private_key.pem  # 사용 후 PEM 파일 삭제
+          ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@${{ secrets.EC2_A_IP }} << 'INNER_EOF'
+          if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then
+            docker-compose stop;
+          fi
+          sleep 3 && docker-compose up -d --pull always
+INNER_EOF
+EOF
+          rm private_key.pem
           
       # 4. EC2-A alb 연결상태 확인
       - name: Register EC2-A to Target Group
@@ -58,7 +57,7 @@ jobs:
               --query "TargetHealthDescriptions[?Target.Id=='${{ secrets.EC2_A_ID }}'].TargetHealth.State" \
               --output text)
       
-            if [ "$HEALTH_STATUS" = "healthy" ]; then
+            if [ "$HEALTH_STATUS" == "healthy" ]; then
               echo "EC2-A is healthy."
               break
             else
@@ -77,21 +76,20 @@ jobs:
       - name: Deploy to EC2-C via Bastion Host
         env:
           BASTION_HOST: ${{ secrets.BASTION_HOST }}
-          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}  # SSH 개인 키
+          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
           ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST << 'EOF'
-            ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@${{ secrets.EC2_C_IP }} << 'INNER_EOF'
-              if [ "$(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}')" = 'true' ]; then
-                docker-compose stop;
-              fi
-              sleep 3
-              docker-compose up -d --pull always
-            INNER_EOF
-          EOF
-          rm private_key.pem  # 사용 후 PEM 파일 삭제
-      
+          ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@${{ secrets.EC2_C_IP }} << 'INNER_EOF'
+          if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then
+            docker-compose stop;
+          fi
+          sleep 3 && docker-compose up -d --pull always
+INNER_EOF
+EOF
+          rm private_key.pem
+
       # 6. EC2-C alb 연결상태 확인
       - name: Register EC2-C to Target Group
         run: |
@@ -104,7 +102,7 @@ jobs:
               --query "TargetHealthDescriptions[?Target.Id=='${{ secrets.EC2_C_ID }}'].TargetHealth.State" \
               --output text)
       
-            if [ "$HEALTH_STATUS" = "healthy" ]; then
+            if [ "$HEALTH_STATUS" == "healthy" ]; then
               echo "EC2-C is healthy."
               break
             else
