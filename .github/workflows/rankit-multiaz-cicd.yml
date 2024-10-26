@@ -78,7 +78,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
           ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST << 'EOF'
-            ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_A_IP << 'INNER_EOF'
+            ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@$EC2_A_IP << 'INNER_EOF'
               if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then
                 docker-compose stop;
               fi
@@ -124,7 +124,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
           ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST << 'EOF'
-            ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_C_IP << 'INNER_EOF'
+            ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@$EC2_C_IP << 'INNER_EOF'
               if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then
                 docker-compose stop;
               fi
