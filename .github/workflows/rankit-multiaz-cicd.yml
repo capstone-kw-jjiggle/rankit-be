@@ -68,22 +68,25 @@ jobs:
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
           aws configure set region ap-northeast-2  # 서울 AWS 리전을 설정
       
-      # 3. Bastion 호스트에 접속하여 EC2-A에 Docker 컨테이너 배포
-      - name: Deploy to EC2-A via Bastion Host
-        env:
-          BASTION_HOST: ${{ secrets.BASTION_HOST }}
-          EC2_A_IP: ${{ secrets.EC2_A_IP }}  # EC2-A의 사설 IP 주소
-          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}  # SSH 개인 키
-        run: |
-          # Bastion 호스트에 접속하여 EC2-A에 docker-compose 실행
-          ssh -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") ec2-user@$BASTION_HOST << 'EOF'
-            ssh -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") ec2-user@$EC2_A_IP << 'INNER_EOF'
-              if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then
-              docker-compose stop;
-              fi
-              sleep 3 && docker-compose up -d --pull always
-            INNER_EOF
-          EOF
+			# 3. Bastion 호스트에 접속하여 EC2-A에 docker-compose 실행
+			- name: Deploy to EC2-A via Bastion Host
+			  env:
+			    BASTION_HOST: ${{ secrets.BASTION_HOST }}
+			    EC2_A_IP: ${{ secrets.EC2_A_IP }}  # EC2-A의 사설 IP 주소
+			    SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}  # SSH 개인 키
+			  run: |
+			    echo "$SSH_PRIVATE_KEY" > private_key.pem
+			    chmod 600 private_key.pem
+			    ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST << 'EOF'
+			      ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_A_IP << 'INNER_EOF'
+			        if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then
+			          docker-compose stop;
+			        fi
+			        sleep 3 && docker-compose up -d --pull always
+			      INNER_EOF
+			    EOF
+			    rm private_key.pem  # 사용 후 PEM 파일 삭제
+			
 
       # 4. EC2-A alb 연결상태 확인
       - name: Register EC2-A to Target Group
@@ -112,22 +115,25 @@ jobs:
             fi
           done
 
-      # 5. Bastion 호스트에 접속하여 EC2-C에 Docker 컨테이너 배포
-      - name: Deploy to EC2-C via Bastion Host
-        env:
-          BASTION_HOST: ${{ secrets.BASTION_HOST }}
-          EC2_C_IP: ${{ secrets.EC2_C_IP }}  # EC2-C의 사설 IP 주소
-          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}  # SSH 개인 키
-        run: |
-          # Bastion 호스트에 접속하여 EC2-C에 docker-compose 실행
-          ssh -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") ec2-user@$BASTION_HOST << 'EOF'
-            ssh -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") ec2-user@$EC2_C_IP << 'INNER_EOF'
-              if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then
-              docker-compose stop;
-              fi
-              sleep 3 && docker-compose up -d --pull always
-            INNER_EOF
-          EOF
+			# 5. Bastion 호스트에 접속하여 EC2-C에 Docker 컨테이너 배포
+			- name: Deploy to EC2-C via Bastion Host
+			  env:
+			    BASTION_HOST: ${{ secrets.BASTION_HOST }}
+			    EC2_C_IP: ${{ secrets.EC2_C_IP }}  # EC2-A의 사설 IP 주소
+			    SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}  # SSH 개인 키
+			  run: |
+			    echo "$SSH_PRIVATE_KEY" > private_key.pem
+			    chmod 600 private_key.pem
+			    ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST << 'EOF'
+			      ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_C_IP << 'INNER_EOF'
+			        if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then
+			          docker-compose stop;
+			        fi
+			        sleep 3 && docker-compose up -d --pull always
+			      INNER_EOF
+			    EOF
+			    rm private_key.pem  # 사용 후 PEM 파일 삭제
+
 
       # 6. EC2-C alb 연결상태 확인
       - name: Register EC2-C to Target Group
