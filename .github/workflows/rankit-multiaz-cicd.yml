@@ -50,13 +50,26 @@ jobs:
             fi
             sleep 3
             docker-compose up -d --pull always
-            sleep 5
-            if curl -s 127.0.0.1:8080 | grep -q \"health Check Success\"; then
-              echo \"EC2-A is healthy.\"
-            else
-              echo \"EC2-A health check failed.\"
-              exit 1
-            fi
+            
+            # 향상된 헬스체크: 최대 10번 시도, 5초 간격
+            MAX_HEALTH_CHECKS=10
+            HEALTH_CHECK_COUNT=0
+            
+            while [ \$HEALTH_CHECK_COUNT -lt \$MAX_HEALTH_CHECKS ]; do
+              if curl -s 127.0.0.1:8080 | grep -q \"health Check Success\"; then
+                echo \"EC2-A is healthy after \$((HEALTH_CHECK_COUNT + 1)) attempts.\"
+                exit 0
+              else
+                echo \"Health check attempt \$((HEALTH_CHECK_COUNT + 1)) failed. Retrying in 5 seconds...\"
+                sleep 5
+                HEALTH_CHECK_COUNT=\$((HEALTH_CHECK_COUNT + 1))
+              fi
+              
+              if [ \$HEALTH_CHECK_COUNT -eq \$MAX_HEALTH_CHECKS ]; then
+                echo \"EC2-A health check failed after \$MAX_HEALTH_CHECKS attempts.\"
+                exit 1
+              fi
+            done
           '"
           rm private_key.pem
 
@@ -118,13 +131,26 @@ jobs:
             fi
             sleep 3
             docker-compose up -d --pull always
-            sleep 5
-            if curl -s 127.0.0.1:8080 | grep -q \"health Check Success\"; then
-              echo \"EC2-C is healthy.\"
-            else
-              echo \"EC2-C health check failed.\"
-              exit 1
-            fi
+            
+            # 향상된 헬스체크: 최대 10번 시도, 5초 간격
+            MAX_HEALTH_CHECKS=10
+            HEALTH_CHECK_COUNT=0
+            
+            while [ \$HEALTH_CHECK_COUNT -lt \$MAX_HEALTH_CHECKS ]; do
+              if curl -s 127.0.0.1:8080 | grep -q \"health Check Success\"; then
+                echo \"EC2-C is healthy after \$((HEALTH_CHECK_COUNT + 1)) attempts.\"
+                exit 0
+              else
+                echo \"Health check attempt \$((HEALTH_CHECK_COUNT + 1)) failed. Retrying in 5 seconds...\"
+                sleep 5
+                HEALTH_CHECK_COUNT=\$((HEALTH_CHECK_COUNT + 1))
+              fi
+              
+              if [ \$HEALTH_CHECK_COUNT -eq \$MAX_HEALTH_CHECKS ]; then
+                echo \"EC2-C health check failed after \$MAX_HEALTH_CHECKS attempts.\"
+                exit 1
+              fi
+            done
           '"
           rm private_key.pem
 
