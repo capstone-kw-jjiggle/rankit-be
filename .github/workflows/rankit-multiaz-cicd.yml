@@ -74,7 +74,7 @@ jobs:
           aws ssm send-command \
             --instance-ids "${{ secrets.EC2_A_ID }}" \
             --document-name "AWS-RunShellScript" \
-            --parameters '{"commands":["if [ $(docker ps -q -f \"ancestor='${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest'\" -f \"status=running\") ]; then docker stop $(docker ps -q -f \"ancestor='${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest'\"); fi && docker pull '${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest' && cd /home/ec2-user && docker-compose -f docker-compose.yml up -d"]}' \
+            --parameters '{"commands":["if [ $(docker ps -q -f \"ancestor='${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest'\" -f \"status=running\") ]; then docker stop $(docker ps -q -f \"ancestor='${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest'\"); fi && docker pull '${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest' && cd /home/ssm-user && docker-compose -f docker-compose.yml up -d"]}' \
             --comment "Deploying application to EC2-A"
 
       # 4. EC2-A alb 연결상태 확인
@@ -112,7 +112,7 @@ jobs:
           aws ssm send-command \
             --instance-ids "${{ secrets.EC2_C_ID }}" \
             --document-name "AWS-RunShellScript" \
-            --parameters '{"commands":["if [ $(docker ps -q -f \"ancestor='${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest'\" -f \"status=running\") ]; then docker stop $(docker ps -q -f \"ancestor='${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest'\"); fi && docker pull '${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest' && cd /home/ec2-user && docker-compose -f docker-compose.yml up -d"]}' \
+            --parameters '{"commands":["if [ $(docker ps -q -f \"ancestor='${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest'\" -f \"status=running\") ]; then docker stop $(docker ps -q -f \"ancestor='${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest'\"); fi && docker pull '${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest' && cd /home/ssm-user && docker-compose -f docker-compose.yml up -d"]}' \
             --comment "Deploying application to EC2-C"
             
       # 6. EC2-C alb 연결상태 확인
