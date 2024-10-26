@@ -74,7 +74,7 @@ jobs:
           aws ssm send-command \
             --instance-ids "${{ secrets.EC2_A_ID }}" \
             --document-name "AWS-RunShellScript" \
-            --parameters '{"commands":["if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then docker-compose stop; fi && cd /home/ssm-user && sleep 3 && docker-compose up -d --pull always"]}' \
+            --parameters '{"commands":["if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then docker-compose stop; fi && cd /home/ssm-user && echo $(pwd) && sleep 3 && docker-compose up -d --pull always"]}' \
             --comment "Deploying application to EC2-A"
 
       # 4. EC2-A alb 연결상태 확인
@@ -112,7 +112,7 @@ jobs:
           aws ssm send-command \
             --instance-ids "${{ secrets.EC2_C_ID }}" \
             --document-name "AWS-RunShellScript" \
-            --parameters '{"commands":["if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then docker-compose stop; fi && sleep 3 && docker-compose up -d --pull always"]}' \
+            --parameters '{"commands":["if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then docker-compose stop; fi && echo $(pwd) && sleep 3 && docker-compose up -d --pull always"]}' \
             --comment "Deploying application to EC2-C"
             
       # 6. EC2-C alb 연결상태 확인
