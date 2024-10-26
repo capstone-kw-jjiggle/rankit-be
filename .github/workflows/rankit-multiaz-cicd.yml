@@ -73,7 +73,7 @@ jobs:
         env:
           BASTION_HOST: ${{ secrets.BASTION_HOST }}
           EC2_A_IP: ${{ secrets.EC2_A_IP }}  # EC2-A의 사설 IP 주소
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH 개인 키
+          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}  # SSH 개인 키
         run: |
           # Bastion 호스트에 접속하여 EC2-A에 docker-compose 실행
           ssh -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") ec2-user@$BASTION_HOST << 'EOF'
@@ -117,7 +117,7 @@ jobs:
         env:
           BASTION_HOST: ${{ secrets.BASTION_HOST }}
           EC2_C_IP: ${{ secrets.EC2_C_IP }}  # EC2-C의 사설 IP 주소
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH 개인 키
+          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}  # SSH 개인 키
         run: |
           # Bastion 호스트에 접속하여 EC2-C에 docker-compose 실행
           ssh -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") ec2-user@$BASTION_HOST << 'EOF'
