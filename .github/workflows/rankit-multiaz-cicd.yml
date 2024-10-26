@@ -39,40 +39,26 @@ jobs:
       - name: Deploy to EC2-A via Bastion Host
         env:
           BASTION_HOST: ${{ secrets.BASTION_HOST }}
-          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}  # SSH 개인 키
+          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}
+          EC2_A_IP: ${{ secrets.EC2_A_IP }}
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST << 'EOF'
-            ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@${{ secrets.EC2_A_IP }} << 'INNER_EOF'
-              if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then
-                docker-compose stop;
-              fi
-              sleep 3
-              docker-compose up -d --pull always
-
-              # 헬스 체크 반복 수행
-              MAX_ATTEMPTS=10
-              ATTEMPT=0
-              while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
-                sleep 5  # 컨테이너가 시작될 시간을 주기 위해 잠시 대기
-                if curl -s 127.0.0.1:8080 | grep -q "health Check Success"; then
-                  echo "EC2-A is healthy."
-                  break  # 성공하면 반복 종료
-                else
-                  echo "EC2-A health check failed. Attempt $(($ATTEMPT + 1)) of $MAX_ATTEMPTS."
-                  ATTEMPT=$(($ATTEMPT + 1))  # 시도 횟수 증가
-                  sleep 5  # 잠시 대기 후 다시 시도
-                fi
-              done
-
-              if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-                echo "EC2-A is not healthy after $MAX_ATTEMPTS attempts. Exiting."
-                exit 1  # 파이프라인 종료
-              fi
-            INNER_EOF
-          EOF
-          rm private_key.pem  # 사용 후 PEM 파일 삭제
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST "ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@$EC2_A_IP '
+            if [ \$(docker-compose ps -q app | xargs -r docker inspect -f \"{{.State.Running}}\") == \"true\" ]; then
+              docker-compose stop
+            fi
+            sleep 3
+            docker-compose up -d --pull always
+            sleep 5
+            if curl -s 127.0.0.1:8080 | grep -q \"health Check Success\"; then
+              echo \"EC2-A is healthy.\"
+            else
+              echo \"EC2-A health check failed.\"
+              exit 1
+            fi
+          '"
+          rm private_key.pem
 
       # 5. ALB 연결 복원 (EC2-A)
       - name: Register EC2-A back to Target Group
@@ -99,13 +85,13 @@ jobs:
               break
             else
               echo "Waiting for EC2-A to become healthy in ALB..."
-              sleep 10  # 10초 대기 후 상태 확인
-              ATTEMPT=$((ATTEMPT + 1))  # 시도 횟수 증가
+              sleep 10
+              ATTEMPT=$((ATTEMPT + 1))
             fi
       
             if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
               echo "EC2-A is not healthy in ALB after $MAX_ATTEMPTS attempts. Exiting."
-              exit 1  # 파이프라인 종료
+              exit 1
             fi
           done
 
@@ -121,40 +107,26 @@ jobs:
       - name: Deploy to EC2-C via Bastion Host
         env:
           BASTION_HOST: ${{ secrets.BASTION_HOST }}
-          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}  # SSH 개인 키
+          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}
+          EC2_C_IP: ${{ secrets.EC2_C_IP }}
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST << 'EOF'
-            ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@${{ secrets.EC2_C_IP }} << 'INNER_EOF'
-              if [ $(docker-compose ps -q app | xargs -r docker inspect -f '{{.State.Running}}') == 'true' ]; then
-                docker-compose stop;
-              fi
-              sleep 3
-              docker-compose up -d --pull always
-
-              # 헬스 체크 반복 수행
-              MAX_ATTEMPTS=10
-              ATTEMPT=0
-              while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
-                sleep 5  # 컨테이너가 시작될 시간을 주기 위해 잠시 대기
-                if curl -s 127.0.0.1:8080 | grep -q "health Check Success"; then
-                  echo "EC2-C is healthy."
-                  break  # 성공하면 반복 종료
-                else
-                  echo "EC2-C health check failed. Attempt $(($ATTEMPT + 1)) of $MAX_ATTEMPTS."
-                  ATTEMPT=$(($ATTEMPT + 1))  # 시도 횟수 증가
-                  sleep 5  # 잠시 대기 후 다시 시도
-                fi
-              done
-
-              if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-                echo "EC2-C is not healthy after $MAX_ATTEMPTS attempts. Exiting."
-                exit 1  # 파이프라인 종료
-              fi
-            INNER_EOF
-          EOF
-          rm private_key.pem  # 사용 후 PEM 파일 삭제
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST "ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@$EC2_C_IP '
+            if [ \$(docker-compose ps -q app | xargs -r docker inspect -f \"{{.State.Running}}\") == \"true\" ]; then
+              docker-compose stop
+            fi
+            sleep 3
+            docker-compose up -d --pull always
+            sleep 5
+            if curl -s 127.0.0.1:8080 | grep -q \"health Check Success\"; then
+              echo \"EC2-C is healthy.\"
+            else
+              echo \"EC2-C health check failed.\"
+              exit 1
+            fi
+          '"
+          rm private_key.pem
 
       # 9. ALB 연결 복원 (EC2-C)
       - name: Register EC2-C back to Target Group
@@ -181,9 +153,12 @@ jobs:
               break
             else
               echo "Waiting for EC2-C to become healthy in ALB..."
-              sleep 10  # 10초 대기 후 상태 확인
-              ATTEMPT=$((ATTEMPT + 1))  # 시도 횟수 증가
+              sleep 10
+              ATTEMPT=$((ATTEMPT + 1))
             fi
       
             if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-              echo "EC2-C is not
+              echo "EC2-C is not healthy in ALB after $MAX_ATTEMPTS attempts. Exiting."
+              exit 1
+            fi
+          done
