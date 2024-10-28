@@ -3,12 +3,16 @@ package gitbal.backend.domain.majorlanguage.application;
 import gitbal.backend.api.userPage.dto.UserRankMajorLanguageResponseDto;
 import gitbal.backend.domain.majorlanguage.MajorLanguage;
 import gitbal.backend.domain.user.User;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -31,8 +35,13 @@ public class MajorLanguageService {
             requireNonNull(majorLanguageJsonParser.parse(
                 response.getBody()));
 
-        if (!languageCounts.isEmpty()) {
-            Map.Entry<String, Integer> entry = languageCounts.entrySet().iterator().next();
+        Optional<Entry<String, Integer>> first = languageCounts.entrySet().stream()
+            .sorted(Comparator.comparing(Entry<String, Integer>::getValue).reversed())
+            .findFirst();
+
+
+        if (first.isPresent()) {
+            Map.Entry<String, Integer> entry = first.get();
 
             return MajorLanguage.builder()
                 .majorLanguage(entry.getKey())
@@ -45,11 +54,13 @@ public class MajorLanguageService {
     }
 
 
+    @Transactional
     public UserRankMajorLanguageResponseDto findMostUsageLanguageByUsername(User findUser) {
         return UserRankMajorLanguageResponseDto.of(findUser.getMajorLanguage());
     }
 
 
+    @Transactional
     public void updateUserLanguage(MajorLanguage updatedLanguage, User user) {
         MajorLanguageUpdater majorLanguageUpdater = MajorLanguageUpdater.of(updatedLanguage);
         majorLanguageUpdater.updateLanguage(user);
