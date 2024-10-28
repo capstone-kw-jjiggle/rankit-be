@@ -12,7 +12,6 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,27 +23,24 @@ public class UserScoreUpdaterImpl extends UserSetup implements UserScoreUpdater 
     private final SchoolService schoolService;
 
     @Override
-    @Transactional
     public void update() {
         log.info("[schedulingUserScore] method start");
         List<String> allUserNames = super.getAllUsernames(userService);
-        updateUserScoresAndRelatedData(allUserNames);
-        log.info("[schedulingUserScore] method finish");
-    }
-
-    private void updateUserScoresAndRelatedData(List<String> allUserNames) {
         for (String username : allUserNames) {
-            User findUser = userService.findByUserName(username);
+            User findUser = userService.findByUserFetchJoin(username);
             Long newScore = userService.calculateUserScore(username);
             Long oldScore = findUser.getScore();
             School school = findUser.getSchool();
             Region region = findUser.getRegion();
-            if (Objects.isNull(school) || Objects.isNull(region)) {
+            if (Objects.isNull(school) || Objects.isNull(region))
                 continue;
-            }
+            userService.updateUserScore(findUser, newScore);
             schoolService.updateByUserScore(school, username, oldScore, newScore);
             regionService.updateByUserScore(region, username, oldScore, newScore);
-            userService.updateUserScore(findUser, newScore);
+            userService.updateUserRanking();
+
+            log.info("Now User is {}, score is {} ", findUser.getNickname(), findUser.getScore());
         }
+        log.info("[schedulingUserScore] method finish");
     }
 }

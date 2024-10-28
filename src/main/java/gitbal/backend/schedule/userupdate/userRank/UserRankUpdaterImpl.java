@@ -5,7 +5,6 @@ import gitbal.backend.schedule.userupdate.UserSetup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +15,6 @@ public class UserRankUpdaterImpl extends UserSetup implements UserRankUpdater {
 
 
   @Override
-  @Transactional
   public void update() {
     log.info("[schedulingUserRank] method start");
     userService.updateUserRank();

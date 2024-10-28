@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 public class UserGradeUpdaterImpl implements UserGradeUpdater{
 
   private final UserService userService;
+
   @Override
   public void update() {
     log.info("[schedulingUserGrade] method start");
