@@ -29,7 +29,7 @@ public class LoginService {
 
         String redirectUrl = initRedirectUrl(username, isRegisterUser(user));
 
-        return "redirect:" + redirectUrl;
+        return  redirectUrl;
     }
 
     private boolean isRegisterUser(User user) {
