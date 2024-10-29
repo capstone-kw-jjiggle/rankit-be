@@ -33,7 +33,7 @@ public class LoginService {
     }
 
     private boolean isRegisterUser(User user) {
-        return (!Objects.isNull(user.getSchool()) && !Objects.isNull(user.getRegion()));
+        return user.getFirstLogined();
     }
 
     private User findUser(String username) {
