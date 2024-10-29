@@ -72,6 +72,10 @@ public class UserService {
         return userRepository.findByNickname(username).orElseThrow(NotFoundUserException::new);
     }
 
+    public User findByUserFetchJoin(String username){
+        return userRepository.findByNicknameFetchJoin(username).orElseThrow(NotFoundUserException::new);
+    }
+
 
 
     public School findSchoolByUserName(String username) {
@@ -143,16 +147,16 @@ public class UserService {
     }
 
     public void updateUserScore(User findUser, Long newScore) {
+        log.info("findUser : {} newScore : {}",findUser.getNickname(), newScore);
         findUser.updateScore(newScore);
-        updateUserRanking();
+        userRepository.save(findUser);
     }
 
-    private void updateUserRanking() {
+    public void updateUserRanking() {
         List<User> users = userRepository.findAll(Sort.by("score").descending());
         int rank = 1;
         for (User user : users) {
             user.setUserRank(rank++);
-            userRepository.save(user);
         }
     }
 
@@ -169,6 +173,7 @@ public class UserService {
         for (User user : users) {
             user.setUserRank(rank++);
         }
+        userRepository.flush();
     }
 
     @Transactional

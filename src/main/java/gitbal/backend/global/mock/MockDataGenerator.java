@@ -123,6 +123,7 @@ public class MockDataGenerator implements CommandLineRunner {
     }
 
     createUserWithNickname(lee);
+    createUserWithNickname("jamooooong");
     userService.updateUserRank(); //user 순위 업데이트
     userService.updateUserGrade(); // user 등급 업데이트
     schoolService.updateSchoolRank(); // school 순위 업데이트
@@ -154,7 +155,7 @@ public class MockDataGenerator implements CommandLineRunner {
     Region region = regionRepository.findById(1L)
         .orElse(null);
 
-    User leesj000603 = User.builder()
+    User user = User.builder()
         .school(school)
         .region(region)
         .nickname(nickName)
@@ -163,11 +164,11 @@ public class MockDataGenerator implements CommandLineRunner {
         .grade(Grade.PURPLE)
         .build();
 
-    String randomMajorLanguagesForUser = createRandomMajorLanguagesForUser(leesj000603);
+    String randomMajorLanguagesForUser = createRandomMajorLanguagesForUser(user);
 
-    leesj000603.joinUpdateUser(school, region, randomMajorLanguagesForUser,
-        leesj000603.getNickname(), leesj000603.getScore(), leesj000603.getProfile_img(), 0, introductionRepository.createIntroductionAndReturn());
-    userRepository.save(leesj000603);
+    user.joinUpdateUser(school, region, randomMajorLanguagesForUser,
+        user.getNickname(), user.getScore(), user.getProfile_img(), 0, introductionRepository.createIntroductionAndReturn());
+    userRepository.save(user);
 
   }
 

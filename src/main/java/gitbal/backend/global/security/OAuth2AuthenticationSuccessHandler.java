@@ -1,5 +1,6 @@
 package gitbal.backend.global.security;
 
+import gitbal.backend.api.auth.service.LoginService;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.domain.user.UserService;
@@ -31,6 +32,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private String REDIRECT_URL;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
+    private final LoginService loginService;
 
     @Override
     @Transactional
@@ -40,19 +42,18 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         GithubOAuth2UserInfo githubOAuth2UserInfo = changeGithubOAuth2UserInfo(
             authentication);
 
-        // TODO: 여기 관련 부분 뒤로 넘길 수 없는지 관련하여 고민
-
         if (isUserEmptyRefreshToken(githubOAuth2UserInfo) || isUserInDatabase(githubOAuth2UserInfo)) {
             log.info("[onAuthenticationSuccess] refreshtoken이 발견되지 않았거나 초기 MockData로 인한 임시의 refreshToken을 제작하고 있는것입니다.");
             updateUser(githubOAuth2UserInfo);
             tokenRefresh(githubOAuth2UserInfo);
         }
 
-        String uriString = UriComponentsBuilder.fromUriString(REDIRECT_URL)
-            .queryParam("username", githubOAuth2UserInfo.getNickname())
-            .build().toUriString();
+        String url = loginService.madeRedirectUrl(githubOAuth2UserInfo.getNickname());
 
-        response.sendRedirect(uriString);
+        log.info("redirect 보내기 직전");
+        log.info("redirect url : {}", url);
+
+        response.sendRedirect(url);
     }
 
     private void tokenRefresh(GithubOAuth2UserInfo githubOAuth2UserInfo) {
