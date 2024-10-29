@@ -73,6 +73,7 @@ public class UserService {
     }
 
     public User findByUserFetchJoin(String username){
+        log.info("username : {}", username);
         return userRepository.findByNicknameFetchJoin(username).orElseThrow(NotFoundUserException::new);
     }
 
@@ -82,21 +83,12 @@ public class UserService {
         User findUser = userRepository.findByNickname(username)
             .orElseThrow(NotFoundUserException::new);
 
-        if(Objects.isNull(findUser.getSchool())){
-            throw new UserHasNoSchoolException();
-        }
-
         return findUser.getSchool();
     }
 
     public Region findRegionByUserName(String username) {
         User findUser = userRepository.findByNickname(username)
             .orElseThrow(NotFoundUserException::new);
-
-        if(Objects.isNull(findUser.getRegion())){
-            throw new UserHasNoRegionException();
-        }
-
 
         return findUser.getRegion();
     }

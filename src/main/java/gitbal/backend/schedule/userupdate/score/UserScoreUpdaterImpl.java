@@ -32,12 +32,14 @@ public class UserScoreUpdaterImpl extends UserSetup implements UserScoreUpdater 
             Long oldScore = findUser.getScore();
             School school = findUser.getSchool();
             Region region = findUser.getRegion();
-            if (Objects.isNull(school) || Objects.isNull(region))
-                continue;
+
             userService.updateUserScore(findUser, newScore);
-            schoolService.updateByUserScore(school, username, oldScore, newScore);
-            regionService.updateByUserScore(region, username, oldScore, newScore);
             userService.updateUserRanking();
+            if(!Objects.isNull(school))
+                schoolService.updateByUserScore(school, username, oldScore, newScore);
+            if(!Objects.isNull(region)){
+                regionService.updateByUserScore(region, username, oldScore, newScore);
+            }
 
             log.info("Now User is {}, score is {} ", findUser.getNickname(), findUser.getScore());
         }
