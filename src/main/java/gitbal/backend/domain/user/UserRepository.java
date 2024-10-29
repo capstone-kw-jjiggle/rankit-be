@@ -38,6 +38,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Page<User> findUserByGrade(Grade grade, Pageable pageable);
 
-    @Query("select u from User u join fetch u.school  join fetch u.region where u.nickname = :username")
+    @Query("select u from User u left join fetch u.school  left join fetch u.region where u.nickname = :username")
     Optional<User> findByNicknameFetchJoin(String username);
 }
