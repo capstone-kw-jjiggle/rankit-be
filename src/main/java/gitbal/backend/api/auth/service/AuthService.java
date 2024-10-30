@@ -2,6 +2,8 @@ package gitbal.backend.api.auth.service;
 
 import gitbal.backend.api.auth.dto.JoinRequestDto;
 import gitbal.backend.api.auth.dto.UserDto;
+import gitbal.backend.domain.region.Region;
+import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.domain.majorlanguage.application.MajorLanguageService;
@@ -20,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -42,12 +46,12 @@ public class AuthService {
 
         User findUser = userRepository.findByNickname(nickname)
             .orElseThrow(() -> new JoinException("유저가 존재하지 않습니다."));
-
+        if(Boolean.FALSE.equals(findUser.getFirstLogined()))
+            findUser.toggleLogined();
         GitbalApiDto gitbalApiDto = GitbalApiDto.of(userService.calculateUserScore(nickname));
 
         //loginRequestDto 학교이름, 지역이름, 프로필 이미지 이름
         UserDto userDto = initUserDto(joinRequestDto, gitbalApiDto, nickname);
-
         joinUpdate(findUser, userDto);
         updateRank();
     }
@@ -55,14 +59,30 @@ public class AuthService {
 
     private UserDto initUserDto(JoinRequestDto joinRequestDto, GitbalApiDto gitbalApiDto,
         String nickname) {
-        return UserDto.of(schoolService.findBySchoolName(joinRequestDto.univName()),
-            regionService.findByRegionName(joinRequestDto.region()),
+
+        School findSchool = findSchool(joinRequestDto);
+        Region findRegion = findRegion(joinRequestDto);
+
+        return UserDto.of(findSchool,
+            findRegion,
             majorLanguageService.getUserTopLaunguage(nickname).getMajorLanguage(),
             nickname,
             gitbalApiDto.getScore(),
             userService.findUserImgByUsername(nickname),
             userService.findByUserName(nickname).getIntroduction()
         );
+    }
+
+    private Region findRegion(JoinRequestDto joinRequestDto) {
+        if(Objects.isNull(joinRequestDto.region()))
+            return null;
+        return regionService.findByRegionName(joinRequestDto.region());
+    }
+
+    private School findSchool(JoinRequestDto joinRequestDto) {
+        if(Objects.isNull(joinRequestDto.univName()))
+            return null;
+        return schoolService.findBySchoolName(joinRequestDto.univName());
     }
 
 
@@ -88,8 +108,10 @@ public class AuthService {
             0,
             userDto.introduction()
         );
-        schoolService.joinNewUserScore(findUser);
-        regionService.joinNewUserScore(findUser);
+        if(!Objects.isNull(findUser.getSchool()))
+            schoolService.joinNewUserScore(findUser);
+        if (!Objects.isNull(findUser.getRegion()))
+            regionService.joinNewUserScore(findUser);
     }
 
 

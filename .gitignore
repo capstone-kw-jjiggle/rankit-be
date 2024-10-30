@@ -2,6 +2,7 @@
 .env
 .env.prod
 
+.DS_Store
 
 HELP.md
 .gradle

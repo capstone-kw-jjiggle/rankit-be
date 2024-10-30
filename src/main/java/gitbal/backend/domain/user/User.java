@@ -84,6 +84,14 @@ public class User extends BaseTimeEntity {
     @ColumnDefault(value="'nothing'")
     private String refreshToken;
 
+    @ColumnDefault("0")
+    @Column(name = "first_logined")
+    private Boolean firstLogined = false;
+
+    public void toggleLogined() {
+        this.firstLogined = true;
+    }
+
     public void setGrade(Grade grade) { this.grade = grade; }
 
     public void setUserRank(int userRank) {this.userRank = userRank;}
@@ -116,7 +124,7 @@ public class User extends BaseTimeEntity {
     @Builder
     public User(School school, Region region,
         String majorLanguage,Introduction introduction,
-        String nickname, Long score, String profile_img, Grade grade,int userRank) {
+        String nickname, Long score, String profile_img, Grade grade,int userRank, boolean firstLogined) {
         this.school = school;
         this.region = region;
         this.majorLanguage = majorLanguage;
@@ -126,6 +134,7 @@ public class User extends BaseTimeEntity {
         this.profile_img = profile_img;
         this.grade = grade;
         this.userRank = userRank;
+        this.firstLogined = firstLogined;
     }
 
 
@@ -147,7 +156,7 @@ public class User extends BaseTimeEntity {
     }
 
     public static User of(String username, String avatarUrl) {
-        return new User(null, null, null, Introduction.of(),username, 0L, avatarUrl, Grade.YELLOW, 0);
+        return new User(null, null, null, Introduction.of(),username, 0L, avatarUrl, Grade.YELLOW, 0, false);
     }
 
 
