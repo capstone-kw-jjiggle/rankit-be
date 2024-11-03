@@ -134,7 +134,7 @@ public class MockDataGenerator implements CommandLineRunner {
   private User createUser(String randomNickname, School school, Region region, int index) {
 
     String randomProfileImg =
-        "https://example.com/image" + random.nextInt(100); // Example profile image URL
+        "https://i.namu.wiki/i/tyx9GSyT6U1vpeboPZpUimd2wgkQsB7SDBIe8nFnHRlgCrXRpp6_C9QRvz61A9KRyf_oP1rUHT8Ykwc3CQF9nDQ4aFR5_5ZueLRbnodvtMpF_wPCbRMis09h_JwvVMIRv12bnrAXy6ecLT959C9a4w.webp"; // Example profile image URL
     Long randomScore = (long) random.nextInt(0, 120000); // Example userScore
 
     return User.builder()
