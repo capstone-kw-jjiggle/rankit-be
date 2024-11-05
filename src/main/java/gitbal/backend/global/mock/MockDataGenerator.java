@@ -104,8 +104,8 @@ public class MockDataGenerator implements CommandLineRunner {
       User fixedRegionUser = userRepository.save(fixRegionUser);
 
 
-      guestBookService.saveGuestBook(saveUser, "안녕하세요");
-      guestBookService.saveGuestBook(saveUser, "안녕하세요2");
+      guestBookService.saveGuestBook(saveUser, "qwer");
+      guestBookService.saveGuestBook(saveUser, "qwer2");
 
       scoring(saveUser);
       scoring(fixedUser);
@@ -160,7 +160,7 @@ public class MockDataGenerator implements CommandLineRunner {
         .region(region)
         .nickname(nickName)
         .score(140000L)
-        .profile_img("sdqsdqwefqwef")
+        .profile_img("https://i.namu.wiki/i/tyx9GSyT6U1vpeboPZpUimd2wgkQsB7SDBIe8nFnHRlgCrXRpp6_C9QRvz61A9KRyf_oP1rUHT8Ykwc3CQF9nDQ4aFR5_5ZueLRbnodvtMpF_wPCbRMis09h_JwvVMIRv12bnrAXy6ecLT959C9a4w.webp")
         .grade(Grade.PURPLE)
         .build();
 
