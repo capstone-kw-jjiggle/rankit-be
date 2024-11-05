@@ -15,8 +15,10 @@ import gitbal.backend.domain.user.UserRepository;
 import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.school.SchoolService;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,11 +55,13 @@ public class MockDataGenerator implements CommandLineRunner {
         schoolGenerator = new SchoolGenerator(schoolRepository);
         regionGenerator = new RegionGenerator(regionRepository);
         log.info("Start runner to create mock data");
-        List<String> names = generateRealMockUser.getNames();
+        List<String> names = new HashSet<>(generateRealMockUser.getNames()).stream().toList();
+        log.info("name size was {}" , names.size());
 
         for (int i = 0; i < names.size(); i++) {
             String username = names.get(i);
             log.info("now username {}", username);
+            log.info("now i {}", i);
             if (userRepository.findByNickname(username).isPresent()) {
                 log.info("duplicate");
                 continue;
@@ -86,6 +90,11 @@ public class MockDataGenerator implements CommandLineRunner {
 
             userRepository.save(user);
             guestBookService.saveGuestBook(user, "qwer" + i);
+
+            if (i % 50 == 0 && i != 0) {
+                userRepository.flush();
+                log.info("Flushed and cleared at count {}", i);
+            }
         }
 
         // Test를 위한 나(이승준)의 githubid와 동일한 nickname data
