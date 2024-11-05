@@ -13,7 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableJpaAuditing
 @EnableSchedulerLock(defaultLockAtMostFor = "PT2M")
 @OpenAPIDefinition(servers = {
-	@Server(url = "https://api.rankit.run", description = "deploy Server URL - https 인 상태로 보내야합니다"),
+	@Server(url = "https://server.rankit.run", description = "deploy Server URL - https 인 상태로 보내야합니다"),
 	@Server(url = "http://localhost:8080", description = "Localhost URL")
 })
 public class BackendApplication {
