@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,17 +25,21 @@ public class UnivCertEntity {
     @Column(unique = true)
     private String email;
 
+    private LocalDateTime expireDate;
 
-    public UnivCertEntity(String code, String email) {
+
+    public UnivCertEntity(String code, String email, LocalDateTime expireDate) {
         this.code = code;
         this.email = email;
+        this.expireDate=expireDate;
     }
 
-    public void updateCode(String code) {
+    public void updateCode(String code, LocalDateTime expireDate) {
         this.code = code;
+        this.expireDate=expireDate;
     }
 
-    public static UnivCertEntity of(String code, String email) {
-        return new UnivCertEntity(code, email);
+    public static UnivCertEntity of(String code, String email, LocalDateTime expireDate) {
+        return new UnivCertEntity(code, email, expireDate);
     }
 }
