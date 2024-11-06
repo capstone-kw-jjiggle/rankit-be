@@ -51,13 +51,19 @@ public class UnivService {
     try {
       Boolean successStatus = mailService.certCode(univCertCodeDto.getEmail(),
           String.valueOf(univCertCodeDto.getCode()));
+      if(!isSuccess(successStatus))
+        return responsetoDto(false);
       mailService.clearEmail(univCertCodeDto.getEmail());
       log.info("now Verifying email");
-      return responsetoDto(successStatus);
+      return responsetoDto(true);
     } catch (Exception e) {
       e.printStackTrace();
       throw new UnivCertCodeException();
     }
+  }
+
+  private boolean isSuccess(Boolean successStatus) {
+    return successStatus;
   }
 
 
