@@ -39,9 +39,8 @@ public class UnivService {
 
       log.info("before sendMail");
       mailService.sendMail(univCertStartDto.getEmail());
-      return UnivMailResponseDto.of("인증 메일 전송에 성공하였습니다.");
+      return UnivMailResponseDto.of(true, "인증 메일 전송에 성공하였습니다.");
     } catch (Exception e) {
-      e.printStackTrace();
       throw new WrongUnivDomainException();
     }
   }

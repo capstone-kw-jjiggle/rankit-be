@@ -1,8 +1,8 @@
 package gitbal.backend.api.univcert.dto;
 
-public record UnivMailResponseDto(String msg) {
+public record UnivMailResponseDto(Boolean isSuccess, String msg) {
 
-    public static UnivMailResponseDto of(String msg) {
-        return new UnivMailResponseDto(msg);
+    public static UnivMailResponseDto of(Boolean isSuccess, String msg) {
+        return new UnivMailResponseDto(isSuccess, msg);
     }
 }
