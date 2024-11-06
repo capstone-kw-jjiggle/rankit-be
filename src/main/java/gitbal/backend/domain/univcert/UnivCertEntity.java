@@ -30,6 +30,10 @@ public class UnivCertEntity {
         this.email = email;
     }
 
+    public void updateCode(String code) {
+        this.code = code;
+    }
+
     public static UnivCertEntity of(String code, String email) {
         return new UnivCertEntity(code, email);
     }

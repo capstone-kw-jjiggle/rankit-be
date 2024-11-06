@@ -3,9 +3,7 @@ package gitbal.backend.api.univcert.service;
 import gitbal.backend.domain.univcert.UnivCertEntity;
 import gitbal.backend.domain.univcert.infra.UnivCertRepository;
 import jakarta.mail.internet.MimeMessage;
-import java.io.File;
 import java.util.Random;
-import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +11,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
@@ -29,6 +28,7 @@ public class MailService {
 
 
     @Transactional
+    @Async("mailSendExecutor")
     public void sendMail(String to) {
         String code = createCode(); // 인증코드 생성
 
@@ -39,10 +39,12 @@ public class MailService {
             helper.setTo(to);
             helper.setSubject("랭깃 인증 코드 발급 안내");
             helper.setText(setContext(code), true);
-            helper.addInline("rankitLogo", new ClassPathResource("img/rankit.png")); // 로고 파일 경로 수정 필요
+            helper.addInline("rankitLogo",
+                new ClassPathResource("img/rankit.png")); // 로고 파일 경로 수정 필요
 
             mailSender.send(message);
-            univCertRepository.save(UnivCertEntity.of(code, to));
+            univCertRepository.findByEmail(to).ifPresentOrElse(u -> u.updateCode(code),
+                () -> univCertRepository.save(UnivCertEntity.of(code, to)));
         } catch (Exception e) {
             throw new MailSendException("메일 전송에 실패했습니다.");
         }
@@ -52,7 +54,7 @@ public class MailService {
     private String setContext(String code) { // 타임리프 설정하는 코드
         Context context = new Context();
         context.setVariable("code", code); // Template에 전달할 데이터 설정
-       String mail = templateEngine.process("mail", context);
+        String mail = templateEngine.process("mail", context);
         log.info("mail : " + mail);
         return mail; // mail.html
     }
