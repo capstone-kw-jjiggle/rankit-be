@@ -8,8 +8,6 @@ import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.global.constant.Grade;
 import gitbal.backend.global.exception.NotFoundUserException;
-import gitbal.backend.global.exception.UserHasNoRegionException;
-import gitbal.backend.global.exception.UserHasNoSchoolException;
 import gitbal.backend.global.security.GithubOAuth2UserInfo;
 import java.util.List;
 import java.util.Objects;

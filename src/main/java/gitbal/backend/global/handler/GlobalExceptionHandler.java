@@ -24,6 +24,7 @@ import gitbal.backend.global.exception.UserHasNoSchoolException;
 import gitbal.backend.global.exception.UserRankException;
 import gitbal.backend.global.exception.UserRankingException;
 import gitbal.backend.global.exception.WrongPageNumberException;
+import gitbal.backend.global.exception.WrongUnivDomainException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -145,6 +146,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RegionRankPageUserInfoByRegionException.class)
     public ResponseEntity<String> handleRegionRankPageUserInfoByRegionException(RegionRankPageUserInfoByRegionException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(WrongUnivDomainException.class)
+    public ResponseEntity<String> handleWrongUnivDomainException(WrongUnivDomainException e) {
         return ResponseEntity.status(400).body(e.getMessage());
     }
 

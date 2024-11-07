@@ -1,5 +1,6 @@
 package gitbal.backend.schedule;
 
+import gitbal.backend.schedule.checker.UnivCertCodeChecker;
 import gitbal.backend.schedule.schoolupdate.schoolRank.SchoolRankUpdater;
 import gitbal.backend.schedule.userupdate.majorLanguage.UserLanguagesUpdater;
 import gitbal.backend.schedule.userupdate.score.UserScoreUpdater;
@@ -23,6 +24,7 @@ public class SchedulingService {
     private final SchoolRankUpdater schoolRankUpdater;
     private final UserRankUpdater userRankUpdater;
     private final UserGradeUpdater userGradeUpdater;
+    private final UnivCertCodeChecker univCertCodeChecker;
 
     @Scheduled(initialDelay = 1, fixedRate = 360, timeUnit = TimeUnit.MINUTES) // fixedRate를 사용하여 일정한 6시간의 주기를 가지는것이 중요!
     @SchedulerLock(name="updateUser")
@@ -33,6 +35,14 @@ public class SchedulingService {
         schoolRankUpdater.update();
         userGradeUpdater.update();
         userLanguagesUpdater.update();
+    }
+
+
+    @Scheduled(fixedRate = 2, timeUnit = TimeUnit.MINUTES)
+    @SchedulerLock(name="certCodeExpiredChecker")
+    @Transactional
+    public void checkExpireCertCode(){
+        univCertCodeChecker.checkExpireCertCodeAndClear();
     }
 
 }

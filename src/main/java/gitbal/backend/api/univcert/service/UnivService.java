@@ -1,66 +1,72 @@
 package gitbal.backend.api.univcert.service;
 
-import com.univcert.api.UnivCert;
 import gitbal.backend.api.univcert.dto.UnivCertCodeDto;
 import gitbal.backend.api.univcert.dto.UnivCertResponseDto;
 import gitbal.backend.api.univcert.dto.UnivCertStartDto;
+import gitbal.backend.api.univcert.dto.UnivMailResponseDto;
+import gitbal.backend.domain.school.School;
+import gitbal.backend.domain.school.SchoolService;
+import gitbal.backend.domain.univcert.constant.UnivMail;
 import gitbal.backend.global.exception.UnivCertCodeException;
-import gitbal.backend.global.exception.UnivCertStartException;
-import java.io.IOException;
-import java.util.HashMap;
+import gitbal.backend.global.exception.WrongUnivDomainException;
+import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UnivService {
 
   @Value("${API-KEY}")
   private String apikey;
+  private final SchoolService schoolService;
+  private final MailService mailService;
 
-  public UnivCertResponseDto certStart(UnivCertStartDto univCertStartDto){
+
+  public UnivMailResponseDto certStart(UnivCertStartDto univCertStartDto){
     try {
-      Map<String, Object> response = UnivCert.certify(apikey, univCertStartDto.getEmail(), univCertStartDto.getUnivName(), true);
-      return responsetoDto(response, "인증번호 전송 완료");
+      if(!UnivMail.isRightMail(univCertStartDto.getUnivName(), univCertStartDto.getEmail()))
+        throw new WrongUnivDomainException();
+      log.info("before rightMail");
+      School bySchoolName = schoolService.findBySchoolName(univCertStartDto.getUnivName());
+      log.info("before check Null");
+      if(Objects.isNull(bySchoolName)) throw new WrongUnivDomainException();
+
+      log.info("before sendMail");
+      mailService.sendMail(univCertStartDto.getEmail());
+      return UnivMailResponseDto.of(true, "인증 메일 전송에 성공하였습니다.");
     } catch (Exception e) {
-      throw new UnivCertStartException();
+      throw new WrongUnivDomainException();
     }
   }
 
+  @Transactional
   public UnivCertResponseDto certCode(UnivCertCodeDto univCertCodeDto) {
     try {
-      Map<String, Object> response = UnivCert.certifyCode(apikey, univCertCodeDto.getEmail(), univCertCodeDto.getUnivName(), univCertCodeDto.getCode());
-
-      clearCertifiedList(response, univCertCodeDto.getEmail());
-
-      return responsetoDto(response, "인증 성공");
+      Boolean successStatus = mailService.certCode(univCertCodeDto.getEmail(),
+          String.valueOf(univCertCodeDto.getCode()));
+      if(!isSuccess(successStatus))
+        return responsetoDto(false);
+      mailService.clearEmail(univCertCodeDto.getEmail());
+      log.info("now Verifying email");
+      return responsetoDto(true);
     } catch (Exception e) {
+      e.printStackTrace();
       throw new UnivCertCodeException();
     }
   }
 
-  private void clearCertifiedList(Map<String, Object> response, String email) throws IOException {
-    Map<String, Object> clear = new HashMap<>();
-    if(Boolean.TRUE.equals(response.get("success")))  clear = UnivCert.clear(apikey,email);
-    else log.info("[clearResponse] 인증 과정에서 코드가 맞지 않아 clear하지 않았습니다.");
-    if(Boolean.TRUE.equals(clear.get("success")))  log.info("[clearResponse] clear success");
-    else log.error("[clearResponse] clear fail");
+  private boolean isSuccess(Boolean successStatus) {
+    return successStatus;
   }
 
-  //TODO : 이거 오류 뱉을 수 있게 하기
-  private UnivCertResponseDto responsetoDto(Map<String, Object> univCertResponse, String successMessage) {
-    boolean success = Boolean.TRUE.equals(univCertResponse.get("success"));
-    if(!success)  throw new UnivCertCodeException();
-    int status = success ? 200 : (Integer) univCertResponse.get("code");
-    String message = success ? successMessage : (String) univCertResponse.get("message");
 
-    return UnivCertResponseDto.builder()
-        .status(status)
-        .success(success)
-        .message(message)
-        .build();
+  private UnivCertResponseDto responsetoDto(boolean success) {
+    return UnivCertResponseDto.of(success);
   }
 }

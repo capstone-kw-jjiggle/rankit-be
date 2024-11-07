@@ -18,7 +18,6 @@ services:
       - REFRESH_TOKEN_VALIDITY_SECONDS=${REFRESH_TOKEN_VALIDITY_SECONDS}
     depends_on:
       - db
-      - redis
     ports:
       - "8080:8080"
 
