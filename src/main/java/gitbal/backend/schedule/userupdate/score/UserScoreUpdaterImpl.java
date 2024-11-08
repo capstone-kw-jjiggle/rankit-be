@@ -45,4 +45,8 @@ public class UserScoreUpdaterImpl extends UserSetup implements UserScoreUpdater 
         }
         log.info("[schedulingUserScore] method finish");
     }
+
+    public void updateSchoolScore(School school, String username, Long oldScore, Long newScore){
+        schoolService.updateByUserScore(school, username, oldScore, newScore);
+    }
 }

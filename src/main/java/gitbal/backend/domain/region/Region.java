@@ -47,4 +47,8 @@ public class Region extends BaseTimeEntity {
   public void updateScore(Long oldScore, Long newScore) {
     this.score=this.score-oldScore+newScore;
   }
+
+  public void minusScore(Long score) {
+    this.score -= score;
+  }
 }

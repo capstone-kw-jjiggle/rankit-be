@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gitbal.backend.api.userPage.dto.UserPageUserInfoResponseDto;
 import gitbal.backend.domain.region.Region;
+import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.school.School;
+import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.global.constant.Grade;
 import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.security.GithubOAuth2UserInfo;
@@ -26,8 +28,8 @@ public class UserService {
     private final UserScoreCalculator userScoreCalculator;
     private final UserInfoService userInfoService;
     private final UserRepository userRepository;
-
-
+    private final SchoolService schoolService;
+    private final RegionService regionService;
 
 
     public Long calculateUserScore(String nickname) {
@@ -92,12 +94,19 @@ public class UserService {
     }
 
     public void updateUserSchool(User user, School school) {
+        School prevSchool = user.getSchool();
+        schoolService.updateScore(prevSchool, school, user.getScore());
         user.setSchool(school);
+
         userRepository.save(user);
     }
 
     public void updateUserRegion(User user, Region region) {
+
+        Region prevRegion = user.getRegion();
         user.setRegion(region);
+        regionService.updateScore(prevRegion,region,user.getScore());
+
         userRepository.save(user);
     }
 
