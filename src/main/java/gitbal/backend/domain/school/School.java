@@ -81,4 +81,7 @@ public class School extends BaseTimeEntity {
     this.score= this.score-oldScore+newScore;
   }
 
+  public void minusScore(Long score) {
+    this.score -= score;
+  }
 }

@@ -3,6 +3,7 @@ package gitbal.backend.api.userPage.controller;
 import gitbal.backend.api.userPage.dto.FriendSuggestDto;
 import gitbal.backend.api.userPage.dto.IntroductionResponseDto;
 import gitbal.backend.api.userPage.dto.IntroductionupdateRequestDto;
+import gitbal.backend.api.userPage.dto.ModifySchoolRequestDto;
 import gitbal.backend.api.userPage.dto.UserPageUserInfoResponseDto;
 import gitbal.backend.api.userPage.service.UserPageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,14 +31,15 @@ public class UserPageController {
 
     private final UserPageService userPageService;
 
+
     @PutMapping("/my/config/school")
     @Operation(summary = "학교 수정(헤더에 토큰 필요 Authorization: Bearer {토큰 값 넣기})", description = "학교 수정을 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "학교 수정에 성공했습니다."),
         @ApiResponse(responseCode = "5xx", description = "학교 수정에 실패했습니다.")
     })
-    public ResponseEntity<String> modifySchool(Authentication authentication, @RequestParam String modifySchoolName){
-        userPageService.modifySchoolName(authentication, modifySchoolName);
+    public ResponseEntity<String> modifySchool(Authentication authentication, @RequestBody ModifySchoolRequestDto modifySchoolRequestDto){
+        userPageService.modifySchoolName(authentication, modifySchoolRequestDto);
         return ResponseEntity.ok("학교 수정에 성공했습니다.");
     }
 

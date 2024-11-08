@@ -1,9 +1,11 @@
 package gitbal.backend.api.userPage.service;
 
+import gitbal.backend.api.univcert.service.MailService;
 import gitbal.backend.api.userPage.RandomFriendPicker;
 import gitbal.backend.api.userPage.dto.FriendSuggestDto;
 import gitbal.backend.api.userPage.dto.IntroductionResponseDto;
 import gitbal.backend.api.userPage.dto.IntroductionupdateRequestDto;
+import gitbal.backend.api.userPage.dto.ModifySchoolRequestDto;
 import gitbal.backend.api.userPage.dto.UserPageUserInfoResponseDto;
 import gitbal.backend.domain.introduction.Introduction;
 import gitbal.backend.domain.introduction.application.repository.IntroductionRepository;
@@ -12,6 +14,7 @@ import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.global.exception.NotLoginedException;
+import gitbal.backend.global.exception.UnivCertCodeException;
 import gitbal.backend.global.security.CustomUserDetails;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,14 +32,17 @@ public class UserPageService {
   private final UserService userService;
   private final SchoolService schoolService;
   private final RegionService regionService;
+  private final MailService mailService;
   private final RandomFriendPicker randomUserPicker;
   private final IntroductionRepository introductionRepository;
 
   //지역이나 학교 수정해도 수정하기 전 후의 지역점수나 학교점수에 유저 점수 직접 더하고 빼지 않음. (어짜피 점수 업데이트 할 때 반영되니깐)
   @Transactional
-  public void modifySchoolName(Authentication authentication, String newSchoolName) {
+  public void modifySchoolName(Authentication authentication, ModifySchoolRequestDto modifySchoolRequestDto) {
     User user = checkAuthAndGetUser(authentication);
-    updateUserSchool(user, newSchoolName);
+    if(!mailService.certCode(modifySchoolRequestDto.email(), modifySchoolRequestDto.certificateCode()))
+        throw new UnivCertCodeException();
+    updateUserSchool(user, modifySchoolRequestDto.modifySchoolName());
   }
 
   @Transactional

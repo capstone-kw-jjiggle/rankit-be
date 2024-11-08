@@ -1,5 +1,6 @@
 package gitbal.backend.domain.school;
 
+import gitbal.backend.api.schoolPage.service.SchoolRankService;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.util.JoinUpdater;
@@ -20,6 +21,7 @@ public class SchoolService {
     private final int FIRST_RANK = 1;
     private final ScheduleUpdater<School> schoolScheduleUpdater;
     private final SchoolRepository schoolRepository;
+    private final SchoolRankService schoolRankService;
 
 
     public School findBySchoolName(String schoolName) {
@@ -61,5 +63,11 @@ public class SchoolService {
             rank = prevRank + 1;
         }
         schoolRepository.saveAll(schools);
+    }
+
+    public void updateScore(School prevSchool, School school, Long score) {
+        school.addScore(score);
+        prevSchool.minusScore(score);
+        updateSchoolRank();
     }
 }
