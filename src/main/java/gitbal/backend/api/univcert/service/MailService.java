@@ -2,6 +2,7 @@ package gitbal.backend.api.univcert.service;
 
 import gitbal.backend.domain.univcert.UnivCertEntity;
 import gitbal.backend.domain.univcert.infra.UnivCertRepository;
+import gitbal.backend.global.exception.UnivCertProcessException;
 import jakarta.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -73,7 +74,7 @@ public class MailService {
 
     public Boolean certCode(String mail, String code) {
         UnivCertEntity univCertEntity = univCertRepository.findByEmail(mail)
-            .orElseThrow(IllegalAccessError::new);
+            .orElseThrow(UnivCertProcessException::new);
         log.info("univCertEntity : " + univCertEntity.toString());
         log.info("code : " + code);
         return univCertEntity.getCode().equals(code);

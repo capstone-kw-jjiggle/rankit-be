@@ -41,13 +41,12 @@ public class UnivService {
       mailService.sendMail(univCertStartDto.getEmail());
       return UnivMailResponseDto.of(true, "인증 메일 전송에 성공하였습니다.");
     } catch (Exception e) {
-      throw new WrongUnivDomainException();
+      throw new WrongUnivDomainException(e.getMessage());
     }
   }
 
   @Transactional
   public UnivCertResponseDto certCode(UnivCertCodeDto univCertCodeDto) {
-    try {
       Boolean successStatus = mailService.certCode(univCertCodeDto.getEmail(),
           String.valueOf(univCertCodeDto.getCode()));
       if(!isSuccess(successStatus))
@@ -55,10 +54,6 @@ public class UnivService {
       mailService.clearEmail(univCertCodeDto.getEmail());
       log.info("now Verifying email");
       return responsetoDto(true);
-    } catch (Exception e) {
-      e.printStackTrace();
-      throw new UnivCertCodeException();
-    }
   }
 
   private boolean isSuccess(Boolean successStatus) {
