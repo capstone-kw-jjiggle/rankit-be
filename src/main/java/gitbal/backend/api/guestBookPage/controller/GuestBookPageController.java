@@ -44,8 +44,8 @@ public class GuestBookPageController {
         @ApiResponse(responseCode = "401", description = "인증된 유저가 없는 상태로 요청하셨습니다. github 로그인을 진행해주세요."),
         @ApiResponse(responseCode = "500", description = "방명록 목록을 서버 측에서 오류가 발생하여 전달하지 못했습니다.")
     })
-    public ResponseEntity<String> writeGuestBook(Authentication authentication ,@RequestBody String content) {
-        guestBookPageFacade.saveDashBoard(authentication, content);
+    public ResponseEntity<String> writeGuestBook(Authentication authentication ,@RequestBody GuestBookWriteRequestDto guestBookWriteRequestDto) {
+        guestBookPageFacade.saveDashBoard(authentication, guestBookWriteRequestDto.content());
         return ResponseEntity.ok("방명록 등록에 성공하였습니다.");
     }
 
