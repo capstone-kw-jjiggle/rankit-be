@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RegionRankService {
 
-    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = 14;
     private final RegionRepository regionRepository;
     private final UserRepository userRepository;
     private final int page = 1;
