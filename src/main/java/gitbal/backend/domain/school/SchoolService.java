@@ -70,4 +70,10 @@ public class SchoolService {
         prevSchool.minusScore(score);
         updateSchoolRank();
     }
+
+
+    public void updateScore(School school, Long score) {
+        school.addScore(score);
+        updateSchoolRank();
+    }
 }

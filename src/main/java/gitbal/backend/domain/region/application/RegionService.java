@@ -53,6 +53,10 @@ public class RegionService{
     prevRegion.minusScore(score);
   }
 
+  public void updateScore(Region region, Long score) {
+    region.addScore(score);
+  }
+
 
 
 }

@@ -94,19 +94,31 @@ public class UserService {
     }
 
     public void updateUserSchool(User user, School school) {
-        School prevSchool = user.getSchool();
-        schoolService.updateScore(prevSchool, school, user.getScore());
-        user.setSchool(school);
 
+        if(Objects.nonNull(school)){
+            School prevSchool = user.getSchool();
+            schoolService.updateScore(prevSchool, school, user.getScore());
+            user.setSchool(school);
+            userRepository.save(user);
+            return;
+        }
+
+        schoolService.updateScore(school, user.getScore());
+        user.setSchool(school);
         userRepository.save(user);
     }
 
     public void updateUserRegion(User user, Region region) {
 
         Region prevRegion = user.getRegion();
+        if(Objects.nonNull(prevRegion)) {
+            regionService.updateScore(prevRegion, region, user.getScore());
+            user.setRegion(region);
+            userRepository.save(user);
+            return;
+        }
         user.setRegion(region);
-        regionService.updateScore(prevRegion,region,user.getScore());
-
+        regionService.updateScore(region,user.getScore());
         userRepository.save(user);
     }
 
