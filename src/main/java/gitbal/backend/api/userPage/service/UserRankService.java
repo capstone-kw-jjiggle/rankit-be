@@ -14,6 +14,7 @@ import gitbal.backend.domain.majorlanguage.application.MajorLanguageService;
 import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.user.UserService;
 
+import gitbal.backend.global.constant.Grade;
 import gitbal.backend.global.exception.UserHasNoMajorLanguageException;
 import gitbal.backend.global.exception.UserRankingException;
 import java.util.Objects;
@@ -68,7 +69,14 @@ public class UserRankService {
     public UserRankExpResponseDto makeUserRankExpResponse(String username) {
         User findUser = userService.findByUserName(username);
         return UserRankExpResponseDto.of(userService.
-            calculateExp(findUser));
+            calculateExp(findUser), findUser.getScore(), remainScore(findUser));
+    }
+
+    private Long remainScore(User user) {
+        if(user.getGrade().name().equals("PURPLE"))
+            return null;
+        Grade grade = Grade.nextGrade(user.getGrade());
+        return grade.getUnderBound()-user.getScore();
     }
 
 

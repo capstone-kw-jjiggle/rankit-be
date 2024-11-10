@@ -1,7 +1,7 @@
 package gitbal.backend.api.userPage.dto;
 
-public record UserRankExpResponseDto(int percent){
-    public static UserRankExpResponseDto of(int percent){
-        return new UserRankExpResponseDto(percent);
+public record UserRankExpResponseDto(int percent, Long score, Long remainScore){
+    public static UserRankExpResponseDto of(int percent, Long score, Long remainScore){
+        return new UserRankExpResponseDto(percent, score, remainScore);
     }
 }
