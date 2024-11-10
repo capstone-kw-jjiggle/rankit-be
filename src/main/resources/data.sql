@@ -1,3 +1,4 @@
+/*
 DROP TABLE IF EXISTS shedlock;
 
 
@@ -45,3 +46,4 @@ VALUES
     ('경상남도', NOW()),
     ('제주특별자치도', NOW());
 SET FOREIGN_KEY_CHECKS = 1;
+*/
