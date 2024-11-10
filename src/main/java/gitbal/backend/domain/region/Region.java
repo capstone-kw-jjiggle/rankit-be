@@ -1,6 +1,6 @@
 package gitbal.backend.domain.region;
 
-import gitbal.backend.domain.BaseTimeEntity;
+import gitbal.backend.global.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,25 +33,10 @@ public class Region extends BaseTimeEntity {
   @ColumnDefault(value = "0")
   private Long score;
 
-  @ColumnDefault(value = "0")
-  private Long prevDayScore;
 
-  @ColumnDefault(value= "0")
-  private Long changedScore;
-
-  @NotNull
-  private String topContributor;
-
-  @NotNull
-  @ColumnDefault(value = "0")
-  private Long contributorScore;
-
-
-  public Region(String regionName, Long score, String topContributor, Long contributorScore) {
+  public Region(String regionName, Long score) {
     this.regionName = regionName;
     this.score = score;
-    this.topContributor = topContributor;
-    this.contributorScore = contributorScore;
   }
 
   public void addScore(Long score) {
@@ -59,27 +44,11 @@ public class Region extends BaseTimeEntity {
   }
 
 
-  // TODO: test 용도여서 나중에 실제로 값 넣으면 변경해야함.
-  public static Region of() {
-    return new Region("부산", 0L, "khyojun", 0L);
-  }
-
-  public void updateContributerInfo(String nickname, Long score) {
-    if (this.contributorScore == null || this.contributorScore < score) {
-      this.topContributor = nickname;
-      this.contributorScore = score;
-    }
-  }
-
-  public void updateChangedScore(Long newScore) {
-    this.changedScore = newScore - this.prevDayScore;
-  }
-
-  public void updatePrevDayScore(Long newScore) {
-    this.prevDayScore = newScore;
-  }
-
   public void updateScore(Long oldScore, Long newScore) {
     this.score=this.score-oldScore+newScore;
+  }
+
+  public void minusScore(Long score) {
+    this.score -= score;
   }
 }

@@ -29,9 +29,6 @@ public interface SchoolRepository extends JpaRepository<School, Long> {
   List<School> schoolScoreRaced(@Param("schoolScore") Long schoolScore,
       @Param("front") int fowrardCount, @Param("behind") int backwardCount);
 
-  @Query("SELECT s FROM School s ORDER BY s.score DESC LIMIT 1")
-  School firstRankedSchool();
-
   Page<School> findBySchoolNameContainingIgnoreCase(String searchedSchoolName, Pageable pageable);
 
 }

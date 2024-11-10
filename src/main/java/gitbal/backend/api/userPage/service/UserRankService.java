@@ -1,22 +1,22 @@
 package gitbal.backend.api.userPage.service;
 
-import gitbal.backend.api.userPage.dto.RegionRankRaceResponseDto;
-import gitbal.backend.api.userPage.dto.SchoolRankRaceResponseDto;
+import gitbal.backend.api.userPage.dto.RegionRankDto;
+import gitbal.backend.api.userPage.dto.RegionRankResponseDto;
+import gitbal.backend.api.userPage.dto.SchoolRankDto;
+import gitbal.backend.api.userPage.dto.SchoolRankResponseDto;
+import gitbal.backend.api.userPage.dto.UserRankExpResponseDto;
 import gitbal.backend.api.userPage.dto.UserRankMajorLanguageResponseDto;
-import gitbal.backend.api.userPage.dto.UserRankRaceResponseDto;
-import gitbal.backend.api.userPage.dto.UserRankScoreResponseDto;
+import gitbal.backend.api.userPage.dto.UserRankingResponseDto;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.user.User;
-import gitbal.backend.domain.majorlanguage.MajorLanguageService;
-import gitbal.backend.domain.region.RegionService;
-import gitbal.backend.domain.school.SchoolService;
+import gitbal.backend.domain.majorlanguage.application.MajorLanguageService;
+import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.user.UserService;
-import gitbal.backend.domain.region.RegionRaceStatus;
-import gitbal.backend.domain.school.SchoolRaceStatus;
-import gitbal.backend.domain.user.UserRaceStatus;
 
-import java.util.List;
+import gitbal.backend.global.constant.Grade;
+import gitbal.backend.global.exception.UserHasNoMajorLanguageException;
+import gitbal.backend.global.exception.UserRankingException;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,51 +29,55 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserRankService {
 
     private final UserService userService;
-    private final SchoolService schoolService;
     private final RegionService regionService;
     private final MajorLanguageService majorLanguageService;
 
     @Transactional(readOnly = true)
-    public UserRankScoreResponseDto makeUserRankResponse(String username) {
+    public UserRankingResponseDto makeUserRankResponse(String username) {
         User findUser = userService.findByUserName(username);
-        return UserRankScoreResponseDto.of(findUser.getScore());
-    }
-
-    @Transactional(readOnly = true)
-    public List<UserRankRaceResponseDto> makeUserRankRaceStatusByUsername(String username) {
-        User findUser = userService.findByUserName(username);
-        UserRaceStatus userRaceStatus = userService.findUsersScoreRaced(findUser.getScore());
-        userRaceStatus.addEntity(findUser);
-        userRaceStatus.sortAroundEntitys();
-        return userRaceStatus.toResponseDto(userRaceStatus.getAroundUsers());
+        if(findUser.getUserRank()==0)
+            throw new UserRankingException();
+        return UserRankingResponseDto.of(findUser.getUserRank());
     }
 
 
+
     @Transactional(readOnly = true)
-    public SchoolRankRaceResponseDto makeUserRankSchoolStatusByUsername(String username) {
+    public SchoolRankResponseDto makeUserRankSchoolStatusByUsername(String username) {
         School findUserScool = userService.findSchoolByUserName(username);
-        if(Objects.isNull(findUserScool)) return SchoolRankRaceResponseDto.of(null);
-        SchoolRaceStatus schoolRaceStatus = schoolService.findSchoolScoreRaced(
-            findUserScool.getScore());
-        schoolRaceStatus.addEntity(findUserScool);
-        schoolRaceStatus.sortAroundEntitys();
-        return schoolRaceStatus.toResponseDto(findUserScool,schoolRaceStatus.getAroundUsers());
+        if(Objects.isNull(findUserScool)) return SchoolRankResponseDto.of(null);
+        return SchoolRankResponseDto.of(SchoolRankDto.of(findUserScool));
     }
 
     @Transactional(readOnly = true)
-    public RegionRankRaceResponseDto makeUserRankRegionStatusByUsername(String username) {
+    public RegionRankResponseDto makeUserRankRegionStatusByUsername(String username) {
         Region findRegion = userService.findRegionByUserName(username);
-        if(Objects.isNull(findRegion)) return RegionRankRaceResponseDto.of(null);
-        RegionRaceStatus regionRaceStatus = regionService.findRegionScoreRaced(
-            findRegion.getScore());
-        regionRaceStatus.addEntity(findRegion);
-        regionRaceStatus.sortAroundEntitys();
-        return regionRaceStatus.toResponseDto(regionRaceStatus.getAroundUsers());
+        if(Objects.isNull(findRegion)) return RegionRankResponseDto.of(null);
+        int regionRanking = regionService.findRegionRanking(findRegion.getRegionName());
+        return RegionRankResponseDto.of(RegionRankDto.of(findRegion.getRegionName(),  regionRanking));
     }
 
     @Transactional(readOnly = true)
-    public List<UserRankMajorLanguageResponseDto> makeUserRankLanguageResponseByUsername(String username) {
+    public UserRankMajorLanguageResponseDto makeUserRankLanguageResponseByUsername(String username) {
         User findUser = userService.findByUserName(username);
-        return majorLanguageService.findLanguagePercentByUser(findUser);
+        if(Objects.isNull(findUser.getMajorLanguage()))
+            return UserRankMajorLanguageResponseDto.of(null);
+        return majorLanguageService.findMostUsageLanguageByUsername(findUser);
     }
+
+    @Transactional(readOnly = true)
+    public UserRankExpResponseDto makeUserRankExpResponse(String username) {
+        User findUser = userService.findByUserName(username);
+        return UserRankExpResponseDto.of(userService.
+            calculateExp(findUser), findUser.getScore(), remainScore(findUser));
+    }
+
+    private Long remainScore(User user) {
+        if(user.getGrade().name().equals("PURPLE"))
+            return null;
+        Grade grade = Grade.nextGrade(user.getGrade());
+        return grade.getUnderBound()-user.getScore();
+    }
+
+
 }

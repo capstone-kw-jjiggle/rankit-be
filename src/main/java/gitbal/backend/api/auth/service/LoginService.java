@@ -19,7 +19,6 @@ public class LoginService {
 
     @Value("${FE.URL}")
     private String FE_URL;
-    //private static final String FE_URL ="http://localhost:5173/auth/token"; // 이후에 급히 수정
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -28,13 +27,13 @@ public class LoginService {
         User user = findUser(username);
         log.info("username : {}", user.getNickname());
 
-        String redirectUrl = getRedirectUrl(username, isRegisterUser(user));
+        String redirectUrl = initRedirectUrl(username, isRegisterUser(user));
 
-        return "redirect:" + redirectUrl;
+        return  redirectUrl;
     }
 
     private boolean isRegisterUser(User user) {
-        return (!Objects.isNull(user.getSchool()) && !Objects.isNull(user.getRegion()));
+        return user.getFirstLogined();
     }
 
     private User findUser(String username) {
@@ -42,10 +41,11 @@ public class LoginService {
             .orElseThrow(NotFoundUserException::new);
     }
 
-    private String getRedirectUrl(String username, boolean isRegistered) {
+    private String initRedirectUrl(String username, boolean isRegistered) {
 
         return UriComponentsBuilder.fromUri(URI.create(FE_URL))
             .queryParam("accessToken", jwtTokenProvider.createAccessToken(username))
+            .queryParam("refreshToken", jwtTokenProvider.createRefreshToken(username))
             .queryParam("isRegistered", isRegistered)
             .build()
             .toString();

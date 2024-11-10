@@ -16,15 +16,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/login")
-@Tag(name = "로그인 프로세스 관련 API(구현중)", description = "로그인 프로세스에 필요한 api입니다.")
+@Tag(name = "로그인 프로세스 관련 API", description = "로그인 프로세스에 필요한 api입니다.")
 public class LoginController {
 
     private final LoginService loginService;
 
     @GetMapping("/success")
-    @Operation(summary = "로그인 (구현중)", description = "로그인을 위한 api입니다.")
+    @Operation(summary = "로그인", description = "로그인을 위한 api입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "로그인에 성공했습니다."),
+        @ApiResponse(responseCode = "400", description = "유저 정보를 가져오는데 실패했습니다."),
     })
     public String successLogin(@RequestParam String username) throws IOException {
         return loginService.madeRedirectUrl(username);

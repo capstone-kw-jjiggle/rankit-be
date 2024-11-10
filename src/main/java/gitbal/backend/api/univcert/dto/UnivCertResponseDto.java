@@ -5,16 +5,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
 @NoArgsConstructor
 public class UnivCertResponseDto {
-  private int status;
   private boolean success;
   private String message;
 
-  public UnivCertResponseDto(int status, boolean success, String message) {
-    this.status = status;
+  public UnivCertResponseDto(boolean success, String message) {
     this.success = success;
     this.message = message;
+  }
+
+  public static UnivCertResponseDto of(boolean success) {
+    if(success)
+        return new UnivCertResponseDto(true, "인증에 성공했습니다.");
+    else
+        return new UnivCertResponseDto( false, "인증에 실패했습니다.");
   }
 }

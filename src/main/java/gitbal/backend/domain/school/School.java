@@ -1,6 +1,6 @@
 package gitbal.backend.domain.school;
 
-import gitbal.backend.domain.BaseTimeEntity;
+import gitbal.backend.global.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,12 +13,13 @@ import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
-import gitbal.backend.global.constant.SchoolGrade;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Setter
 public class School extends BaseTimeEntity {
 
   @Id
@@ -41,43 +42,20 @@ public class School extends BaseTimeEntity {
   @ColumnDefault(value = "0")
   private int schoolRank;
 
-  @Enumerated(value = EnumType.STRING)
-  private SchoolGrade grade;
-  @NotNull
-  private String topContributor;
 
-  @NotNull
-  @ColumnDefault(value = "0")
-  private Long contributorScore;
-
-  @Column(name = "prev_day_score")
-  @ColumnDefault(value = "0")
-  private Long prevDayScore;
-
-  public School(String schoolName, Long score, String topContributor, Long contributorScore) {
+  public School(String schoolName, Long score) {
     this.schoolName = schoolName;
     this.score = score;
-    this.topContributor = topContributor;
-    this.contributorScore = contributorScore;
   }
 
-  // TODO: test 용도여서 나중에 실제로 값 넣으면 변경해야함.
-  public static School of() {
-    return new School("광운대학교", 0L, "khyojun", 0L);
+  public static School of(String schoolName, Long score) {
+    return new School(schoolName, score);
   }
 
   public void addScore(Long score) {
     this.score += score;
   }
 
-  public void updateContributerInfo(String nickname, Long score) {
-    if (this.contributorScore == null || this.contributorScore < score) {
-      this.topContributor = nickname;
-      this.contributorScore = score;
-    }
-  }
-
-  public void setGrade(SchoolGrade grade) { this.grade = grade; }
 
   public void setSchoolRank(int rank) {
     this.schoolRank=rank;
@@ -103,11 +81,7 @@ public class School extends BaseTimeEntity {
     this.score= this.score-oldScore+newScore;
   }
 
-  public void updatePrevDayScore(Long newScore) {
-    this.prevDayScore = newScore;
-  }
-
-  public void updateChangedScore(Long newScore) {
-    this.changedScore = newScore - this.prevDayScore;
+  public void minusScore(Long score) {
+    this.score -= score;
   }
 }

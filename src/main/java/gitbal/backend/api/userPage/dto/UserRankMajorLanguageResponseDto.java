@@ -6,18 +6,13 @@ import lombok.Getter;
 public class UserRankMajorLanguageResponseDto {
 
     private String langName;
-    private double langPercent;
 
-    public UserRankMajorLanguageResponseDto(String langName, double langPercent) {
+    public UserRankMajorLanguageResponseDto(String langName) {
         this.langName = langName;
-        this.langPercent = langPercent;
     }
 
-    public static UserRankMajorLanguageResponseDto of(String langName, double langPercent) {
-        return new UserRankMajorLanguageResponseDto(langName, langPercent);
+    public static UserRankMajorLanguageResponseDto of(String langName) {
+        return new UserRankMajorLanguageResponseDto(langName);
     }
-
-
-
 
 }

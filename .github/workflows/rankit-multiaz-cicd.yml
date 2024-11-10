@@ -1,0 +1,230 @@
+name: rankit-multiaz-rolling-zerodowntime-cicd
+
+on:
+  push:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      # 1. JDK 17 설정
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 2. Gradle 설정
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+
+      # 3. Jar 파일 빌드 (테스트 제외)
+      - name: Build with Gradle Wrapper
+        run: ./gradlew -x test bootJar
+
+      # 4. Docker Buildx 설정
+      - name: Set up Docker Build
+        uses: docker/setup-buildx-action@v1
+
+      # 5. Docker 로그인
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      # 6. Docker 이미지 빌드 및 푸시
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build  # build 작업이 완료되어야 실행
+    permissions:
+      contents: read
+
+    steps:
+      # 1. AWS CLI 설치
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install awscli -y
+
+      # 2. AWS 자격 증명 설정
+      - name: Configure AWS credentials
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set region ap-northeast-2  # 서울 AWS 리전을 설정
+
+      # 3. ALB 연결 끊기 (EC2-A)
+      - name: Deregister EC2-A from Target Group
+        run: |
+          aws elbv2 deregister-targets \
+            --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
+            --targets Id=${{ secrets.EC2_A_ID }}
+          echo "EC2-A has been deregistered from the ALB."
+
+      # 4. Bastion 호스트에 접속하여 EC2-A에 docker-compose 실행
+      - name: Deploy to EC2-A via Bastion Host
+        env:
+          BASTION_HOST: ${{ secrets.BASTION_HOST }}
+          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}
+          EC2_A_IP: ${{ secrets.EC2_A_IP }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST "ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@$EC2_A_IP '
+            if [ \$(docker-compose ps -q app | xargs -r docker inspect -f \"{{.State.Running}}\") == \"true\" ]; then
+              docker-compose down
+            fi
+            sleep 10
+            docker-compose up -d --pull always
+            
+            # 향상된 헬스체크: 최대 10번 시도, 5초 간격
+            MAX_HEALTH_CHECKS=10
+            HEALTH_CHECK_COUNT=0
+            
+            while [ \$HEALTH_CHECK_COUNT -lt \$MAX_HEALTH_CHECKS ]; do
+              if curl -s 127.0.0.1:8080 | grep -q \"health Check Success\"; then
+                echo \"EC2-A is healthy after \$((HEALTH_CHECK_COUNT + 1)) attempts.\"
+                exit 0
+              else
+                echo \"Health check attempt \$((HEALTH_CHECK_COUNT + 1)) failed. Retrying in 5 seconds...\"
+                sleep 5
+                HEALTH_CHECK_COUNT=\$((HEALTH_CHECK_COUNT + 1))
+              fi
+              
+              if [ \$HEALTH_CHECK_COUNT -eq \$MAX_HEALTH_CHECKS ]; then
+                echo \"EC2-A health check failed after \$MAX_HEALTH_CHECKS attempts.\"
+                exit 1
+              fi
+            done
+          '"
+          rm private_key.pem
+
+      # 5. ALB 연결 복원 (EC2-A)
+      - name: Register EC2-A back to Target Group
+        run: |
+          aws elbv2 register-targets \
+            --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
+            --targets Id=${{ secrets.EC2_A_ID }}
+          echo "EC2-A has been registered back to the ALB."
+
+      # 6. ALB 연결 상태 확인 (EC2-A)
+      - name: Check Health of ALB Connection to EC2-A
+        run: |
+          MAX_ATTEMPTS=30
+          ATTEMPT=0
+      
+          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            HEALTH_STATUS=$(aws elbv2 describe-target-health \
+              --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
+              --query "TargetHealthDescriptions[?Target.Id=='${{ secrets.EC2_A_ID }}'].TargetHealth.State" \
+              --output text)
+      
+            if [ "$HEALTH_STATUS" == "healthy" ]; then
+              echo "EC2-A is healthy in ALB."
+              break
+            else
+              echo "Waiting for EC2-A to become healthy in ALB..."
+              sleep 10
+              ATTEMPT=$((ATTEMPT + 1))
+            fi
+      
+            if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+              echo "EC2-A is not healthy in ALB after $MAX_ATTEMPTS attempts. Exiting."
+              exit 1
+            fi
+          done
+
+      # 7. ALB 연결 끊기 (EC2-C)
+      - name: Deregister EC2-C from Target Group
+        run: |
+          aws elbv2 deregister-targets \
+            --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
+            --targets Id=${{ secrets.EC2_C_ID }}
+          echo "EC2-C has been deregistered from the ALB."
+
+      # 8. Bastion 호스트에 접속하여 EC2-C에 docker-compose 실행
+      - name: Deploy to EC2-C via Bastion Host
+        env:
+          BASTION_HOST: ${{ secrets.BASTION_HOST }}
+          SSH_PRIVATE_KEY: ${{ secrets.API_RANKIT_PEM }}
+          EC2_C_IP: ${{ secrets.EC2_C_IP }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST "ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@$EC2_C_IP '
+            if [ \$(docker-compose ps -q app | xargs -r docker inspect -f \"{{.State.Running}}\") == \"true\" ]; then
+              docker-compose down
+            fi
+            sleep 10
+            docker-compose up -d --pull always
+            
+            # 향상된 헬스체크: 최대 10번 시도, 5초 간격
+            MAX_HEALTH_CHECKS=10
+            HEALTH_CHECK_COUNT=0
+            
+            while [ \$HEALTH_CHECK_COUNT -lt \$MAX_HEALTH_CHECKS ]; do
+              if curl -s 127.0.0.1:8080 | grep -q \"health Check Success\"; then
+                echo \"EC2-C is healthy after \$((HEALTH_CHECK_COUNT + 1)) attempts.\"
+                exit 0
+              else
+                echo \"Health check attempt \$((HEALTH_CHECK_COUNT + 1)) failed. Retrying in 5 seconds...\"
+                sleep 5
+                HEALTH_CHECK_COUNT=\$((HEALTH_CHECK_COUNT + 1))
+              fi
+              
+              if [ \$HEALTH_CHECK_COUNT -eq \$MAX_HEALTH_CHECKS ]; then
+                echo \"EC2-C health check failed after \$MAX_HEALTH_CHECKS attempts.\"
+                exit 1
+              fi
+            done
+          '"
+          rm private_key.pem
+
+      # 9. ALB 연결 복원 (EC2-C)
+      - name: Register EC2-C back to Target Group
+        run: |
+          aws elbv2 register-targets \
+            --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
+            --targets Id=${{ secrets.EC2_C_ID }}
+          echo "EC2-C has been registered back to the ALB."
+
+      # 10. ALB 연결 상태 확인 (EC2-C)
+      - name: Check Health of ALB Connection to EC2-C
+        run: |
+          MAX_ATTEMPTS=30
+          ATTEMPT=0
+      
+          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            HEALTH_STATUS=$(aws elbv2 describe-target-health \
+              --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
+              --query "TargetHealthDescriptions[?Target.Id=='${{ secrets.EC2_C_ID }}'].TargetHealth.State" \
+              --output text)
+      
+            if [ "$HEALTH_STATUS" == "healthy" ]; then
+              echo "EC2-C is healthy in ALB."
+              break
+            else
+              echo "Waiting for EC2-C to become healthy in ALB..."
+              sleep 10
+              ATTEMPT=$((ATTEMPT + 1))
+            fi
+      
+            if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+              echo "EC2-C is not healthy in ALB after $MAX_ATTEMPTS attempts. Exiting."
+              exit 1
+            fi
+          done

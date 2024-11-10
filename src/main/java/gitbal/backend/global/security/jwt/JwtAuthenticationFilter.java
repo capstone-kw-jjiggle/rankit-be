@@ -1,5 +1,6 @@
 package gitbal.backend.global.security.jwt;
 
+import gitbal.backend.global.exception.NotLoginedException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -29,16 +29,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
 
-        String token = extractAccessToken(request);
+        String accessToken = extractAccessToken(request);
 
         try {
-            if (isValidAccessToken(token)) {
-                Authentication authentication = registerAuthenticationToContext(token);
+            if (isValidAccessToken(accessToken)) {
+                Authentication authentication = registerAuthenticationToContext(accessToken);
                 log.info("[doFilterInternal]" + authentication.getName() + "의 인증정보 저장");
                 response.setStatus(200);
-            } else if (isValidRefreshToken(token)) {
+            } else if (isValidRefreshToken(accessToken)) {
                 log.info("[doFilterInternal] 다시 로그인을 해야합니다! 리프레시 토큰을 확인한 후 재발급합니다.");
-                String regenerateToken = tokenProvider.regenerateToken(token);
+                String regenerateToken = tokenProvider.regenerateToken(accessToken);
                 Authentication authentication = registerAuthenticationToContext(regenerateToken);
                 response.setHeader(AUTHORIZATION_HEADER, regenerateToken);
                 response.setStatus(200);
@@ -46,11 +46,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } else {
                 log.info("[doFilterInternal] 유효한 JWT 토큰이 없습니다.");
             }
-        } catch (RedisConnectionFailureException e) {
-            log.error("[doFilterInternal] redis 연결에 오류가 발생했습니다.");
+        } catch (Exception e) {
+            log.error("[doFilterInternal] 작업 도중 검증되지 않은 exception이 발생했습니다.");
+            log.error(e.getMessage());
         }
 
 
+        log.info("[doFilterInternal] 다음 필터로 이동합니다.");
         filterChain.doFilter(request, response);
     }
 

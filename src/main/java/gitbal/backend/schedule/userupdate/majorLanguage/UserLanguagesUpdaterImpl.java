@@ -1,14 +1,15 @@
 package gitbal.backend.schedule.userupdate.majorLanguage;
 
 import gitbal.backend.domain.majorlanguage.MajorLanguage;
-import gitbal.backend.domain.majorlanguage.MajorLanguageService;
+import gitbal.backend.domain.majorlanguage.application.MajorLanguageService;
+import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.schedule.userupdate.UserSetup;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,26 +20,27 @@ public class UserLanguagesUpdaterImpl extends UserSetup implements UserLanguages
     private final MajorLanguageService majorLanguageService;
 
     @Override
-    @Transactional
     public void update() {
         log.info("[languageupdate] method start");
+        System.out.println("언어 업데이트 시작");
         List<String> allUsers = super.getAllUsernames(userService);
         for (String username : allUsers) {
-            List<MajorLanguage> oldLanguages = userService.findMajorLanguagesByUsername(
-                username);
-            List<MajorLanguage> updatedLanguages = majorLanguageService.getUserTopLaunguages(
-                username);
-
-            log.info(oldLanguages.toString());
-            log.info(updatedLanguages.toString());
-
-            majorLanguageService.updateUserLanguage(oldLanguages, updatedLanguages);
+            MajorLanguage updateLanguage = majorLanguageService.getUserTopLaunguage(username);
+            if(Objects.nonNull(updateLanguage))
+                log.info(updateLanguage.toString());
+            try {
+                majorLanguageService.updateUserLanguage(updateLanguage, userService.findByUserName(username));
+            }catch (NullPointerException e){
+                User findUser = userService.findByUserName(username);
+                saveNewLanguage(updateLanguage, findUser);
+            }
         }
         log.info("[languageupdate] method finish");
     }
 
-
-
+    private void saveNewLanguage(MajorLanguage updateLanguage, User findUser) {
+        findUser.setMajorLanguage(updateLanguage.getMajorLanguage());
+    }
 
 
 }

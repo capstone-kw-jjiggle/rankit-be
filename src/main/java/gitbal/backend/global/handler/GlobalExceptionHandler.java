@@ -1,8 +1,10 @@
 package gitbal.backend.global.handler;
 
+import gitbal.backend.api.badge.dto.BadgeResponseDTO;
+import gitbal.backend.api.badge.service.BadgeService;
+import gitbal.backend.global.exception.BadgeException;
 import gitbal.backend.global.exception.JoinException;
 import gitbal.backend.global.exception.LogoutException;
-import gitbal.backend.global.exception.MainPageFirstRankException;
 import gitbal.backend.global.exception.NoTokenException;
 import gitbal.backend.global.exception.NotDrawUserException;
 import gitbal.backend.global.exception.NotFoundRefreshTokenException;
@@ -10,17 +12,30 @@ import gitbal.backend.global.exception.NotFoundRegionException;
 import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.exception.NotLoginedException;
+import gitbal.backend.global.exception.NotUserPermissionException;
 import gitbal.backend.global.exception.PageOutOfRangeException;
+import gitbal.backend.global.exception.RegionRankPageUserInfoByRegionException;
+import gitbal.backend.global.exception.SchoolRankPageUserInfoBySchoolException;
 import gitbal.backend.global.exception.UnivCertCodeException;
+import gitbal.backend.global.exception.UnivCertProcessException;
 import gitbal.backend.global.exception.UnivCertStartException;
+import gitbal.backend.global.exception.UserHasNoMajorLanguageException;
+import gitbal.backend.global.exception.UserHasNoRegionException;
+import gitbal.backend.global.exception.UserHasNoSchoolException;
 import gitbal.backend.global.exception.UserRankException;
+import gitbal.backend.global.exception.UserRankingException;
 import gitbal.backend.global.exception.WrongPageNumberException;
+import gitbal.backend.global.exception.WrongUnivDomainException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    private final BadgeService badgeService;
 
     @ExceptionHandler(JoinException.class)
     public ResponseEntity<String> handleJoinException(JoinException e) {
@@ -43,14 +58,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotLoginedException.class)
-    public ResponseEntity<String> handleNotLoginedException(WrongPageNumberException e){
+    public ResponseEntity<String> handleNotLoginedException(NotLoginedException e){
         return ResponseEntity.status(401).body(e.getMessage());
-    }
-
-
-    @ExceptionHandler(MainPageFirstRankException.class)
-    public ResponseEntity<String> handleMainPageFirstRankException(MainPageFirstRankException e){
-        return ResponseEntity.status(500).body(e.getMessage());
     }
 
     @ExceptionHandler(NotFoundSchoolException.class)
@@ -98,6 +107,57 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnivCertCodeException.class)
     public ResponseEntity<String> handleUnivCertCodeException(UnivCertCodeException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(NotUserPermissionException.class)
+    public ResponseEntity<String> handleNotUserPermissionException(NotUserPermissionException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(SchoolRankPageUserInfoBySchoolException.class)
+    public ResponseEntity<String> handleSchoolRankPageUserInfoBySchoolException(SchoolRankPageUserInfoBySchoolException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(UserHasNoSchoolException.class)
+    public ResponseEntity<String> handleNotFoundUserException(UserHasNoSchoolException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(UserHasNoRegionException.class)
+    public ResponseEntity<String> handleNotFoundUserException(UserHasNoRegionException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(UserRankingException.class)
+    public ResponseEntity<String> handleUserRankingException(UserRankingException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(UserHasNoMajorLanguageException.class)
+    public ResponseEntity<String> handleUserHasNoMajorLanguageException(UserHasNoMajorLanguageException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(BadgeException.class)
+    public ResponseEntity<BadgeResponseDTO> BadgeException(BadgeException e) {
+        return ResponseEntity.status(e.getStatusCode()).body(badgeService.getBadgeFailureResponse());
+    }
+
+    @ExceptionHandler(RegionRankPageUserInfoByRegionException.class)
+    public ResponseEntity<String> handleRegionRankPageUserInfoByRegionException(RegionRankPageUserInfoByRegionException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(WrongUnivDomainException.class)
+    public ResponseEntity<String> handleWrongUnivDomainException(WrongUnivDomainException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+
+    @ExceptionHandler(UnivCertProcessException.class)
+    public ResponseEntity<String> handleUnivCertProcessException(UnivCertProcessException e) {
         return ResponseEntity.status(400).body(e.getMessage());
     }
 

@@ -3,15 +3,14 @@ package gitbal.backend.domain.user;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gitbal.backend.domain.majorlanguage.MajorLanguage;
+import gitbal.backend.api.userPage.dto.UserPageUserInfoResponseDto;
 import gitbal.backend.domain.region.Region;
+import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.school.School;
+import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.global.constant.Grade;
-import gitbal.backend.global.exception.NotFoundRegionException;
-import gitbal.backend.global.exception.NotFoundSchoolException;
 import gitbal.backend.global.exception.NotFoundUserException;
 import gitbal.backend.global.security.GithubOAuth2UserInfo;
-import gitbal.backend.global.util.SurroundingRankStatus;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +28,8 @@ public class UserService {
     private final UserScoreCalculator userScoreCalculator;
     private final UserInfoService userInfoService;
     private final UserRepository userRepository;
-    private final int USER_AROUND_RANGE = 2;
-
+    private final SchoolService schoolService;
+    private final RegionService regionService;
 
 
     public Long calculateUserScore(String nickname) {
@@ -46,23 +45,6 @@ public class UserService {
             e.printStackTrace();
             throw new NotFoundUserException();
         }
-    }
-
-    public boolean checkUserRecentCommit(String username) {
-        try {
-            ResponseEntity<String> response = userInfoService.requestUserRecentCommit(username);
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode root = objectMapper.readTree(response.getBody());
-            JsonNode dataNode = root.get("data").get("user");
-            return checkOneDayCommit(dataNode);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e); // TODO : 추후 exception 처리하기
-        }
-    }
-
-
-    private boolean checkOneDayCommit(JsonNode dataNode) {
-        return dataNode.get("yesterdayCommits").get("totalCommitContributions").asLong() > 0;
     }
 
     private Long delegateToGitbalScore(JsonNode dataNode) {
@@ -81,45 +63,62 @@ public class UserService {
 
 
 
-
+    public User findById(Long id){
+        return userRepository.findById(id).orElseThrow(() -> new NotFoundUserException("게시글 등록 중 사용자를 찾지 못하여 실패하였습니다."));
+    }
 
 
     public User findByUserName(String username) {
         return userRepository.findByNickname(username).orElseThrow(NotFoundUserException::new);
     }
 
-    public UserRaceStatus findUsersScoreRaced(Long score) {
-        int forwardCount = userRepository.usersScoreRacedForward(score);
-        int backwardCount = userRepository.userScoreRacedBackward(score);
-        log.info("forwardCount = {} backwardCount = {}", forwardCount, backwardCount);
-        SurroundingRankStatus surroundingRankStatus = SurroundingRankStatus.calculateUserForwardBackward(
-            forwardCount, backwardCount, USER_AROUND_RANGE);
-        log.info("after forwardCount = {} backwardCount = {}",
-            surroundingRankStatus.getForwardCount(), surroundingRankStatus.getBackwardCount());
-        return UserRaceStatus.of(
-            userRepository.usersScoreRaced(score, surroundingRankStatus.getForwardCount(),
-                surroundingRankStatus.getBackwardCount()));
+    public User findByUserFetchJoin(String username){
+        log.info("username : {}", username);
+        return userRepository.findByNicknameFetchJoin(username).orElseThrow(NotFoundUserException::new);
     }
+
+
 
     public School findSchoolByUserName(String username) {
         User findUser = userRepository.findByNickname(username)
-            .orElseThrow(NotFoundSchoolException::new);
+            .orElseThrow(NotFoundUserException::new);
+
         return findUser.getSchool();
     }
 
     public Region findRegionByUserName(String username) {
         User findUser = userRepository.findByNickname(username)
-            .orElseThrow(NotFoundRegionException::new);
+            .orElseThrow(NotFoundUserException::new);
+
         return findUser.getRegion();
     }
 
     public void updateUserSchool(User user, School school) {
+
+        if(Objects.nonNull(school)){
+            School prevSchool = user.getSchool();
+            schoolService.updateScore(prevSchool, school, user.getScore());
+            user.setSchool(school);
+            userRepository.save(user);
+            return;
+        }
+
+        schoolService.updateScore(school, user.getScore());
         user.setSchool(school);
         userRepository.save(user);
     }
 
     public void updateUserRegion(User user, Region region) {
+
+        Region prevRegion = user.getRegion();
+        if(Objects.nonNull(prevRegion)) {
+            regionService.updateScore(prevRegion, region, user.getScore());
+            user.setRegion(region);
+            userRepository.save(user);
+            return;
+        }
         user.setRegion(region);
+        regionService.updateScore(region,user.getScore());
         userRepository.save(user);
     }
 
@@ -144,33 +143,38 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public List<User> getAllUser(){
+        return userRepository.findAll();
+    }
+
+
     public void deleteUserProfileImg(User user) {
         user.setProfileImg(null);
         userRepository.save(user);
     }
 
     public List<String> findAllUserNames() {
-        return userRepository.findAll().stream().map(u -> u.getNickname()).toList();
+        return userRepository.findAll().stream().map(User::getNickname).toList();
     }
 
     public void updateUserScore(User findUser, Long newScore) {
+        log.info("findUser : {} newScore : {}",findUser.getNickname(), newScore);
         findUser.updateScore(newScore);
-        updateUserRanking();
+        userRepository.save(findUser);
     }
 
-    private void updateUserRanking() {
+    public void updateUserRanking() {
         List<User> users = userRepository.findAll(Sort.by("score").descending());
         int rank = 1;
         for (User user : users) {
             user.setUserRank(rank++);
-            userRepository.save(user);
         }
     }
 
-    public List<MajorLanguage> findMajorLanguagesByUsername(String username) {
+    public String findMajorLanguageByUsername(String username) {
         User findUser = userRepository.findByNickname(username)
             .orElseThrow(NotFoundUserException::new);
-        return findUser.getMajorLanguages();
+        return findUser.getMajorLanguage();
     }
 
     @Transactional
@@ -180,6 +184,7 @@ public class UserService {
         for (User user : users) {
             user.setUserRank(rank++);
         }
+        userRepository.flush();
     }
 
     @Transactional
@@ -204,19 +209,55 @@ public class UserService {
         for (User user : users) {
             Long score = user.getScore();
 
-            if (score <= 60000) {
+            if (score <= Grade.YELLOW.getUpperBound()) {
                 user.setGrade(Grade.YELLOW);
-            } else if (score <= 70000) {
+            } else if (score <= Grade.GREEN.getUpperBound()) {
                 user.setGrade(Grade.GREEN);
-            } else if (score <= 80000) {
+            } else if (score <= Grade.BLUE.getUpperBound()) {
                 user.setGrade(Grade.BLUE);
-            } else if (score <= 90000) {
+            } else if (score <= Grade.RED.getUpperBound()) {
                 user.setGrade(Grade.RED);
-            } else if (score <= 96000) {
+            } else if (score <= Grade.GREY.getUpperBound()) {
                 user.setGrade(Grade.GREY);
             } else {
                 user.setGrade(Grade.PURPLE);
             }
         }
+    }
+
+    public List<User> getAllUserExceptCurrentUser(User user) {
+        List<User> users = userRepository.findAll();
+        users.remove(user);
+        return users;
+    }
+
+    public Grade getNextGrade(User user) {
+        Grade grade = user.getGrade();
+
+        return Grade.nextGrade(grade);
+    }
+
+    public int calculateExp(User findUser) {
+        Grade nextGrade = getNextGrade(findUser);
+        Grade nowUserGrade = findUser.getGrade();
+        if(nowUserGrade == Grade.PURPLE) return 100;
+
+        double nextGradeScore = nextGrade.getUnderBound();
+        double nowGradeUnderBound = nowUserGrade.getUnderBound();
+        double relativeScore = findUser.getScore() - nowGradeUnderBound;
+
+        double v =  relativeScore / (nextGradeScore - nowGradeUnderBound) * 100.0;
+        long round = Math.round(v);
+        log.info("round : {}", round);
+        return Math.toIntExact(round);
+    }
+
+
+    public UserPageUserInfoResponseDto makeUserInfoResponse(String username) {
+        User findUser = userRepository.findByNickname(username)
+            .orElseThrow(NotFoundUserException::new);
+
+        return UserPageUserInfoResponseDto.of(findUser.getNickname(), findUser.getGrade()
+        ,findUser.getProfile_img());
     }
 }

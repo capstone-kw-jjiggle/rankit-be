@@ -5,6 +5,7 @@ spring:
     password: ${PASSWORD} # db에 연결할 비번
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+
   jpa:
     properties:
       hibernate:
@@ -16,13 +17,18 @@ spring:
     defer-datasource-initialization: true
     open-in-view: true
 
-  #redis
-  data:
-    redis:
-      port: ${REDIS_PORT}
-      host: ${REDIS_HOST}
-      repositories:
-        enabled: false
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${RANKIT_MAIL}
+    password: ${RANKIT_PWD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
 
   security:
     oauth2:
@@ -31,6 +37,8 @@ spring:
           github:
             client-id: ${SECURITY_CLIENT_ID}
             client-secret: ${SECURITY_SECRET_ID}
+            redirect-uri: "https://server.rankit.run/login/oauth2/code/github"
+
 
   #### data.sql 시작
   sql:

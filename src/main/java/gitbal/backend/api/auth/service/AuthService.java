@@ -2,13 +2,13 @@ package gitbal.backend.api.auth.service;
 
 import gitbal.backend.api.auth.dto.JoinRequestDto;
 import gitbal.backend.api.auth.dto.UserDto;
-import gitbal.backend.domain.refreshtoken.RefreshTokenService;
-import gitbal.backend.global.constant.Grade;
+import gitbal.backend.domain.majorlanguage.MajorLanguage;
+import gitbal.backend.domain.region.Region;
+import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
-import gitbal.backend.domain.majorlanguage.MajorLanguageService;
-import gitbal.backend.domain.onedaycommit.OneDayCommitService;
-import gitbal.backend.domain.region.RegionService;
+import gitbal.backend.domain.majorlanguage.application.MajorLanguageService;
+import gitbal.backend.domain.region.application.RegionService;
 import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.global.exception.JoinException;
@@ -20,22 +20,24 @@ import gitbal.backend.global.util.AuthenticationChecker;
 import gitbal.backend.api.auth.dto.GitbalApiDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
 
     private final SchoolService schoolService;
     private final RegionService regionService;
     private final MajorLanguageService majorLanguageService;
-    private final OneDayCommitService oneDayCommitService;
     private final UserService userService;
     private final UserRepository userRepository;
     private final AuthenticationChecker authenticationChecker;
-    private final RefreshTokenService refreshTokenService;
 
 
     @Transactional
@@ -45,14 +47,12 @@ public class AuthService {
 
         User findUser = userRepository.findByNickname(nickname)
             .orElseThrow(() -> new JoinException("유저가 존재하지 않습니다."));
-
-        // TODO: 이름 좀 더 생각해보기 -> 이거 승준씨랑 같이 회의때 고민
-        GitbalApiDto gitbalApiDto = GitbalApiDto.of(userService.calculateUserScore(nickname),
-            userService.checkUserRecentCommit(nickname));
+        if(Boolean.FALSE.equals(findUser.getFirstLogined()))
+            findUser.toggleLogined();
+        GitbalApiDto gitbalApiDto = GitbalApiDto.of(userService.calculateUserScore(nickname));
 
         //loginRequestDto 학교이름, 지역이름, 프로필 이미지 이름
         UserDto userDto = initUserDto(joinRequestDto, gitbalApiDto, nickname);
-
         joinUpdate(findUser, userDto);
         updateRank();
     }
@@ -60,14 +60,41 @@ public class AuthService {
 
     private UserDto initUserDto(JoinRequestDto joinRequestDto, GitbalApiDto gitbalApiDto,
         String nickname) {
-        return UserDto.of(schoolService.findBySchoolName(joinRequestDto.univName()),
-            regionService.findByRegionName(joinRequestDto.region()),
-            oneDayCommitService.calculateRecentCommit(gitbalApiDto.getRecentCommit()),
-            majorLanguageService.getUserTopLaunguages(nickname),
+
+        School findSchool = findSchool(joinRequestDto);
+        Region findRegion = findRegion(joinRequestDto);
+
+        String majorLanguage = findMajorLanguage(nickname);
+
+
+        return UserDto.of(findSchool,
+            findRegion,
+            majorLanguage,
             nickname,
             gitbalApiDto.getScore(),
-            userService.findUserImgByUsername(nickname)
+            userService.findUserImgByUsername(nickname),
+            userService.findByUserName(nickname).getIntroduction()
         );
+    }
+
+    private  String findMajorLanguage(String nickname) {
+        MajorLanguage userTopLaunguage = majorLanguageService.getUserTopLaunguage(nickname);
+        if(Objects.isNull(userTopLaunguage))
+            return null;
+        return  majorLanguageService.getUserTopLaunguage(nickname)
+            .getMajorLanguage();
+    }
+
+    private Region findRegion(JoinRequestDto joinRequestDto) {
+        if(Objects.isNull(joinRequestDto.region()))
+            return null;
+        return regionService.findByRegionName(joinRequestDto.region());
+    }
+
+    private School findSchool(JoinRequestDto joinRequestDto) {
+        if(Objects.isNull(joinRequestDto.univName()))
+            return null;
+        return schoolService.findBySchoolName(joinRequestDto.univName());
     }
 
 
@@ -86,15 +113,17 @@ public class AuthService {
     private void joinUpdate(User findUser, UserDto userDto) {
         findUser.joinUpdateUser(userDto.school(),
             userDto.region(),
-            userDto.oneDayCommit(),
-            userDto.majorLanguages(),
+            userDto.majorLanguage(),
             userDto.nickname(),
             userDto.score(),
             userDto.profile_img(),
-            0
+            0,
+            userDto.introduction()
         );
-        schoolService.joinNewUserScore(findUser);
-        regionService.joinNewUserScore(findUser);
+        if(!Objects.isNull(findUser.getSchool()))
+            schoolService.joinNewUserScore(findUser);
+        if (!Objects.isNull(findUser.getRegion()))
+            regionService.joinNewUserScore(findUser);
     }
 
 
@@ -108,7 +137,10 @@ public class AuthService {
     @Transactional
     public String logoutUser(String username) {
         try {
-            refreshTokenService.deleteByUsername(username);
+            User user = userRepository.findByNickname(username)
+                .orElseThrow(NotFoundUserException::new);
+            user.setRefreshToken("nothing");
+            log.info("로그아웃 성공");
             return "로그아웃에 성공하였습니다.";
         }catch (Exception e){
             e.printStackTrace();
@@ -119,7 +151,6 @@ public class AuthService {
     private void updateRank() {
         userService.updateUserRank();
         userService.updateUserGrade();
-        schoolService.updateSchoolGrade();
         schoolService.updateSchoolRank();
     }
 }

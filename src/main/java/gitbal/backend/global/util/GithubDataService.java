@@ -1,6 +1,6 @@
 package gitbal.backend.global.util;
 
-import gitbal.backend.domain.majorlanguage.TopLanguageService;
+import gitbal.backend.domain.majorlanguage.application.TopLanguageService;
 import gitbal.backend.domain.user.UserInfoService;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -41,7 +41,7 @@ public class GithubDataService implements UserInfoService, TopLanguageService {
     private String getTopLanguageQuery(String username) {
         return """
         {
-          "query": "query userInfo($login: String!) { user(login: $login) { repositories(ownerAffiliations: OWNER, isFork: false, first: 100) { nodes { name languages(first: 10, orderBy: {field: SIZE, direction: DESC}) { edges { size node { name } } } } } } }",
+          "query": "query userInfo($login: String!) { user(login: $login) { repositories(ownerAffiliations: OWNER, isFork: false, first: 100) { nodes { name languages(first: 1, orderBy: {field: SIZE, direction: DESC}) { edges { size node { name } } } } } } }",
           "variables": { "login": "%s" }
         }
         """.formatted(username);
