@@ -78,6 +78,7 @@ public class RandomFriendPicker {
 
   private User getRandomSameLanguageUser(List<User> allUsers, String userLang){
     List<User> sameLangUsers = allUsers.stream()
+        .filter(u -> Objects.nonNull(u.getMajorLanguage()))
         .filter(u -> u.getMajorLanguage().equals(userLang))
         .toList();
     return checkNullAndReturn(sameLangUsers, allUsers);
