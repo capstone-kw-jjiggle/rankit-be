@@ -28,11 +28,11 @@ public class UserPageListBySchoolResponseDto {
         return;
     }
 
-    int pageSize = 10;
+    int pageSize = 14;
     this.totalPages = (int) Math.ceil((double) totalCount / pageSize);
 
-    this.end = (int) (Math.ceil(page / 10.0)) * 10;
-    this.start = end - 9;
+    this.end = (int) (Math.ceil(page / 14.0)) * 14;
+    this.start = end - 13;
 
     int last = (int) (Math.ceil(totalCount / (double) pageSize));
     end = end > last ? last : end;
