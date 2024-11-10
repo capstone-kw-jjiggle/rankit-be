@@ -46,9 +46,9 @@ jobs:
           chmod 600 private_key.pem
           ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST "ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@$EC2_A_IP '
             if [ \$(docker-compose ps -q app | xargs -r docker inspect -f \"{{.State.Running}}\") == \"true\" ]; then
-              docker-compose stop
+              docker-compose down
             fi
-            sleep 3
+            sleep 10
             docker-compose up -d --pull always
             
             # 향상된 헬스체크: 최대 10번 시도, 5초 간격
@@ -127,9 +127,9 @@ jobs:
           chmod 600 private_key.pem
           ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$BASTION_HOST "ssh -o StrictHostKeyChecking=no -i /home/ec2-user/my-key.pem ec2-user@$EC2_C_IP '
             if [ \$(docker-compose ps -q app | xargs -r docker inspect -f \"{{.State.Running}}\") == \"true\" ]; then
-              docker-compose stop
+              docker-compose down
             fi
-            sleep 3
+            sleep 10
             docker-compose up -d --pull always
             
             # 향상된 헬스체크: 최대 10번 시도, 5초 간격
