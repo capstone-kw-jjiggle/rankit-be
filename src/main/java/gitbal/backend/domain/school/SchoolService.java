@@ -67,6 +67,10 @@ public class SchoolService {
 
     public void updateScore(School prevSchool, School school, Long score) {
         school.addScore(score);
+        if(Objects.isNull(prevSchool)){
+            updateSchoolRank();
+            return;
+        }
         prevSchool.minusScore(score);
         updateSchoolRank();
     }
