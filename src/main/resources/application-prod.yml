@@ -5,6 +5,8 @@ spring:
     password: ${PASSWORD} # db에 연결할 비번
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+logging:
+
   jpa:
     properties:
       hibernate:
@@ -43,6 +45,10 @@ spring:
   sql:
     init:
       mode: always
+
+  level:
+    web: trace
+
 
 token: ${GITHUB_TOKEN}
 API-KEY: ${UNIV_API_KEY}
