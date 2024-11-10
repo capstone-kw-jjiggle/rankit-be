@@ -126,6 +126,8 @@ public class SchoolRankService {
 
             List<UserInfoBySchool> userInfoBySchools = convertPageByUserInfoBySchool(
                     userBySchoolName);
+            log.info("userBySchoolName : {}",userInfoBySchools);
+
             return buildUserPageListBySchoolResponseDto(page, userInfoBySchools, userBySchoolName);
         } catch (Exception e) {
             log.info(e.getMessage());
@@ -144,7 +146,8 @@ public class SchoolRankService {
         List<UserInfoBySchool> userInfoBySchools = new ArrayList<>();
         for (int index = 0; index < users.size(); index++) {
             User user = users.get(index);
-            convertToUserInfoBySchool(user, index+1);
+            UserInfoBySchool userInfo = convertToUserInfoBySchool(user, index+1);
+            userInfoBySchools.add(userInfo);
         }
         return userInfoBySchools;
     }
