@@ -2,6 +2,7 @@ package gitbal.backend.api.auth.service;
 
 import gitbal.backend.api.auth.dto.JoinRequestDto;
 import gitbal.backend.api.auth.dto.UserDto;
+import gitbal.backend.domain.majorlanguage.MajorLanguage;
 import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.user.User;
@@ -63,14 +64,25 @@ public class AuthService {
         School findSchool = findSchool(joinRequestDto);
         Region findRegion = findRegion(joinRequestDto);
 
+        String majorLanguage = findMajorLanguage(nickname);
+
+
         return UserDto.of(findSchool,
             findRegion,
-            majorLanguageService.getUserTopLaunguage(nickname).getMajorLanguage(),
+            majorLanguage,
             nickname,
             gitbalApiDto.getScore(),
             userService.findUserImgByUsername(nickname),
             userService.findByUserName(nickname).getIntroduction()
         );
+    }
+
+    private  String findMajorLanguage(String nickname) {
+        MajorLanguage userTopLaunguage = majorLanguageService.getUserTopLaunguage(nickname);
+        if(Objects.isNull(userTopLaunguage))
+            return "LanguageEmpty";
+        return  majorLanguageService.getUserTopLaunguage(nickname)
+            .getMajorLanguage();
     }
 
     private Region findRegion(JoinRequestDto joinRequestDto) {
