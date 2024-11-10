@@ -11,7 +11,7 @@ spring:
         show_sql: true
         format_sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     database-platform: org.hibernate.dialect.MySQLDialect
     defer-datasource-initialization: true
     open-in-view: true
