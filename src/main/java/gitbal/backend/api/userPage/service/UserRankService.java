@@ -61,7 +61,7 @@ public class UserRankService {
     public UserRankMajorLanguageResponseDto makeUserRankLanguageResponseByUsername(String username) {
         User findUser = userService.findByUserName(username);
         if(Objects.isNull(findUser.getMajorLanguage()))
-            throw new UserHasNoMajorLanguageException();
+            return UserRankMajorLanguageResponseDto.of(null);
         return majorLanguageService.findMostUsageLanguageByUsername(findUser);
     }
 

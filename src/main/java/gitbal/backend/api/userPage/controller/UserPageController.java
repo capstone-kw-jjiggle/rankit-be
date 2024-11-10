@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/userPage")
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "유저페이지 API", description = "유저 페이지에 필요한 정보를 위한 api입니다.")
 public class UserPageController {
 
@@ -61,6 +63,7 @@ public class UserPageController {
         @ApiResponse(responseCode = "5xx", description = "친구 추천 리스트를 가져오기 실패했습니다.")
     })
     public ResponseEntity<List<FriendSuggestDto>> suggestFreinds(Authentication authentication){
+        log.info("now suggest start");
         return ResponseEntity.ok(userPageService.getFriendSuggestionList(authentication));
     }
 

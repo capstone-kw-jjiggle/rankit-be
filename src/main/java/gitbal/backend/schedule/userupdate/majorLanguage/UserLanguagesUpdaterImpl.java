@@ -6,6 +6,7 @@ import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserService;
 import gitbal.backend.schedule.userupdate.UserSetup;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,15 +26,14 @@ public class UserLanguagesUpdaterImpl extends UserSetup implements UserLanguages
         List<String> allUsers = super.getAllUsernames(userService);
         for (String username : allUsers) {
             MajorLanguage updateLanguage = majorLanguageService.getUserTopLaunguage(username);
-            log.info(updateLanguage.toString());
-
+            if(Objects.nonNull(updateLanguage))
+                log.info(updateLanguage.toString());
             try {
                 majorLanguageService.updateUserLanguage(updateLanguage, userService.findByUserName(username));
             }catch (NullPointerException e){
                 User findUser = userService.findByUserName(username);
                 saveNewLanguage(updateLanguage, findUser);
             }
-
         }
         log.info("[languageupdate] method finish");
     }

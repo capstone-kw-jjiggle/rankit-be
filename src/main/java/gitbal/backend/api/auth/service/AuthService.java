@@ -80,7 +80,7 @@ public class AuthService {
     private  String findMajorLanguage(String nickname) {
         MajorLanguage userTopLaunguage = majorLanguageService.getUserTopLaunguage(nickname);
         if(Objects.isNull(userTopLaunguage))
-            return "LanguageEmpty";
+            return null;
         return  majorLanguageService.getUserTopLaunguage(nickname)
             .getMajorLanguage();
     }
