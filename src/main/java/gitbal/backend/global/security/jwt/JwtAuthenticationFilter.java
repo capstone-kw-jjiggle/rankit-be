@@ -52,6 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
 
+        log.info("[doFilterInternal] 다음 필터로 이동합니다.");
         filterChain.doFilter(request, response);
     }
 

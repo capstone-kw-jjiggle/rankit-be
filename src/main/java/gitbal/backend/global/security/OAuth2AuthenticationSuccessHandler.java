@@ -38,21 +38,17 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Transactional
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication) throws IOException {
-
+        log.info("[onAuthenticationSuccess] : OAuth2 로그");
         GithubOAuth2UserInfo githubOAuth2UserInfo = changeGithubOAuth2UserInfo(
             authentication);
-
         if (isUserEmptyRefreshToken(githubOAuth2UserInfo) || isUserInDatabase(githubOAuth2UserInfo)) {
             log.info("[onAuthenticationSuccess] refreshtoken이 발견되지 않았거나 초기 MockData로 인한 임시의 refreshToken을 제작하고 있는것입니다.");
             updateUser(githubOAuth2UserInfo);
             tokenRefresh(githubOAuth2UserInfo);
         }
-
         String url = loginService.madeRedirectUrl(githubOAuth2UserInfo.getNickname());
-
         log.info("redirect 보내기 직전");
         log.info("redirect url : {}", url);
-
         response.sendRedirect(url);
     }
 

@@ -22,22 +22,25 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        log.info("Hello CusotmOauth2UserService 입니다.");
         OAuth2User oAuth2User = super.loadUser(userRequest);
         return mappingCustomeUserDetails(oAuth2User);
     }
 
     //oAuth2 빼와서 User로 매핑 하고 회원가입 및 로그인 진행
     private OAuth2User mappingCustomeUserDetails(OAuth2User oAuth2User) {
+        log.info("MappingCustomUserDetails 로 왔습니다.");
         Map<String, Object> attributes = oAuth2User.getAttributes();
         String username = attributes.get("login").toString();
         String avatarUrl = attributes.get("avatar_url").toString();
-        log.info(username);
+        log.info("username은 {}", username);
         User user = userRepository.findByNickname(username)
             .orElse(createUser(username, avatarUrl));
 
         CustomUserDetails customUserDetails = settingUserDetails(user,
             attributes);
         log.info(customUserDetails.toString());
+
         return customUserDetails;
     }
 

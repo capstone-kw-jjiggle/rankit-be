@@ -5,12 +5,15 @@ import gitbal.backend.domain.user.UserService;
 import gitbal.backend.global.constant.Grade;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class RandomFriendPicker {
   private final int NEAR_SCORE_BOUNDARY = 1000;
   private final int NUM_OF_SUGGESTING_FRIENDS = 4;
@@ -19,11 +22,19 @@ public class RandomFriendPicker {
   public List<User> getFriendList(User user) {
     List <User> allUsers = userService.getAllUserExceptCurrentUser(user);
     User highestGradeUser = getRandomHigestGradeUser(allUsers);
-    User sameLangUser = getRandomSameLanguageUser(allUsers, user.getMajorLanguage());
+    log.info("before SameLangUser");
+    User sameLangUser = getSameLangUser(user, allUsers);
     User nextGradeUser = getRandomNextLanguageUser(allUsers, userService.getNextGrade(user));
     User nearScoreUser = getRandomNearScoreUser(allUsers, user.getScore());
 
     return getList(highestGradeUser, sameLangUser, nextGradeUser, nearScoreUser);
+  }
+
+  private User getSameLangUser(User user, List<User> allUsers) {
+    if(Objects.nonNull(user.getMajorLanguage()))
+      return getRandomSameLanguageUser(allUsers, user.getMajorLanguage());
+    log.info("getEmptyLangUser");
+    return getRandomLanguageUser(allUsers);
   }
 
   public List<User> getAllRandomFriendList() {
@@ -59,6 +70,10 @@ public class RandomFriendPicker {
         .filter(u -> u.getGrade() == Grade.PURPLE).toList();
 
     return checkNullAndReturn(highestGradeUsers,allUsers);
+  }
+
+  private User getRandomLanguageUser(List<User> allUsers){
+    return pickRandomUser(allUsers);
   }
 
   private User getRandomSameLanguageUser(List<User> allUsers, String userLang){
