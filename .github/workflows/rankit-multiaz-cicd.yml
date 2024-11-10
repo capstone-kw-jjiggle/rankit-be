@@ -46,6 +46,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/rankitrun-be:latest
   deploy:
     runs-on: ubuntu-latest
+    needs: build  # build 작업이 완료되어야 실행
     permissions:
       contents: read
 
