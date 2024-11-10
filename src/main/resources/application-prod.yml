@@ -37,7 +37,7 @@ spring:
           github:
             client-id: ${SECURITY_CLIENT_ID}
             client-secret: ${SECURITY_SECRET_ID}
-            redirect-uri: "https://server.rankit.run/login/oauth2/code/{registrationId}"
+            redirect-uri: "https://server.rankit.run/login/oauth2/code/github"
 
 
   #### data.sql 시작
