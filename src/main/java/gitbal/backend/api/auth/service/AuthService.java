@@ -141,11 +141,20 @@ public class AuthService {
                 .orElseThrow(NotFoundUserException::new);
             user.setRefreshToken("nothing");
             log.info("로그아웃 성공");
+            logoutUpdateProcess(user);
+
             return "로그아웃에 성공하였습니다.";
         }catch (Exception e){
             e.printStackTrace();
             throw new LogoutException("로그아웃 실패");
         }
+    }
+
+    private void logoutUpdateProcess(User user) {
+        regionService.updatedByLogout(user, user.getRegion());
+        schoolService.updatedByLogout(user, user.getSchool());
+        schoolService.updateSchoolRank();
+        userService.updateUserRank();
     }
 
     private void updateRank() {

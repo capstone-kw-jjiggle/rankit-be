@@ -80,4 +80,9 @@ public class SchoolService {
         school.addScore(score);
         updateSchoolRank();
     }
+
+    public void updatedByLogout(User user, School school) {
+        school.minusScore(user.getScore());
+        updateSchoolRank();
+    }
 }

@@ -58,5 +58,7 @@ public class RegionService{
   }
 
 
-
+  public void updatedByLogout(User user, Region region) {
+    region.minusScore(user.getScore());
+  }
 }
