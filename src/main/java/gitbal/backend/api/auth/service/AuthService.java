@@ -47,8 +47,8 @@ public class AuthService {
 
         User findUser = userRepository.findByNickname(nickname)
             .orElseThrow(() -> new JoinException("유저가 존재하지 않습니다."));
-       // if(Boolean.FALSE.equals(findUser.getFirstLogined()))
-       //     findUser.toggleLogined();
+        if(Boolean.FALSE.equals(findUser.getFirstLogined()))
+            findUser.toggleLogined();
       //  GitbalApiDto gitbalApiDto = GitbalApiDto.of(userService.calculateUserScore(nickname));
 
         //loginRequestDto 학교이름, 지역이름, 프로필 이미지 이름
@@ -65,8 +65,8 @@ public class AuthService {
         User findUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new JoinException("유저가 존재하지 않습니다."));
 
-        if(Boolean.FALSE.equals(findUser.getFirstLogined()))
-            findUser.toggleLogined();
+//        if(Boolean.FALSE.equals(findUser.getFirstLogined()))
+//            findUser.toggleLogined();
 
         GitbalApiDto gitbalApiDto = GitbalApiDto.of(userService.calculateUserScore(nickname));
 
