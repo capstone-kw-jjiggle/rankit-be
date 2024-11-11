@@ -47,6 +47,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             tokenRefresh(githubOAuth2UserInfo);
         }
         String url = loginService.madeRedirectUrl(githubOAuth2UserInfo.getNickname());
+
+
         log.info("redirect 보내기 직전");
         log.info("redirect url : {}", url);
         response.sendRedirect(url);

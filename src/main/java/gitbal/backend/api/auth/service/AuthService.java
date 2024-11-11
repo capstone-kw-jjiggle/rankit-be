@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -102,7 +103,9 @@ public class AuthService {
     public String withDrawUser(Authentication authentication) {
         User user = getAuthenticatedUser(authentication);
         try {
+            withDrawUpdate(user);
             userRepository.delete(user);
+            userService.updateUserRank();
             return "성공적으로 탈퇴 처리 되었습니다.";
         } catch (Exception e) {
             throw new NotDrawUserException();
@@ -141,8 +144,6 @@ public class AuthService {
                 .orElseThrow(NotFoundUserException::new);
             user.setRefreshToken("nothing");
             log.info("로그아웃 성공");
-            logoutUpdateProcess(user);
-
             return "로그아웃에 성공하였습니다.";
         }catch (Exception e){
             e.printStackTrace();
@@ -150,11 +151,13 @@ public class AuthService {
         }
     }
 
-    private void logoutUpdateProcess(User user) {
-        regionService.updatedByLogout(user, user.getRegion());
-        schoolService.updatedByLogout(user, user.getSchool());
-        schoolService.updateSchoolRank();
-        userService.updateUserRank();
+    private void withDrawUpdate(User user) {
+        if(Objects.nonNull(user.getRegion()))
+            regionService.updatedByLogout(user, user.getRegion());
+        if(Objects.nonNull(user.getSchool())) {
+            schoolService.updatedByLogout(user, user.getSchool());
+            schoolService.updateSchoolRank();
+        }
     }
 
     private void updateRank() {

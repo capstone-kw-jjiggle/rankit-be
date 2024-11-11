@@ -82,7 +82,9 @@ public class SchoolService {
     }
 
     public void updatedByLogout(User user, School school) {
+        log.info("now this is this");
         school.minusScore(user.getScore());
+        log.info("school score {}", school.getScore());
         updateSchoolRank();
     }
 }
