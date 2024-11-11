@@ -65,6 +65,7 @@ public class RegionRankService {
 
     private List<RegionListDto> convertListToDto(List<Region> regions) {
         List<RegionListDto> regionListDtos = new ArrayList<>();
+
         for(int index = 0; index < regions.size(); index++) {
             Region region = regions.get(index);
             regionListDtos.add(new RegionListDto(

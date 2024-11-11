@@ -140,7 +140,20 @@ public class User extends BaseTimeEntity {
 
     public void joinUpdateUser(School school, Region region,
         String majorLanguage,
-        String nickname, Long score, String profile_img, int userRank, Introduction introduction) {
+        String nickname, String profile_img, int userRank, Introduction introduction) {
+        this.school = school;
+        this.region = region;
+        this.majorLanguage = majorLanguage;
+        this.nickname = nickname;
+        this.profile_img = profile_img;
+        this.userRank = userRank;
+        this.introduction = introduction;
+    }
+
+
+    public void joinMockUpdateUser(School school, Region region,
+                               String majorLanguage,
+                               String nickname, Long score, String profile_img, int userRank, Introduction introduction) {
         this.school = school;
         this.region = region;
         this.majorLanguage = majorLanguage;
