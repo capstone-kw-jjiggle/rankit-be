@@ -89,7 +89,7 @@ public class MockDataGenerator implements CommandLineRunner {
                     user.getNickname(), user.getScore(), user.getProfile_img(), 0, user.getIntroduction());
 
             userRepository.save(user);
-            guestBookService.saveGuestBook(user, "qwer" + i);
+            guestBookService.saveGuestBook(user, "안녕하세요!");
 
             if (i % 50 == 0 && i != 0) {
                 userRepository.flush();
