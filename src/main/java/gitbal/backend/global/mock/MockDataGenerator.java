@@ -85,11 +85,11 @@ public class MockDataGenerator implements CommandLineRunner {
             scoring(user);
 
             // Update user with the new relations
-            user.joinUpdateUser(school, region, randomMajorLanguagesForUser,
+            user.joinMockUpdateUser(school, region, randomMajorLanguagesForUser,
                     user.getNickname(), user.getScore(), user.getProfile_img(), 0, user.getIntroduction());
 
             userRepository.save(user);
-            guestBookService.saveGuestBook(user, "qwer" + i);
+            guestBookService.saveGuestBook(user, "안녕하세요!");
 
             if (i % 50 == 0 && i != 0) {
                 userRepository.flush();
@@ -131,7 +131,7 @@ public class MockDataGenerator implements CommandLineRunner {
 
         String randomMajorLanguagesForUser = createRandomMajorLanguagesForUser(user);
 
-        user.joinUpdateUser(school, region, randomMajorLanguagesForUser,
+        user.joinMockUpdateUser(school, region, randomMajorLanguagesForUser,
                 user.getNickname(), user.getScore(), user.getProfile_img(), 0, introductionRepository.createIntroductionAndReturn());
         userRepository.save(user);
     }

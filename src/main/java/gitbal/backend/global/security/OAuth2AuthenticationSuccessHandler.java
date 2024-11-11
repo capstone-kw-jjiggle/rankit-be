@@ -1,5 +1,6 @@
 package gitbal.backend.global.security;
 
+import gitbal.backend.api.auth.service.AuthService;
 import gitbal.backend.api.auth.service.LoginService;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserRepository;
@@ -33,6 +34,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
     private final LoginService loginService;
+    private final AuthService authService;
 
     @Override
     @Transactional
@@ -46,7 +48,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             updateUser(githubOAuth2UserInfo);
             tokenRefresh(githubOAuth2UserInfo);
         }
+
+        authService.earlyJoin(githubOAuth2UserInfo.getNickname());
+
         String url = loginService.madeRedirectUrl(githubOAuth2UserInfo.getNickname());
+
+
         log.info("redirect 보내기 직전");
         log.info("redirect url : {}", url);
         response.sendRedirect(url);

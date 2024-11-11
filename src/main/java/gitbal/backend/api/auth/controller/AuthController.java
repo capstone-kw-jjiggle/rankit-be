@@ -46,7 +46,7 @@ public class AuthController {
 
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
 
-        authService.join(joinRequestDto, principal);
+        authService.afterRealjoin(joinRequestDto, principal);
 
         response.setHeader("accessToken", principal.getAccessToken());
         return ResponseEntity.ok("회원 가입 성공!");

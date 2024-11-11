@@ -11,24 +11,13 @@ public record UserDto(
     Region region,
     String majorLanguage,
     String nickname,
-    Long score,
     String profile_img,
 
     Introduction introduction) {
 
-    public static UserDto of(School school, Region region, String majorLanguage, String nickname, Long score,
+    public static UserDto of(School school, Region region, String majorLanguage, String nickname,
         String profile_img, Introduction introduction) {
-        return new UserDto(school, region, majorLanguage, nickname, score, profile_img, introduction);
+        return new UserDto(school, region, majorLanguage, nickname, profile_img, introduction);
     }
 
-    public static User toEntity(UserDto userDto) {
-        return User.builder()
-            .school(userDto.school())
-            .region(userDto.region())
-            .majorLanguage(userDto.majorLanguage)
-            .nickname(userDto.nickname())
-            .score(userDto.score())
-            .profile_img(userDto.profile_img())
-            .build();
-    }
 }

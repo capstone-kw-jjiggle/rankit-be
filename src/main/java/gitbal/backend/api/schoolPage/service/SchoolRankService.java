@@ -125,7 +125,7 @@ public class SchoolRankService {
                 throw new PageOutOfRangeException();
 
             List<UserInfoBySchool> userInfoBySchools = convertPageByUserInfoBySchool(
-                    userBySchoolName);
+                    userBySchoolName, page);
             log.info("userBySchoolName : {}",userInfoBySchools);
 
             return buildUserPageListBySchoolResponseDto(page, userInfoBySchools, userBySchoolName);
@@ -141,12 +141,13 @@ public class SchoolRankService {
         return schoolRepository.findBySchoolName(schoolName).isPresent();
     }
 
-    private List<UserInfoBySchool> convertPageByUserInfoBySchool(Page<User> userBySchoolName) {
+    private List<UserInfoBySchool> convertPageByUserInfoBySchool(Page<User> userBySchoolName, int page) {
         List<User> users = userBySchoolName.get().toList();
         List<UserInfoBySchool> userInfoBySchools = new ArrayList<>();
-        for (int index = 0; index < users.size(); index++) {
-            User user = users.get(index);
-            UserInfoBySchool userInfo = convertToUserInfoBySchool(user, index+1);
+        int startNum = (page-1) * PAGE_SIZE +1;
+        for (int index = startNum; index < users.size()+startNum; index++) {
+            User user = users.get(index-startNum);
+            UserInfoBySchool userInfo = convertToUserInfoBySchool(user, index);
             userInfoBySchools.add(userInfo);
         }
         return userInfoBySchools;

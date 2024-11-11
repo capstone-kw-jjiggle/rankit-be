@@ -45,14 +45,14 @@ public class UserRankService {
     @Transactional(readOnly = true)
     public SchoolRankResponseDto makeUserRankSchoolStatusByUsername(String username) {
         School findUserScool = userService.findSchoolByUserName(username);
-        if(Objects.isNull(findUserScool)) return SchoolRankResponseDto.of(null);
+        if(Objects.isNull(findUserScool)) return SchoolRankResponseDto.of(SchoolRankDto.of(null));
         return SchoolRankResponseDto.of(SchoolRankDto.of(findUserScool));
     }
 
     @Transactional(readOnly = true)
     public RegionRankResponseDto makeUserRankRegionStatusByUsername(String username) {
         Region findRegion = userService.findRegionByUserName(username);
-        if(Objects.isNull(findRegion)) return RegionRankResponseDto.of(null);
+        if(Objects.isNull(findRegion)) return RegionRankResponseDto.of(RegionRankDto.of(null, null));
         int regionRanking = regionService.findRegionRanking(findRegion.getRegionName());
         return RegionRankResponseDto.of(RegionRankDto.of(findRegion.getRegionName(),  regionRanking));
     }

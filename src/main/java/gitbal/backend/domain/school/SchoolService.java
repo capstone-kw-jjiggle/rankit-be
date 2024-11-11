@@ -67,6 +67,10 @@ public class SchoolService {
 
     public void updateScore(School prevSchool, School school, Long score) {
         school.addScore(score);
+        if(Objects.isNull(prevSchool)){
+            updateSchoolRank();
+            return;
+        }
         prevSchool.minusScore(score);
         updateSchoolRank();
     }
@@ -74,6 +78,13 @@ public class SchoolService {
 
     public void updateScore(School school, Long score) {
         school.addScore(score);
+        updateSchoolRank();
+    }
+
+    public void updatedByLogout(User user, School school) {
+        log.info("now this is this");
+        school.minusScore(user.getScore());
+        log.info("school score {}", school.getScore());
         updateSchoolRank();
     }
 }

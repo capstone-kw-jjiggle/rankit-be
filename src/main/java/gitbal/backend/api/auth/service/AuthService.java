@@ -41,7 +41,7 @@ public class AuthService {
 
 
     @Transactional
-    public void join(JoinRequestDto joinRequestDto, CustomUserDetails user) {
+    public void afterRealjoin(JoinRequestDto joinRequestDto, CustomUserDetails user) {
 
         String nickname = user.getNickname();
 
@@ -49,16 +49,39 @@ public class AuthService {
             .orElseThrow(() -> new JoinException("유저가 존재하지 않습니다."));
         if(Boolean.FALSE.equals(findUser.getFirstLogined()))
             findUser.toggleLogined();
-        GitbalApiDto gitbalApiDto = GitbalApiDto.of(userService.calculateUserScore(nickname));
+      //  GitbalApiDto gitbalApiDto = GitbalApiDto.of(userService.calculateUserScore(nickname));
 
         //loginRequestDto 학교이름, 지역이름, 프로필 이미지 이름
-        UserDto userDto = initUserDto(joinRequestDto, gitbalApiDto, nickname);
+        UserDto userDto = initUserDto(joinRequestDto, nickname);
         joinUpdate(findUser, userDto);
         updateRank();
     }
 
 
-    private UserDto initUserDto(JoinRequestDto joinRequestDto, GitbalApiDto gitbalApiDto,
+    @Transactional
+    public void earlyJoin(String nickname){
+        //String nickname = user.getNickname();
+
+        User findUser = userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new JoinException("유저가 존재하지 않습니다."));
+
+//        if(Boolean.FALSE.equals(findUser.getFirstLogined()))
+//            findUser.toggleLogined();
+
+        GitbalApiDto gitbalApiDto = GitbalApiDto.of(userService.calculateUserScore(nickname));
+
+        initEarlyUserDto(gitbalApiDto, findUser);
+    }
+
+    private void initEarlyUserDto(GitbalApiDto gitbalApiDto, User user) {
+        user.updateScore(gitbalApiDto.getScore());
+        userService.updateUserRank();
+        userService.updateUserGrade();
+    }
+
+
+
+    private UserDto initUserDto(JoinRequestDto joinRequestDto,
         String nickname) {
 
         School findSchool = findSchool(joinRequestDto);
@@ -71,7 +94,6 @@ public class AuthService {
             findRegion,
             majorLanguage,
             nickname,
-            gitbalApiDto.getScore(),
             userService.findUserImgByUsername(nickname),
             userService.findByUserName(nickname).getIntroduction()
         );
@@ -102,7 +124,9 @@ public class AuthService {
     public String withDrawUser(Authentication authentication) {
         User user = getAuthenticatedUser(authentication);
         try {
+            withDrawUpdate(user);
             userRepository.delete(user);
+            userService.updateUserRank();
             return "성공적으로 탈퇴 처리 되었습니다.";
         } catch (Exception e) {
             throw new NotDrawUserException();
@@ -115,7 +139,6 @@ public class AuthService {
             userDto.region(),
             userDto.majorLanguage(),
             userDto.nickname(),
-            userDto.score(),
             userDto.profile_img(),
             0,
             userDto.introduction()
@@ -145,6 +168,15 @@ public class AuthService {
         }catch (Exception e){
             e.printStackTrace();
             throw new LogoutException("로그아웃 실패");
+        }
+    }
+
+    private void withDrawUpdate(User user) {
+        if(Objects.nonNull(user.getRegion()))
+            regionService.updatedByLogout(user, user.getRegion());
+        if(Objects.nonNull(user.getSchool())) {
+            schoolService.updatedByLogout(user, user.getSchool());
+            schoolService.updateSchoolRank();
         }
     }
 

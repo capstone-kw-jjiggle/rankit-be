@@ -3,8 +3,10 @@ package gitbal.backend.api.regionPage.dto;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 @Data
+@Slf4j
 public class UserPageListByRegionResponseDto {
     private List<UserInfoByRegion> userInfoByRegion;
     private int currentPage;
@@ -26,11 +28,13 @@ public class UserPageListByRegionResponseDto {
             return;
         }
 
-        int pageSize = 10;
+        log.info("totalCount : {}", totalCount);
+
+        int pageSize = 14;
         this.totalPages = (int) Math.ceil((double) totalCount / pageSize);
 
-        this.end = (int) (Math.ceil(page / 10.0)) * 10;
-        this.start = end - 9;
+        this.end = (int) (Math.ceil(page / 14.0)) * 14;
+        this.start = end - 13;
 
         int last = (int) (Math.ceil(totalCount / (double) pageSize));
         end = end > last ? last : end;

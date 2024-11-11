@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RegionRankService {
 
     private static final int PAGE_SIZE = 14;
@@ -63,6 +65,7 @@ public class RegionRankService {
 
     private List<RegionListDto> convertListToDto(List<Region> regions) {
         List<RegionListDto> regionListDtos = new ArrayList<>();
+
         for(int index = 0; index < regions.size(); index++) {
             Region region = regions.get(index);
             regionListDtos.add(new RegionListDto(
@@ -107,10 +110,11 @@ public class RegionRankService {
             Pageable pageable = initpageable(page, "score");
             Page<User> userByRegionName = userRepository.findUserByRegion_RegionName(regionName,
                     pageable);
+            log.info("userByRegionName: {}", userByRegionName.getTotalPages());
             if (userByRegionName.getTotalPages() < page)
                 throw new PageOutOfRangeException();
             List<UserInfoByRegion> userInfoByRegions = convertPageByUserInfoByRegion(
-                    userByRegionName);
+                    userByRegionName, page);
             return buildUserPageListByRegionResponseDto(page, userInfoByRegions, userByRegionName);
         } catch (Exception e) {
             if (Objects.isNull(e.getMessage()))
@@ -120,12 +124,13 @@ public class RegionRankService {
     }
 
 
-    private List<UserInfoByRegion> convertPageByUserInfoByRegion(Page<User> userBySchoolName) {
+    private List<UserInfoByRegion> convertPageByUserInfoByRegion(Page<User> userBySchoolName, int page) {
         List<User> users = userBySchoolName.get().toList();
         List<UserInfoByRegion> userInfoByRegions= new ArrayList<>();
-        for(int index=0; index<users.size(); index++){
-            User user = users.get(index);
-            userInfoByRegions.add(convertToUserInfoByRegion(user, index+1));
+        int startNum = (page-1) * PAGE_SIZE +1;
+        for(int index=startNum; index<users.size()+startNum; index++){
+            User user = users.get(index-startNum);
+            userInfoByRegions.add(convertToUserInfoByRegion(user, index));
         }
 
         return userInfoByRegions;
