@@ -99,14 +99,14 @@ public class MockDataGenerator implements CommandLineRunner {
 
         // Test를 위한 나(이승준)의 githubid와 동일한 nickname data
 
-        String lee = "leesj000603";
-        if (userRepository.findByNickname(lee).isPresent()) {
-            log.info("duplicate");
-            return;
-        }
-
-        createUserWithNickname(lee);
-        createUserWithNickname("jamooooong");
+//        String lee = "leesj000603";
+//        if (userRepository.findByNickname(lee).isPresent()) {
+//            log.info("duplicate");
+//            return;
+//        }
+//
+//        createUserWithNickname(lee);
+//        createUserWithNickname("jamooooong");
         userService.updateUserRank(); //user 순위 업데이트
         userService.updateUserGrade(); // user 등급 업데이트
         schoolService.updateSchoolRank(); // school 순위 업데이트
