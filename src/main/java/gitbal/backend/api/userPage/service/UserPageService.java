@@ -9,7 +9,9 @@ import gitbal.backend.api.userPage.dto.ModifySchoolRequestDto;
 import gitbal.backend.api.userPage.dto.UserPageUserInfoResponseDto;
 import gitbal.backend.domain.introduction.Introduction;
 import gitbal.backend.domain.introduction.application.repository.IntroductionRepository;
+import gitbal.backend.domain.region.Region;
 import gitbal.backend.domain.region.application.RegionService;
+import gitbal.backend.domain.school.School;
 import gitbal.backend.domain.school.SchoolService;
 import gitbal.backend.domain.user.User;
 import gitbal.backend.domain.user.UserService;
@@ -95,15 +97,63 @@ public class UserPageService {
   }
 
   private FriendSuggestDto convertToFriendSuggestDTO(User user) {
+    School school = user.getSchool();
+    Region region = user.getRegion();
+    if(Objects.isNull(school) && Objects.isNull(region)){
+      return getRegionSchoolEmptySuggestedDto(user);
+    }
+    else if(Objects.isNull(user.getSchool()))
+        return getOnlySchoolEmptySuggestedDto(user);
+    else if(Objects.isNull(user.getRegion()))
+      return getOnlyRegionEmptySuggestedDto(user);
+
+    return getNotEmptySuggestedDto(user);
+  }
+
+  private FriendSuggestDto getNotEmptySuggestedDto(User user) {
     return FriendSuggestDto.of(
-        user.getNickname(),
-        user.getGrade(),
-        user.getMajorLanguage(),
-        user.getSchool().getSchoolName(),
-        user.getRegion().getRegionName(),
-        user.getProfile_img()
+            user.getNickname(),
+            user.getGrade(),
+            user.getMajorLanguage(),
+            user.getSchool().getSchoolName(),
+            user.getRegion().getRegionName(),
+            user.getProfile_img()
     );
   }
+
+  private FriendSuggestDto getOnlyRegionEmptySuggestedDto(User user) {
+    return FriendSuggestDto.of(
+            user.getNickname(),
+            user.getGrade(),
+            user.getMajorLanguage(),
+            user.getSchool().getSchoolName(),
+            null,
+            user.getProfile_img()
+    );
+  }
+
+  private FriendSuggestDto getOnlySchoolEmptySuggestedDto(User user) {
+    return FriendSuggestDto.of(
+            user.getNickname(),
+            user.getGrade(),
+            user.getMajorLanguage(),
+            null,
+            user.getRegion().getRegionName(),
+            user.getProfile_img()
+    );
+  }
+
+  private FriendSuggestDto getRegionSchoolEmptySuggestedDto(User user) {
+    return FriendSuggestDto.of(
+            user.getNickname(),
+            user.getGrade(),
+            user.getMajorLanguage(),
+            null,
+            null,
+            user.getProfile_img()
+    );
+  }
+
   private User checkAuthAndGetUser(Authentication authentication) {
     if (authentication == null) {
       throw new NotLoginedException();
