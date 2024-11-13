@@ -24,10 +24,6 @@
 
 </div>
 
-## 0. 서비스 아키텍쳐
-<img width="2013" alt="인프라 아키텍쳐" src="https://github.com/user-attachments/assets/8ca9d548-2549-406e-a633-7f1d698cf2a4">
-
-<br>
 
 ## 1. 개발 환경
 
@@ -36,6 +32,15 @@
 - 협업 툴 : Jira, Notion 
 - 서비스 배포 환경 : AWS - EC2 , Docker , Github Actions 사용 예정 
  <br>
+
+## 2. 서비스 아키텍쳐
+<img width="2013" alt="인프라 아키텍쳐" src="https://github.com/user-attachments/assets/8ca9d548-2549-406e-a633-7f1d698cf2a4">
+
+<br>
+
+ ## 3. ERD
+ 
+![image](https://github.com/user-attachments/assets/5c8108bb-c155-4127-a7e6-d730e5de3f1e)
 
 ## 2. 전략 및 컨벤션
 
