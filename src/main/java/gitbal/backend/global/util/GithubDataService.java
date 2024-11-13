@@ -41,7 +41,7 @@ public class GithubDataService implements UserInfoService, TopLanguageService {
     private String getTopLanguageQuery(String username) {
         return """
         {
-          "query": "query userInfo($login: String!) { user(login: $login) { repositories(ownerAffiliations: OWNER, isFork: false, first: 100) { nodes { name languages(first: 1, orderBy: {field: SIZE, direction: DESC}) { edges { size node { name } } } } } } }",
+          "query": "query userInfo($login: String!) { user(login: $login) { repositories(ownerAffiliations: OWNER, isFork: false, first: 100) { nodes { name languages(first: 10, orderBy: {field: SIZE, direction: DESC}) { edges { size node { name } } } } } } }",
           "variables": { "login": "%s" }
         }
         """.formatted(username);
@@ -61,6 +61,7 @@ public class GithubDataService implements UserInfoService, TopLanguageService {
     @Override
     public ResponseEntity<String> requestUserInfo(String username) {
         String query = getUserInfoQuery(username);
+        System.out.println(query);
 
         return restTemplate.exchange(GITHUB_GRAPHQL_URL,
             HttpMethod.POST,

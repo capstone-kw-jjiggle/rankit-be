@@ -77,6 +77,7 @@ public class AuthService {
         user.updateScore(gitbalApiDto.getScore());
         userService.updateUserRank();
         userService.updateUserGrade();
+        user.setMajorLanguage(findMajorLanguage(user.getNickname()));
     }
 
 
