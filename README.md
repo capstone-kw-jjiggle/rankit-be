@@ -34,7 +34,7 @@
  <br>
 
 ## 2. 서비스 아키텍쳐
-![image](https://github.com/user-attachments/assets/77f0d398-6e10-4c46-85a6-9de7d4eca190)
+![image](https://github.com/user-attachments/assets/1fe4896c-4a5c-4756-9337-6c02970a47e6)
 
 <br>
 
