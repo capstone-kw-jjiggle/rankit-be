@@ -24,6 +24,9 @@
 
 </div>
 
+## 0. 서비스 아키텍쳐
+<img width="2013" alt="인프라 아키텍쳐" src="https://github.com/user-attachments/assets/8ca9d548-2549-406e-a633-7f1d698cf2a4">
+
 <br>
 
 ## 1. 개발 환경
