@@ -34,7 +34,7 @@
  <br>
 
 ## 2. 서비스 아키텍쳐
-<img width="2013" alt="인프라 아키텍쳐" src="https://github.com/user-attachments/assets/8ca9d548-2549-406e-a633-7f1d698cf2a4">
+![image](https://github.com/user-attachments/assets/77f0d398-6e10-4c46-85a6-9de7d4eca190)
 
 <br>
 
