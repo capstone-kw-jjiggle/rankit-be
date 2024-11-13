@@ -41,6 +41,7 @@ public class MajorLanguageJsonParser {
                     languageCounts.getOrDefault(languageName, 0) + size);
             }
         }
+        log.info("Your Language Count is {}", languageCounts);
         return languageCounts;
     }
 }

@@ -2,7 +2,8 @@ name: rankit-multiaz-rolling-zerodowntime-cicd
 
 on:
   push:
-    branches: [ "develop" ]
+    branches:
+      - release*  # Trigger on any branch that starts with "release"
 
 jobs:
   build:
