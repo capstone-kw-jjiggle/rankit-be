@@ -42,7 +42,7 @@ public class MailService {
             helper.setSubject("랭깃 인증 코드 발급 안내");
             helper.setText(setContext(code), true);
             helper.addInline("rankitLogo",
-                new ClassPathResource("img/rankit.png")); // 로고 파일 경로 수정 필요
+                new ClassPathResource("img/rankit.png"));
 
             mailSender.send(message);
             univCertRepository.findByEmail(to).ifPresentOrElse(u -> u.updateCode(code,
