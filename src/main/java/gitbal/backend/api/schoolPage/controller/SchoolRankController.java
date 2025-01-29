@@ -26,7 +26,7 @@ public class SchoolRankController {
 
     private final SchoolRankService schoolRankService;
 
-    @GetMapping("/mySchool") // 삭제????
+    @GetMapping("/mySchool")
     @Operation(summary = "이 API 가 필요할까요? 이건 보류", description = "내 학교 정보 탭 관련 api 요청입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "내 학교 정보 요청을 성공했습니다."),

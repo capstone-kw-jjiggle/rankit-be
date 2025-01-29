@@ -26,7 +26,7 @@ public class SchedulingService {
     private final UserGradeUpdater userGradeUpdater;
     private final UnivCertCodeChecker univCertCodeChecker;
 
-    @Scheduled(initialDelay = 1, fixedRate = 120, timeUnit = TimeUnit.MINUTES) // fixedRate를 사용하여 일정한 6시간의 주기를 가지는것이 중요!
+    @Scheduled(initialDelay = 1, fixedRate = 120, timeUnit = TimeUnit.MINUTES) // fixedRate를 사용하여 일정한 2시간의 주기를 가지는것이 중요!
     @SchedulerLock(name="updateUser")
     @Transactional
     public void updateUser() {
