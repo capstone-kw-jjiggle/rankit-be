@@ -46,7 +46,6 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_id")
     private Long id;
 
-    // Todo: 공부한 이후 수정 작업 계속 진행 (JPA 공부)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_id")
     private School school;

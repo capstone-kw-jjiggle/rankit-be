@@ -32,8 +32,20 @@
 - 서비스 배포 환경 : AWS - EC2 , Docker , Github Actions 사용 예정 
  <br>
 
-## 2. 서비스 아키텍쳐
+## 2. 서비스 아키텍쳐 (최종 완성형)
 ![image](https://github.com/user-attachments/assets/1fe4896c-4a5c-4756-9337-6c02970a47e6)
+
+
+
+## 2-1. 현재 아키텍쳐 (지속된 비용 문제로 인한 변경)
+
+### 변경 사유
+- 현재 유저 규모로 예상했을때 이중화 서버를 구축하기에는 너무 많은 비용이 부과되어 현재 구조로 변경
+- 현재 구조의 경우 비용이 나오지 않음!
+
+![img.png](https://github.com/user-attachments/assets/2d6ddd97-04ef-481c-b2e3-c52ef8bfe0b1)
+
+
 
 <br>
 
